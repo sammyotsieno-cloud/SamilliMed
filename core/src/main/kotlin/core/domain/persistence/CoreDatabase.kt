@@ -12,6 +12,8 @@ import core.domain.model.InventoryCostLayer
 import core.domain.model.PharmaceuticalDetail
 import core.domain.model.PriceHistory
 import core.domain.model.ProductCategory
+import core.domain.model.ProductRecognitionIdentifier
+import core.domain.model.ProductRecognitionObservation
 import core.domain.model.ProductImage
 import core.domain.model.ProductMaster
 import core.domain.model.ProductTag
@@ -57,6 +59,8 @@ import core.domain.model.UnitPriceConfig
         ProductImage::class,
         ProductTag::class,
         ProductTagAssignment::class,
+        ProductRecognitionIdentifier::class,
+        ProductRecognitionObservation::class,
         UnitPriceConfig::class,
         PriceHistory::class,
         FacilityProfile::class,
@@ -70,7 +74,7 @@ import core.domain.model.UnitPriceConfig
         Sale::class,
         SaleItem::class
     ],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 @TypeConverters(RoomConverters::class)
@@ -89,6 +93,10 @@ abstract class CoreDatabase : RoomDatabase() {
     abstract fun saleDao(): SaleDao
 
     abstract fun productMasterDao(): ProductMasterDao
+
+    abstract fun productCategoryDao(): ProductCategoryDao
+
+    abstract fun productRecognitionDao(): ProductRecognitionDao
 
     companion object {
 
@@ -131,6 +139,51 @@ abstract class CoreDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE product_categories ADD COLUMN is_system_default INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS product_recognition_identifiers (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        product_id TEXT NOT NULL,
+                        identifier_type TEXT NOT NULL,
+                        normalized_value TEXT NOT NULL,
+                        raw_value TEXT NOT NULL,
+                        format TEXT,
+                        is_verified INTEGER NOT NULL DEFAULT 0,
+                        created_at INTEGER NOT NULL,
+                        updated_at INTEGER NOT NULL,
+                        FOREIGN KEY(product_id) REFERENCES product_masters(id) ON DELETE RESTRICT
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_product_recognition_identifiers_product_id ON product_recognition_identifiers(product_id)")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_product_recognition_identifiers_identifier_type_normalized_value ON product_recognition_identifiers(identifier_type, normalized_value)")
+                db.execSQL("""
+                    CREATE TABLE IF NOT EXISTS product_recognition_observations (
+                        id TEXT NOT NULL PRIMARY KEY,
+                        product_id TEXT,
+                        candidate_product_id TEXT,
+                        candidate_category_id TEXT,
+                        source TEXT NOT NULL,
+                        source_image_uris TEXT,
+                        ocr_text TEXT,
+                        barcode_values TEXT,
+                        visual_labels TEXT,
+                        confidence_score REAL,
+                        confidence_level TEXT NOT NULL,
+                        verification_status TEXT NOT NULL,
+                        corrected INTEGER NOT NULL DEFAULT 0,
+                        explanation TEXT,
+                        created_at INTEGER NOT NULL,
+                        FOREIGN KEY(product_id) REFERENCES product_masters(id) ON DELETE SET NULL
+                    )
+                """.trimIndent())
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_product_recognition_observations_product_id ON product_recognition_observations(product_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_product_recognition_observations_candidate_product_id ON product_recognition_observations(candidate_product_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_product_recognition_observations_created_at ON product_recognition_observations(created_at)")
+            }
+        }
+
         @Volatile
         private var INSTANCE: CoreDatabase? = null
 
@@ -141,7 +194,7 @@ abstract class CoreDatabase : RoomDatabase() {
                     CoreDatabase::class.java,
                     "SamilliMed_ground.db"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                     .also { INSTANCE = it }
             }
