@@ -189,7 +189,7 @@ fun AppNavigation(
             when {
                 currentFeature == "product-categories" -> ProductCategoryManagementScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "products" -> ProductsScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
-                currentFeature == "product-scanner" -> ProductScannerScreen(onConfirmed = { draft -> pendingScanDraft = draft; currentFeature = "products" })
+                currentFeature == "product-scanner" -> ProductScannerScreen(container = appContainer, onConfirmed = { draft -> pendingScanDraft = draft; currentFeature = "products" })
                 currentFeature == "receiving" -> GoodsReceivingScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "dispensing" -> DispensingScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "inventory" -> InventoryScreen(container = appContainer, onBack = { currentFeature = null })
