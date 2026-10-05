@@ -1,6 +1,9 @@
 name: Manual Verification
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       target:
@@ -33,19 +36,19 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        if: inputs.target == 'build' || inputs.target == 'full'
+        if: inputs.target == 'build' || inputs.target == 'full' || github.event_name == 'push' || github.event_name == 'push' || github.event_name == 'push'
         run: ./gradlew :app:assembleDebug
 
       - name: Lint
-        if: inputs.target == 'lint'
+        if: inputs.target == 'lint' || github.event_name == 'push'
         run: ./gradlew lint
 
       - name: Tests
-        if: inputs.target == 'tests'
+        if: inputs.target == 'tests' || github.event_name == 'push'
         run: ./gradlew test
 
       - name: Full verification
-        if: inputs.target == 'full'
+        if: inputs.target == 'full' || github.event_name == 'push'
         run: ./gradlew lint test
 
       - name: Prepare debug APK artifact
