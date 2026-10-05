@@ -55,6 +55,9 @@ data class ProductCategory(
     @ColumnInfo(name = "sort_order")
     val sortOrder: Int = 0,
 
+    @ColumnInfo(name = "is_system_default", defaultValue = "0")
+    val isSystemDefault: Boolean = false,
+
     @ColumnInfo(name = "created_at")
     val createdAt: Long,
 
@@ -65,6 +68,9 @@ data class ProductCategory(
         require(id.isNotBlank()) { "ProductCategory id must not be blank" }
         require(name.isNotBlank()) { "ProductCategory name must not be blank" }
         require(parentCategoryId != id) { "ProductCategory cannot be its own parent (id=$id)" }
+        require(sortOrder >= 0) { "ProductCategory sortOrder must not be negative" }
+        require(createdAt > 0L) { "ProductCategory createdAt must be positive" }
+        require(updatedAt >= createdAt) { "ProductCategory updatedAt must not precede createdAt" }
     }
 
     /**
