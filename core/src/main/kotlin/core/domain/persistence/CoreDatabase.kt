@@ -12,8 +12,6 @@ import core.domain.model.InventoryCostLayer
 import core.domain.model.PharmaceuticalDetail
 import core.domain.model.PriceHistory
 import core.domain.model.ProductCategory
-import core.domain.model.ProductRecognitionIdentifier
-import core.domain.model.ProductRecognitionObservation
 import core.domain.model.ProductImage
 import core.domain.model.ProductMaster
 import core.domain.model.ProductTag
@@ -59,8 +57,6 @@ import core.domain.model.UnitPriceConfig
         ProductImage::class,
         ProductTag::class,
         ProductTagAssignment::class,
-        ProductRecognitionIdentifier::class,
-        ProductRecognitionObservation::class,
         UnitPriceConfig::class,
         PriceHistory::class,
         FacilityProfile::class,
@@ -95,8 +91,6 @@ abstract class CoreDatabase : RoomDatabase() {
     abstract fun productMasterDao(): ProductMasterDao
 
     abstract fun productCategoryDao(): ProductCategoryDao
-
-    abstract fun productRecognitionDao(): ProductRecognitionDao
 
     companion object {
 
