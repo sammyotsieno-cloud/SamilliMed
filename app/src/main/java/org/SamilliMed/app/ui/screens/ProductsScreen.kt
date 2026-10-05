@@ -1083,19 +1083,28 @@ fun ProductsScreen(
                                 container.productMasterDao.insertProduct(product)
 
                                 initialScanDraft?.barcodeValue?.trim()?.takeIf { it.isNotBlank() }?.let { barcode ->
-                                    container.productRecognitionDao.insertIdentifier(
-                                        ProductRecognitionIdentifier(
-                                            id = UUID.randomUUID().toString(),
-                                            productId = productId,
-                                            identifierType = ProductRecognitionIdentifier.TYPE_BARCODE,
-                                            normalizedValue = core.domain.recognition.ProductRecognitionService.normalize(barcode),
-                                            rawValue = barcode,
-                                            format = initialScanDraft.barcodeFormat,
-                                            isVerified = true,
-                                            createdAt = now,
-                                            updatedAt = now
+                                    val normalizedBarcode =
+                                        core.domain.recognition.ProductRecognitionService.normalize(barcode)
+                                    val existingIdentifier =
+                                        container.productRecognitionDao.findIdentifier(
+                                            ProductRecognitionIdentifier.TYPE_BARCODE,
+                                            normalizedBarcode
                                         )
-                                    )
+                                    if (existingIdentifier == null) {
+                                        container.productRecognitionDao.insertIdentifier(
+                                            ProductRecognitionIdentifier(
+                                                id = UUID.randomUUID().toString(),
+                                                productId = productId,
+                                                identifierType = ProductRecognitionIdentifier.TYPE_BARCODE,
+                                                normalizedValue = normalizedBarcode,
+                                                rawValue = barcode,
+                                                format = initialScanDraft.barcodeFormat,
+                                                isVerified = true,
+                                                createdAt = now,
+                                                updatedAt = now
+                                            )
+                                        )
+                                    }
                                 }
 
                                 if (initialScanDraft != null) {
