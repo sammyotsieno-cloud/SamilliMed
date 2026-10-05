@@ -25,6 +25,8 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -139,6 +141,7 @@ fun ProductCategoryManagementScreen(
             category = null,
             parent = null,
             repository = container.productCategoryRepository,
+            categories = categories,
             onDismiss = { showAddRoot = false },
             onSaved = { showAddRoot = false; refresh() }
         )
@@ -148,6 +151,7 @@ fun ProductCategoryManagementScreen(
             category = null,
             parent = parent,
             repository = container.productCategoryRepository,
+            categories = categories,
             onDismiss = { addingParent = null },
             onSaved = { addingParent = null; refresh() }
         )
@@ -157,6 +161,7 @@ fun ProductCategoryManagementScreen(
             category = category,
             parent = null,
             repository = container.productCategoryRepository,
+            categories = categories,
             onDismiss = { editor = null },
             onSaved = { editor = null; refresh() }
         )
@@ -211,12 +216,15 @@ private fun CategoryEditorDialog(
     category: ProductCategory?,
     parent: ProductCategory?,
     repository: core.domain.category.ProductCategoryRepository,
+    categories: List<ProductCategory>,
     onDismiss: () -> Unit,
     onSaved: () -> Unit
 ) {
     var name by remember(category?.id, parent?.id) { mutableStateOf(category?.name.orEmpty()) }
     var description by remember(category?.id, parent?.id) { mutableStateOf(category?.description.orEmpty()) }
     var error by remember(category?.id, parent?.id) { mutableStateOf<String?>(null) }
+    var selectedParentId by remember(category?.id, parent?.id) { mutableStateOf(category?.parentCategoryId ?: parent?.id) }
+    var parentMenuExpanded by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     AlertDialog(
@@ -224,7 +232,33 @@ private fun CategoryEditorDialog(
         title = { Text(if (category == null) "Add Category" else "Edit Category") },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                parent?.let { Text("Parent: @@{it.name}", style = MaterialTheme.typography.bodySmall) }
+                Text(
+                    selectedParentId?.let { id ->
+                        "Parent: " + (categories.firstOrNull { it.id == id }?.name ?: "Unknown")
+                    } ?: "Parent: None (root)",
+                    style = MaterialTheme.typography.bodySmall
+                )
+                androidx.compose.material3.OutlinedButton(
+                    onClick = { parentMenuExpanded = true },
+                    modifier = Modifier.fillMaxWidth()
+                ) { Text("Choose Parent") }
+                DropdownMenu(
+                    expanded = parentMenuExpanded,
+                    onDismissRequest = { parentMenuExpanded = false }
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("None (root)") },
+                        onClick = { selectedParentId = null; parentMenuExpanded = false }
+                    )
+                    categories.filter { it.id != category?.id && it.isActive }
+                        .sortedBy { it.name.lowercase() }
+                        .forEach { candidate ->
+                            DropdownMenuItem(
+                                text = { Text(candidate.name) },
+                                onClick = { selectedParentId = candidate.id; parentMenuExpanded = false }
+                            )
+                        }
+                }
                 androidx.compose.material3.OutlinedTextField(name, { name = it }, label = { Text("Category name") }, modifier = Modifier.fillMaxWidth())
                 androidx.compose.material3.OutlinedTextField(description, { description = it }, label = { Text("Description (optional)") }, modifier = Modifier.fillMaxWidth(), minLines = 2)
                 error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
@@ -235,8 +269,8 @@ private fun CategoryEditorDialog(
                 scope.launch {
                     runCatching {
                         withContext(Dispatchers.IO) {
-                            if (category == null) repository.create(name, parent?.id, description)
-                            else repository.update(category, name, category.parentCategoryId, description)
+                            if (category == null) repository.create(name, selectedParentId, description)
+                            else repository.update(category, name, selectedParentId, description)
                         }
                     }.onSuccess { onSaved() }
                         .onFailure { error = it.message ?: "Unable to save category." }
