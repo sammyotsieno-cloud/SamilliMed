@@ -66,6 +66,8 @@ import org.SamilliMed.app.scanner.ProductScanDraft
 import android.net.Uri
 import core.domain.model.ProductMaster
 import core.domain.model.ProductCategory
+import core.domain.model.ProductRecognitionIdentifier
+import core.domain.model.ProductRecognitionObservation
 import core.domain.model.ProductUnit
 import core.domain.model.QuantityScale
 import core.domain.model.UnitPriceConfig
@@ -1079,6 +1081,45 @@ fun ProductsScreen(
 
                             withContext(Dispatchers.IO) {
                                 container.productMasterDao.insertProduct(product)
+
+                                initialScanDraft?.barcodeValue?.trim()?.takeIf { it.isNotBlank() }?.let { barcode ->
+                                    container.productRecognitionDao.insertIdentifier(
+                                        ProductRecognitionIdentifier(
+                                            id = UUID.randomUUID().toString(),
+                                            productId = productId,
+                                            identifierType = ProductRecognitionIdentifier.TYPE_BARCODE,
+                                            normalizedValue = org.SamilliMed.app.scanner.ProductRecognitionNormalizer.normalize(barcode),
+                                            rawValue = barcode,
+                                            format = initialScanDraft.barcodeFormat,
+                                            isVerified = true,
+                                            createdAt = now,
+                                            updatedAt = now
+                                        )
+                                    )
+                                }
+
+                                if (initialScanDraft != null) {
+                                    container.productRecognitionDao.insertObservation(
+                                        ProductRecognitionObservation(
+                                            id = UUID.randomUUID().toString(),
+                                            productId = productId,
+                                            candidateProductId = initialScanDraft.recognizedProductId,
+                                            candidateCategoryId = selectedCategoryId,
+                                            source = ProductRecognitionObservation.SOURCE_SCANNER,
+                                            sourceImageUris = initialScanDraft.sourceImageUris.joinToString("|"),
+                                            ocrText = initialScanDraft.otherDetectedText,
+                                            barcodeValues = initialScanDraft.barcodeValue,
+                                            confidenceScore = initialScanDraft.recognitionConfidence,
+                                            confidenceLevel = initialScanDraft.recognitionConfidenceLevel
+                                                ?: ProductRecognitionObservation.CONFIDENCE_UNKNOWN,
+                                            verificationStatus = ProductRecognitionObservation.STATUS_CONFIRMED,
+                                            corrected = false,
+                                            explanation = initialScanDraft.recognitionExplanation,
+                                            createdAt = now
+                                        )
+                                    )
+                                }
+
                                 container.productMasterDao.insertUnit(baseUnit)
                                 container.productMasterDao.savePriceConfig(priceConfig)
 
