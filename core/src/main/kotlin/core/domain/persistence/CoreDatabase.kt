@@ -98,8 +98,6 @@ abstract class CoreDatabase : RoomDatabase() {
 
     abstract fun productRecognitionDao(): ProductRecognitionDao
 
-    abstract fun productCategoryDao(): ProductCategoryDao
-
     companion object {
 
         /**
