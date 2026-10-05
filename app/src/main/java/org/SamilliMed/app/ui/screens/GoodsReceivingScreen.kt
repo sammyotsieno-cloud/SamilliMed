@@ -70,6 +70,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.SamilliMed.app.data.AppContainer
+import org.SamilliMed.app.scanner.ProductScanDraft
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.text.SimpleDateFormat
@@ -92,6 +93,9 @@ private data class TempLineItem(
 fun GoodsReceivingScreen(
     container: AppContainer,
     onBack: () -> Unit,
+    onScanProduct: () -> Unit = {},
+    initialScanDraft: ProductScanDraft? = null,
+    onScanDraftConsumed: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -137,6 +141,10 @@ fun GoodsReceivingScreen(
 
     var showAddLineDialog by remember {
         mutableStateOf(false)
+    }
+
+    LaunchedEffect(initialScanDraft) {
+        if (initialScanDraft != null) showAddLineDialog = true
     }
 
     var viewingReceipt by remember {
@@ -299,6 +307,8 @@ fun GoodsReceivingScreen(
                                 i != index
                             }
                     },
+
+                    onScanProduct = onScanProduct,
 
                     onCommit = {
 
@@ -516,6 +526,8 @@ fun GoodsReceivingScreen(
         AddReceiptLineDialog(
             products = registeredProducts,
             units = registeredUnits,
+            preselectedProductId = initialScanDraft?.recognizedProductId,
+            onScanDraftConsumed = onScanDraftConsumed,
 
             onDismiss = {
                 showAddLineDialog = false
@@ -556,6 +568,7 @@ private fun ReceiveStockContent(
     onInvoiceRefChange: (String) -> Unit,
     onNotesChange: (String) -> Unit,
     onAddLine: () -> Unit,
+    onScanProduct: () -> Unit,
     onRemoveLine: (Int) -> Unit,
     onCommit: () -> Unit
 ) {
@@ -634,22 +647,15 @@ private fun ReceiveStockContent(
                     FontWeight.Bold
             )
 
-            Button(
-                onClick = onAddLine
-            ) {
-
-                Icon(
-                    imageVector =
-                        Icons.Default.Add,
-                    contentDescription = null
-                )
-
-                Spacer(
-                    modifier =
-                        Modifier.width(4.dp)
-                )
-
-                Text("Add Line")
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = onScanProduct) {
+                    Text("Scan")
+                }
+                Button(onClick = onAddLine) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text("Add Line")
+                }
             }
         }
 
@@ -830,13 +836,23 @@ private fun ReceiveStockContent(
 private fun AddReceiptLineDialog(
     products: List<ProductMaster>,
     units: List<ProductUnit>,
+    preselectedProductId: String? = null,
+    onScanDraftConsumed: () -> Unit = {},
     onDismiss: () -> Unit,
     onAdd: (TempLineItem) -> Unit
 ) {
     var selectedProduct by remember {
         mutableStateOf(
-            products.firstOrNull()
+            preselectedProductId?.let { id -> products.firstOrNull { it.id == id } }
+                ?: products.firstOrNull()
         )
+    }
+
+    LaunchedEffect(preselectedProductId, products) {
+        preselectedProductId?.let { id ->
+            products.firstOrNull { it.id == id }?.let { selectedProduct = it }
+        }
+        onScanDraftConsumed()
     }
 
     var selectedUnit by remember {
