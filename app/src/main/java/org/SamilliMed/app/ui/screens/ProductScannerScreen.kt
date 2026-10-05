@@ -39,6 +39,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
 import org.SamilliMed.app.scanner.ProductScanAnalysis
+import org.SamilliMed.app.data.AppContainer
 import org.SamilliMed.app.scanner.ProductScanDraft
 import org.SamilliMed.app.scanner.ProductScanEngine
 import org.SamilliMed.app.scanner.ProductExtractionEngine
@@ -49,6 +50,7 @@ import java.util.Locale
 
 @Composable
 fun ProductScannerScreen(
+    container: AppContainer,
     modifier: Modifier = Modifier,
     onConfirmed: (ProductScanDraft) -> Unit = {}
 ) {
@@ -136,10 +138,25 @@ fun ProductScannerScreen(
                             }.onSuccess {
                                 val combinedOcr = acceptedAnalyses.flatMap { item -> item.ocrResults } + it.ocrResults
                                 val combinedBarcodes = acceptedAnalyses.flatMap { item -> item.barcodeResults } + it.barcodeResults
+                                val extractedDraft = ProductExtractionEngine.extract(combinedOcr, combinedBarcodes)
+                                val candidates = withContext(kotlinx.coroutines.Dispatchers.IO) {
+                                    container.productRecognitionService.recognize(
+                                        ocrText = combinedOcr.joinToString("\n") { item -> item.text },
+                                        barcodes = combinedBarcodes.map { item -> item.rawValue }
+                                    )
+                                }
+                                val best = candidates.firstOrNull()
+                                val enrichedDraft = extractedDraft.copy(
+                                    recognizedProductId = best?.product?.id,
+                                    recognitionCategoryId = best?.category?.id,
+                                    recognitionConfidence = best?.confidenceScore,
+                                    recognitionConfidenceLevel = best?.confidenceLevel,
+                                    recognitionExplanation = best?.explanation
+                                )
                                 analysis = it.copy(
                                     ocrResults = combinedOcr,
                                     barcodeResults = combinedBarcodes,
-                                    draft = ProductExtractionEngine.extract(combinedOcr, combinedBarcodes)
+                                    draft = enrichedDraft
                                 )
                             }.onFailure {
                                 working.delete()
