@@ -59,7 +59,7 @@ class ProductRecognitionService(
                 category,
                 score,
                 if (score >= 0.75) "HIGH" else "MEDIUM",
-                "OCR matched @@{matches} known product identity field(s)."
+                "OCR matched " + matches + " known product identity field(s)."
             )
         }
 
