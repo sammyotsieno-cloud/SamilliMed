@@ -30,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -40,6 +41,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import org.SamilliMed.app.data.AppContainer
 import org.SamilliMed.app.scanner.ProductScanDraft
+import core.domain.model.ProductRecognitionIdentifier
+import core.domain.model.ProductRecognitionObservation
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.SamilliMed.app.ui.screens.DashboardScreen
 import org.SamilliMed.app.ui.screens.DispensingScreen
 import org.SamilliMed.app.ui.screens.ExpiryAlertsScreen
@@ -70,6 +75,7 @@ fun AppNavigation(
 ) {
     val context = LocalContext.current
     val appContainer = container ?: remember(context) { AppContainer(context.applicationContext) }
+    val scope = rememberCoroutineScope()
 
     var currentBottomTab by remember { mutableStateOf<BottomNavItem>(BottomNavItem.Dashboard) }
     var currentFeature by remember { mutableStateOf<String?>(null) }
@@ -191,7 +197,58 @@ fun AppNavigation(
             when {
                 currentFeature == "product-categories" -> ProductCategoryManagementScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "products" -> ProductsScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { scanReturnFeature = null; currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
-                currentFeature == "product-scanner" -> ProductScannerScreen(container = appContainer, onConfirmed = { draft -> pendingScanDraft = draft; currentFeature = scanReturnFeature ?: "products"; scanReturnFeature = null })
+                currentFeature == "product-scanner" -> ProductScannerScreen(
+                    container = appContainer,
+                    onConfirmed = { draft ->
+                        val destination = scanReturnFeature ?: "products"
+                        if (destination == "receiving" || destination == "dispensing") {
+                            scope.launch(Dispatchers.IO) {
+                                draft.barcodeValue?.trim()?.takeIf { it.isNotBlank() }?.let { barcode ->
+                                    val normalized = core.domain.recognition.ProductRecognitionService.normalize(barcode)
+                                    if (appContainer.productRecognitionDao.findIdentifier(ProductRecognitionIdentifier.TYPE_BARCODE, normalized) == null &&
+                                        draft.recognizedProductId != null
+                                    ) {
+                                        appContainer.productRecognitionDao.insertIdentifier(
+                                            ProductRecognitionIdentifier(
+                                                id = java.util.UUID.randomUUID().toString(),
+                                                productId = draft.recognizedProductId,
+                                                identifierType = ProductRecognitionIdentifier.TYPE_BARCODE,
+                                                normalizedValue = normalized,
+                                                rawValue = barcode,
+                                                format = draft.barcodeFormat,
+                                                isVerified = true,
+                                                createdAt = System.currentTimeMillis(),
+                                                updatedAt = System.currentTimeMillis()
+                                            )
+                                        )
+                                    }
+                                }
+                                appContainer.productRecognitionDao.insertObservation(
+                                    ProductRecognitionObservation(
+                                        id = java.util.UUID.randomUUID().toString(),
+                                        productId = draft.recognizedProductId,
+                                        candidateProductId = draft.recognizedProductId,
+                                        candidateCategoryId = draft.recognitionCategoryId,
+                                        source = ProductRecognitionObservation.SOURCE_SCANNER,
+                                        sourceImageUris = draft.sourceImageUris.joinToString("|"),
+                                        ocrText = draft.otherDetectedText,
+                                        barcodeValues = draft.barcodeValue,
+                                        confidenceScore = draft.recognitionConfidence,
+                                        confidenceLevel = draft.recognitionConfidenceLevel
+                                            ?: ProductRecognitionObservation.CONFIDENCE_UNKNOWN,
+                                        verificationStatus = ProductRecognitionObservation.STATUS_CONFIRMED,
+                                        corrected = false,
+                                        explanation = draft.recognitionExplanation,
+                                        createdAt = System.currentTimeMillis()
+                                    )
+                                )
+                            }
+                        }
+                        pendingScanDraft = draft
+                        currentFeature = destination
+                        scanReturnFeature = null
+                    }
+                )
                 currentFeature == "receiving" -> GoodsReceivingScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { scanReturnFeature = "receiving"; currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
                 currentFeature == "dispensing" -> DispensingScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { scanReturnFeature = "dispensing"; currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
                 currentFeature == "inventory" -> InventoryScreen(container = appContainer, onBack = { currentFeature = null })
