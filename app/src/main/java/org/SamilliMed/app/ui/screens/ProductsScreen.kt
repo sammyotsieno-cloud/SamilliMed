@@ -65,6 +65,7 @@ import core.domain.model.ProductImage
 import org.SamilliMed.app.scanner.ProductScanDraft
 import android.net.Uri
 import core.domain.model.ProductMaster
+import core.domain.model.ProductCategory
 import core.domain.model.ProductUnit
 import core.domain.model.QuantityScale
 import core.domain.model.UnitPriceConfig
@@ -104,6 +105,8 @@ fun ProductsScreen(
     var showEditPriceDialogForUnit by remember {
         mutableStateOf<Pair<ProductUnit, UnitPriceConfig?>?>(null)
     }
+    var categories by remember { mutableStateOf<List<ProductCategory>>(emptyList()) }
+    var showCategoryPicker by remember { mutableStateOf(false) }
 
     fun refreshProducts() {
         scope.launch {
@@ -133,6 +136,10 @@ fun ProductsScreen(
 
     LaunchedEffect(Unit) {
         refreshProducts()
+        categories = withContext(Dispatchers.IO) {
+            container.productCategoryRepository.ensureDefaultTaxonomy()
+            container.productCategoryRepository.getActive()
+        }
     }
 
     val filteredProducts = remember(productsWithDetails, searchQuery) {
@@ -690,6 +697,15 @@ fun ProductsScreen(
         )
     }
 
+    if (showCategoryPicker) {
+        ProductCategoryPickerDialog(
+            categories = categories,
+            selectedId = selectedCategoryId,
+            onSelect = { selectedCategoryId = it; showCategoryPicker = false },
+            onDismiss = { showCategoryPicker = false }
+        )
+    }
+
     if (showAddProductDialog) {
 
         var brandName by remember { mutableStateOf(initialScanDraft?.brandName ?: "") }
@@ -706,6 +722,7 @@ fun ProductsScreen(
         var prescriptionClassification by remember { mutableStateOf(initialScanDraft?.prescriptionClassification ?: "") }
         var storageCondition by remember { mutableStateOf(initialScanDraft?.storageCondition ?: "") }
         var scannedImageUris by remember { mutableStateOf(initialScanDraft?.sourceImageUris ?: emptyList()) }
+        var selectedCategoryId by remember { mutableStateOf<String?>(null) }
 
         var baseUnitName by remember { mutableStateOf("") }
         var baseUnitAbbr by remember { mutableStateOf("") }
@@ -802,6 +819,17 @@ fun ProductsScreen(
                     OutlinedTextField(value = therapeuticCategory, onValueChange = { therapeuticCategory = it }, label = { Text("Therapeutic Category (Optional)") }, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(value = prescriptionClassification, onValueChange = { prescriptionClassification = it }, label = { Text("Prescription Classification (Optional)") }, modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(value = storageCondition, onValueChange = { storageCondition = it }, label = { Text("Storage Condition (Optional)") }, modifier = Modifier.fillMaxWidth())
+
+                    OutlinedButton(
+                        onClick = { showCategoryPicker = true },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        val selected = categories.firstOrNull { it.id == selectedCategoryId }
+                        Text(
+                            if (selected == null) "Select Primary Product Category"
+                            else "Category: " + selected.name
+                        )
+                    }
 
                     OutlinedTextField(
                         value = description,
@@ -1009,6 +1037,7 @@ fun ProductsScreen(
                                 manufacturer = manufacturer
                                     .trim()
                                     .ifBlank { null },
+                                categoryId = selectedCategoryId,
                                 description = description
                                     .trim()
                                     .ifBlank { null },
