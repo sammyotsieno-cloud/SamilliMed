@@ -1,6 +1,9 @@
 name: Manual Verification
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       target:
@@ -33,7 +36,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build debug APK
-        if: inputs.target == 'build' || inputs.target == 'full' || github.event_name == 'push' || github.event_name == 'push'
+        if: inputs.target == 'build' || inputs.target == 'full' || github.event_name == 'push'
         run: ./gradlew :app:assembleDebug
 
       - name: Lint
@@ -50,7 +53,7 @@ jobs:
 
       - name: Prepare debug APK artifact
         id: prepare
-        if: inputs.target == 'build' || inputs.target == 'full'
+        if: inputs.target == 'build' || inputs.target == 'full' || github.event_name == 'push'
         shell: bash
         run: |
           set -euo pipefail
@@ -126,7 +129,7 @@ jobs:
           cat "$artifact_dir/SHA256SUMS.txt"
 
       - name: Upload debug APK artifact
-        if: inputs.target == 'build' || inputs.target == 'full'
+        if: inputs.target == 'build' || inputs.target == 'full' || github.event_name == 'push'
         uses: actions/upload-artifact@v4
         with:
           name: SamilliMed-debug
