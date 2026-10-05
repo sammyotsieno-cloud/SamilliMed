@@ -49,16 +49,23 @@ jobs:
         run: ./gradlew lint test
 
       - name: Prepare debug APK artifact
+        id: prepare
         if: inputs.target == 'build' || inputs.target == 'full'
+        shell: bash
         run: |
           set -euo pipefail
+
           source_apk="app/build/outputs/apk/debug/app-debug.apk"
           artifact_dir="app/build/ci-artifact"
           artifact_apk="$artifact_dir/SamilliMed-debug.apk"
+          test_zip="app/build/SamilliMed-debug-test.zip"
+          extracted_dir="app/build/ci-artifact-test"
 
           test -f "$source_apk"
-          rm -rf "$artifact_dir"
+
+          rm -rf "$artifact_dir" "$extracted_dir" "$test_zip"
           mkdir -p "$artifact_dir"
+
           cp "$source_apk" "$artifact_apk"
           test -f "$artifact_apk"
 
@@ -66,7 +73,51 @@ jobs:
           unzip -t "$artifact_apk"
 
           echo "Generating checksum..."
-          sha256sum "$artifact_apk" > "$artifact_dir/SHA256SUMS.txt"
+          (
+            cd "$artifact_dir"
+            sha256sum SamilliMed-debug.apk > SHA256SUMS.txt
+          )
+
+          echo "Verifying checksum..."
+          (
+            cd "$artifact_dir"
+            sha256sum -c SHA256SUMS.txt
+          )
+
+          echo "Creating local round-trip ZIP..."
+          (
+            cd "$artifact_dir"
+            zip -q -0 "../SamilliMed-debug-test.zip" SamilliMed-debug.apk SHA256SUMS.txt
+          )
+
+          echo "Testing local round-trip ZIP..."
+          unzip -t "$test_zip"
+
+          echo "Extracting local round-trip ZIP..."
+          mkdir -p "$extracted_dir"
+          unzip -q "$test_zip" -d "$extracted_dir"
+
+          echo "Comparing extracted APK with original..."
+          cmp "$artifact_apk" "$extracted_dir/SamilliMed-debug.apk"
+
+          echo "Verifying extracted APK checksum..."
+          (
+            cd "$extracted_dir"
+            sha256sum -c SHA256SUMS.txt
+          )
+
+          echo "Round-trip APK verification passed."
+
+          source_size=$(stat -c '%s' "$source_apk")
+          artifact_size=$(stat -c '%s' "$artifact_apk")
+          extracted_size=$(stat -c '%s' "$extracted_dir/SamilliMed-debug.apk")
+
+          test "$source_size" -eq "$artifact_size"
+          test "$artifact_size" -eq "$extracted_size"
+
+          echo "Source APK size:    $source_size bytes"
+          echo "Artifact APK size:  $artifact_size bytes"
+          echo "Extracted APK size: $extracted_size bytes"
 
           echo "Artifact contents:"
           ls -lh "$artifact_dir"
