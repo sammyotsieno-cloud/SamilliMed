@@ -74,10 +74,12 @@ fun AppNavigation(
     var currentBottomTab by remember { mutableStateOf<BottomNavItem>(BottomNavItem.Dashboard) }
     var currentFeature by remember { mutableStateOf<String?>(null) }
     var pendingScanDraft by remember { mutableStateOf<ProductScanDraft?>(null) }
+    var scanReturnFeature by remember { mutableStateOf<String?>(null) }
     var showExitConfirmation by remember { mutableStateOf(false) }
 
     BackHandler(enabled = currentFeature != null) {
-        currentFeature = if (currentFeature == "product-scanner") "products" else null
+        currentFeature = if (currentFeature == "product-scanner") (scanReturnFeature ?: "products") else null
+        if (currentFeature != "product-scanner") scanReturnFeature = null
     }
 
     BackHandler(enabled = currentFeature == null && currentBottomTab != BottomNavItem.Dashboard) {
@@ -189,9 +191,9 @@ fun AppNavigation(
             when {
                 currentFeature == "product-categories" -> ProductCategoryManagementScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "products" -> ProductsScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
-                currentFeature == "product-scanner" -> ProductScannerScreen(container = appContainer, onConfirmed = { draft -> pendingScanDraft = draft; currentFeature = "products" })
-                currentFeature == "receiving" -> GoodsReceivingScreen(container = appContainer, onBack = { currentFeature = null })
-                currentFeature == "dispensing" -> DispensingScreen(container = appContainer, onBack = { currentFeature = null })
+                currentFeature == "product-scanner" -> ProductScannerScreen(container = appContainer, onConfirmed = { draft -> pendingScanDraft = draft; currentFeature = scanReturnFeature ?: "products"; scanReturnFeature = null })
+                currentFeature == "receiving" -> GoodsReceivingScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { scanReturnFeature = "receiving"; currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
+                currentFeature == "dispensing" -> DispensingScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { scanReturnFeature = "dispensing"; currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
                 currentFeature == "inventory" -> InventoryScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "alerts" -> ExpiryAlertsScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "reports" -> ReportsScreen(container = appContainer, onBack = { currentFeature = null })
