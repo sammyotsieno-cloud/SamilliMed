@@ -1088,7 +1088,7 @@ fun ProductsScreen(
                                             id = UUID.randomUUID().toString(),
                                             productId = productId,
                                             identifierType = ProductRecognitionIdentifier.TYPE_BARCODE,
-                                            normalizedValue = org.SamilliMed.app.scanner.ProductRecognitionNormalizer.normalize(barcode),
+                                            normalizedValue = core.domain.recognition.ProductRecognitionService.normalize(barcode),
                                             rawValue = barcode,
                                             format = initialScanDraft.barcodeFormat,
                                             isVerified = true,
