@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import org.SamilliMed.app.scanner.ProductScanAnalysis
 import org.SamilliMed.app.data.AppContainer
 import org.SamilliMed.app.scanner.ProductScanDraft
