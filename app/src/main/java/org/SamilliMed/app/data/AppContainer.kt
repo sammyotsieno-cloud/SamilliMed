@@ -18,11 +18,6 @@ import core.domain.receiving.GoodsReceiptPersistenceService
 import core.domain.reporting.InventoryValuationService
 
 class AppContainer(context: Context) {
-    init {
-        kotlinx.coroutines.CoroutineScope(kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO).launch {
-            productCategoryRepository.ensureDefaultTaxonomy()
-        }
-    }
     val database: CoreDatabase = CoreDatabase.getInstance(context)
 
     val productMasterDao: ProductMasterDao = database.productMasterDao()
