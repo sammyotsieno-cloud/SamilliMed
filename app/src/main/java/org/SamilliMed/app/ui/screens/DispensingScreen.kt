@@ -78,6 +78,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.SamilliMed.app.data.AppContainer
+import org.SamilliMed.app.scanner.ProductScanDraft
 import org.SamilliMed.app.ui.formatters.MoneyDisplayFormatter
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -97,6 +98,9 @@ private data class TempDispenseLine(
 fun DispensingScreen(
     container: AppContainer,
     onBack: () -> Unit,
+    onScanProduct: () -> Unit = {},
+    initialScanDraft: ProductScanDraft? = null,
+    onScanDraftConsumed: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -130,6 +134,10 @@ fun DispensingScreen(
     }
 
     var showAddLineDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(initialScanDraft) {
+        if (initialScanDraft != null) showAddLineDialog = true
+    }
 
     var selectedSaleForDetail by remember {
         mutableStateOf<Sale?>(null)
@@ -318,31 +326,25 @@ fun DispensingScreen(
                             fontWeight = FontWeight.Bold
                         )
 
-                        Button(
-                            onClick = {
-                                if (registeredProducts.isEmpty()) {
-                                    scope.launch {
-                                        snackbarHostState.showSnackbar(
-                                            "Please register products first"
-                                        )
-                                    }
-                                } else {
-                                    showAddLineDialog = true
-                                }
+                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            OutlinedButton(onClick = onScanProduct) {
+                                Text("Scan")
                             }
-                        ) {
-
-                            Icon(
-                                Icons.Default.Add,
-                                contentDescription = null,
-                                modifier = Modifier.size(18.dp)
-                            )
-
-                            Spacer(
-                                modifier = Modifier.width(4.dp)
-                            )
-
-                            Text("Add Item")
+                            Button(
+                                onClick = {
+                                    if (registeredProducts.isEmpty()) {
+                                        scope.launch {
+                                            snackbarHostState.showSnackbar("Please register products first")
+                                        }
+                                    } else {
+                                        showAddLineDialog = true
+                                    }
+                                }
+                            ) {
+                                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Spacer(modifier = Modifier.width(4.dp))
+                                Text("Add Item")
+                            }
                         }
                     }
 
@@ -926,8 +928,16 @@ fun DispensingScreen(
 
         var selectedProduct by remember {
             mutableStateOf(
-                registeredProducts.firstOrNull()
+                initialScanDraft?.recognizedProductId?.let { id -> registeredProducts.firstOrNull { it.id == id } }
+                    ?: registeredProducts.firstOrNull()
             )
+        }
+
+        LaunchedEffect(initialScanDraft?.recognizedProductId, registeredProducts) {
+            initialScanDraft?.recognizedProductId?.let { id ->
+                registeredProducts.firstOrNull { it.id == id }?.let { selectedProduct = it }
+            }
+            onScanDraftConsumed()
         }
 
         val productUnits =
