@@ -105,7 +105,7 @@ fun ProductScanReviewScreen(
         }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(onClick = onAddAnother) { Text("Add Another Photo") }
-            Button(onClick = { onConfirm(currentDraft()) }) { Text("Use in Registration") }
+            Button(onClick = { onConfirm(currentDraft()) }) { Text("Continue with Product") }
         }
     }
 }
