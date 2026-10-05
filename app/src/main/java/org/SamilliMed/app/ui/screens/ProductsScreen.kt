@@ -724,7 +724,7 @@ fun ProductsScreen(
         var prescriptionClassification by remember { mutableStateOf(initialScanDraft?.prescriptionClassification ?: "") }
         var storageCondition by remember { mutableStateOf(initialScanDraft?.storageCondition ?: "") }
         var scannedImageUris by remember { mutableStateOf(initialScanDraft?.sourceImageUris ?: emptyList()) }
-        var selectedCategoryId by remember { mutableStateOf<String?>(null) }
+        var selectedCategoryId by remember { mutableStateOf(initialScanDraft?.recognitionCategoryId) }
 
         var baseUnitName by remember { mutableStateOf("") }
         var baseUnitAbbr by remember { mutableStateOf("") }
