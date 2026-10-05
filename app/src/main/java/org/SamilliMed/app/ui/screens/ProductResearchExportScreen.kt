@@ -26,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -38,6 +39,7 @@ fun ProductResearchExportScreen(
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val snackbar = remember { SnackbarHostState() }
     var isPreparing by remember { mutableStateOf(false) }
@@ -51,13 +53,15 @@ fun ProductResearchExportScreen(
             scope.launch {
                 runCatching {
                     withContext(Dispatchers.IO) {
-                        container.run {
-                            // ContentResolver is intentionally used here so the export
-                            // can be saved outside the application's private directory.
-                            null
-                        }
-                        // The resolver is accessed through the Activity context at call site below.
+                        context.contentResolver.openOutputStream(uri)?.bufferedWriter()?.use { writer ->
+                            writer.write(json)
+                        } ?: error("Unable to open selected destination.")
                     }
+                }.onSuccess {
+                    pendingJson = null
+                    snackbar.showSnackbar("Research export saved.")
+                }.onFailure {
+                    snackbar.showSnackbar("Export failed: " + (it.message ?: "unknown error"))
                 }
             }
         }
