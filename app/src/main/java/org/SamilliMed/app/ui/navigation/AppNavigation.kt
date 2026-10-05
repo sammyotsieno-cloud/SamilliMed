@@ -48,6 +48,7 @@ import org.SamilliMed.app.ui.screens.InventoryScreen
 import org.SamilliMed.app.ui.screens.NotificationsScreen
 import org.SamilliMed.app.ui.screens.PlaceholderScreen
 import org.SamilliMed.app.ui.screens.ProductScannerScreen
+import org.SamilliMed.app.ui.screens.ProductCategoryManagementScreen
 import org.SamilliMed.app.ui.screens.ProductsScreen
 import org.SamilliMed.app.ui.screens.ReportsScreen
 import org.SamilliMed.app.ui.screens.SettingsScreen
@@ -186,6 +187,7 @@ fun AppNavigation(
             )
 
             when {
+                currentFeature == "product-categories" -> ProductCategoryManagementScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "products" -> ProductsScreen(container = appContainer, onBack = { currentFeature = null }, onScanProduct = { currentFeature = "product-scanner" }, initialScanDraft = pendingScanDraft, onScanDraftConsumed = { pendingScanDraft = null })
                 currentFeature == "product-scanner" -> ProductScannerScreen(onConfirmed = { draft -> pendingScanDraft = draft; currentFeature = "products" })
                 currentFeature == "receiving" -> GoodsReceivingScreen(container = appContainer, onBack = { currentFeature = null })
@@ -198,7 +200,7 @@ fun AppNavigation(
                 currentFeature != null -> PlaceholderScreen(title = "Feature", onBack = { currentFeature = null })
                 currentBottomTab is BottomNavItem.Dashboard -> DashboardScreen(onFeatureClick = { route -> currentFeature = route }, modifier = Modifier.fillMaxSize())
                 currentBottomTab is BottomNavItem.Notifications -> NotificationsScreen(modifier = Modifier.fillMaxSize())
-                currentBottomTab is BottomNavItem.Settings -> SettingsScreen(modifier = Modifier.fillMaxSize())
+                currentBottomTab is BottomNavItem.Settings -> SettingsScreen(modifier = Modifier.fillMaxSize(), onOpenProductCategories = { currentFeature = "product-categories" })
             }
         }
     }
