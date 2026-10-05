@@ -43,4 +43,12 @@ class AppContainer(context: Context) {
 
     val inventoryValuationService: InventoryValuationService =
         InventoryValuationService(inventoryCostLayerDao)
+
+    init {
+        kotlinx.coroutines.CoroutineScope(
+            kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
+        ).launch {
+            productCategoryRepository.ensureDefaultTaxonomy()
+        }
+    }
 }
