@@ -18,7 +18,12 @@ data class ProductScanDraft(
     val barcodeValue: String? = null,
     val barcodeFormat: String? = null,
     val otherDetectedText: String? = null,
-    val sourceImageUris: List<String> = emptyList()
+    val sourceImageUris: List<String> = emptyList(),
+    val recognizedProductId: String? = null,
+    val recognitionCategoryId: String? = null,
+    val recognitionConfidence: Double? = null,
+    val recognitionConfidenceLevel: String? = null,
+    val recognitionExplanation: String? = null
 )
 
 data class DetectedRegion(val bounds: Rect, val confidence: Float, val labels: List<String>)
