@@ -32,7 +32,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun SettingsScreen(
     modifier: Modifier = Modifier,
-    onOpenProductCategories: () -> Unit = {}
+    onOpenProductCategories: () -> Unit = {},
+    onExportProductResearch: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -67,6 +68,13 @@ fun SettingsScreen(
             title = "Product Categories",
             subtitle = "Customize the facility product taxonomy",
             onClick = onOpenProductCategories
+        )
+
+        SettingsItem(
+            icon = Icons.Outlined.Info,
+            title = "Product Research Export",
+            subtitle = "Export taxonomy, products and recognition evidence",
+            onClick = onExportProductResearch
         )
 
         SettingsItem(
