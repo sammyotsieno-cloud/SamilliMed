@@ -76,6 +76,17 @@ fun ProductScanReviewScreen(
         Text(
             "Quality: " + analysis.quality.warnings.ifEmpty { listOf("No quality warnings") }.joinToString()
         )
+        analysis.draft.recognitionExplanation?.let { explanation ->
+            Text(
+                "Recognition suggestion: " + (analysis.draft.recognizedProductId ?: "new/unknown product"),
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                explanation + (analysis.draft.recognitionConfidenceLevel?.let { " Confidence: " + it } ?: ""),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.primary
+            )
+        }
         analysis.barcodeResults.forEach { Text("Barcode: ${it.rawValue} (${it.format})") }
         OutlinedTextField(brand, { brand = it }, label = { Text("Brand / Trade Name") }, modifier = Modifier.fillMaxWidth())
         OutlinedTextField(generic, { generic = it }, label = { Text("Generic / Active Ingredient") }, modifier = Modifier.fillMaxWidth())
