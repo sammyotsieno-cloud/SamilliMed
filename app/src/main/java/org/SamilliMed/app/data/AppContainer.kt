@@ -11,6 +11,7 @@ import core.domain.persistence.ProductCategoryDao
 import core.domain.persistence.ProductRecognitionDao
 import core.domain.recognition.ProductRecognitionService
 import core.domain.research.ProductResearchExportService
+import kotlinx.coroutines.launch
 import core.domain.persistence.SaleDao
 import core.domain.persistence.StockAllocationDao
 import core.domain.persistence.StockBatchDao
