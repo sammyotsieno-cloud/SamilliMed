@@ -31,7 +31,8 @@ import androidx.compose.ui.unit.sp
 
 @Composable
 fun SettingsScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onOpenProductCategories: () -> Unit = {}
 ) {
     Column(
         modifier = modifier
@@ -59,6 +60,13 @@ fun SettingsScreen(
             icon = Icons.Outlined.Notifications,
             title = "Notification Preferences",
             subtitle = "Expiry alerts & stock warnings"
+        )
+
+        SettingsItem(
+            icon = Icons.Outlined.Info,
+            title = "Product Categories",
+            subtitle = "Customize the facility product taxonomy",
+            onClick = onOpenProductCategories
         )
 
         SettingsItem(
@@ -96,12 +104,13 @@ fun SettingsScreen(
 private fun SettingsItem(
     icon: ImageVector,
     title: String,
-    subtitle: String
+    subtitle: String,
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { /* TODO */ }
+            .clickable(onClick = onClick)
             .padding(vertical = 14.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
