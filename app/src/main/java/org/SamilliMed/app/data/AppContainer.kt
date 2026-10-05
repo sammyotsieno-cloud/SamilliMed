@@ -9,6 +9,7 @@ import core.domain.persistence.ProductMasterDao
 import core.domain.category.ProductCategoryRepository
 import core.domain.persistence.ProductCategoryDao
 import core.domain.persistence.ProductRecognitionDao
+import core.domain.recognition.ProductRecognitionService
 import core.domain.persistence.SaleDao
 import core.domain.persistence.StockAllocationDao
 import core.domain.persistence.StockBatchDao
@@ -28,6 +29,7 @@ class AppContainer(context: Context) {
     val productCategoryDao: ProductCategoryDao = database.productCategoryDao()
     val productCategoryRepository: ProductCategoryRepository = ProductCategoryRepository(productCategoryDao)
     val productRecognitionDao: ProductRecognitionDao = database.productRecognitionDao()
+    val productRecognitionService: ProductRecognitionService = ProductRecognitionService(productMasterDao, productRecognitionDao, productCategoryDao)
     val goodsReceiptDao: GoodsReceiptDao = database.goodsReceiptDao()
     val stockBatchDao: StockBatchDao = database.stockBatchDao()
     val inventoryCostLayerDao: InventoryCostLayerDao = database.inventoryCostLayerDao()
