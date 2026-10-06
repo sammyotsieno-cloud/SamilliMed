@@ -12,20 +12,6 @@ N	cat.maternal	category		Maternal, newborn and family planning	Maternal, newborn
 N	cat.personal	category		Personal care and hygiene	Personal hygiene and continence products	{}	GLOBAL	2026.10
 N	cat.nutrition	category		Nutrition and supplements	Rehydration, therapeutic nutrition and supplements	{}	GLOBAL	2026.10
 N	cat.facility	category		Facility and non-medical supplies	Facility operations and non-clinical supplies	{}	GLOBAL	2026.10
-N	atc.A	atc_level_1		Alimentary tract and metabolism	WHO ATC main group A	{"atc":"A"}	GLOBAL	2026.10
-N	atc.B	atc_level_1		Blood and blood forming organs	WHO ATC main group B	{"atc":"B"}	GLOBAL	2026.10
-N	atc.C	atc_level_1		Cardiovascular system	WHO ATC main group C	{"atc":"C"}	GLOBAL	2026.10
-N	atc.D	atc_level_1		Dermatologicals	WHO ATC main group D	{"atc":"D"}	GLOBAL	2026.10
-N	atc.G	atc_level_1		Genito urinary system and sex hormones	WHO ATC main group G	{"atc":"G"}	GLOBAL	2026.10
-N	atc.H	atc_level_1		Systemic hormonal preparations excluding sex hormones and insulins	WHO ATC main group H	{"atc":"H"}	GLOBAL	2026.10
-N	atc.J	atc_level_1		Anti-infectives for systemic use	WHO ATC main group J	{"atc":"J"}	GLOBAL	2026.10
-N	atc.L	atc_level_1		Antineoplastic and immunomodulating agents	WHO ATC main group L	{"atc":"L"}	GLOBAL	2026.10
-N	atc.M	atc_level_1		Musculo-skeletal system	WHO ATC main group M	{"atc":"M"}	GLOBAL	2026.10
-N	atc.N	atc_level_1		Nervous system	WHO ATC main group N	{"atc":"N"}	GLOBAL	2026.10
-N	atc.P	atc_level_1		Antiparasitic products, insecticides and repellents	WHO ATC main group P	{"atc":"P"}	GLOBAL	2026.10
-N	atc.R	atc_level_1		Respiratory system	WHO ATC main group R	{"atc":"R"}	GLOBAL	2026.10
-N	atc.S	atc_level_1		Sensory organs	WHO ATC main group S	{"atc":"S"}	GLOBAL	2026.10
-N	atc.V	atc_level_1		Various	WHO ATC main group V	{"atc":"V"}	GLOBAL	2026.10
 N	grp.antibacterials	group	cat.medicines	Antibacterials	Medicines used against bacterial infections	{"atcPrefix":"J01"}	GLOBAL	2026.10
 N	grp.antimycobacterials	group	cat.medicines	Antimycobacterials	Tuberculosis and other mycobacterial medicines	{"atcPrefix":"J04"}	GLOBAL	2026.10
 N	grp.antimalarials	group	cat.medicines	Antimalarials	Medicines used against malaria	{"atcPrefix":"P01B"}	GLOBAL	2026.10
@@ -174,76 +160,6 @@ A	alias.amoxicillin_caps	drug.amoxicillin	amox	SEARCH	ev.who.atc	GLOBAL	2026.10
 A	alias.paracetamol	drug.paracetamol	panadol	BRAND_OR_COMMON	ev.who.atc	GLOBAL	2026.10
 A	alias.acetaminophen	drug.paracetamol	acetaminophen	SYNONYM	ev.who.atc	GLOBAL	2026.10
 A	alias.adrenaline	drug.adrenaline	epinephrine	SYNONYM	ev.who.atc	GLOBAL	2026.10
-N	atc.A02	atc_level_2		Drugs for acid related disorders	WHO ATC level 4 grouping	{"atc":"A02"}	GLOBAL	2026.10
-N	atc.A03	atc_level_2		Drugs for functional gastrointestinal disorders	WHO ATC level 4 grouping	{"atc":"A03"}	GLOBAL	2026.10
-N	atc.A04	atc_level_2		Antiemetics and antinauseants	WHO ATC level 4 grouping	{"atc":"A04"}	GLOBAL	2026.10
-N	atc.A06	atc_level_2		Drugs for constipation	WHO ATC level 4 grouping	{"atc":"A06"}	GLOBAL	2026.10
-N	atc.A07	atc_level_2		Antidiarrheals, intestinal anti-inflammatory agents	WHO ATC level 4 grouping	{"atc":"A07"}	GLOBAL	2026.10
-N	atc.A10	atc_level_2		Drugs used in diabetes	WHO ATC level 4 grouping	{"atc":"A10"}	GLOBAL	2026.10
-N	atc.A11	atc_level_2		Vitamins	WHO ATC level 4 grouping	{"atc":"A11"}	GLOBAL	2026.10
-N	atc.A12	atc_level_2		Mineral supplements	WHO ATC level 4 grouping	{"atc":"A12"}	GLOBAL	2026.10
-N	atc.B01	atc_level_2		Antithrombotic agents	WHO ATC level 4 grouping	{"atc":"B01"}	GLOBAL	2026.10
-N	atc.B02	atc_level_2		Antihemorrhagics	WHO ATC level 4 grouping	{"atc":"B02"}	GLOBAL	2026.10
-N	atc.B03	atc_level_2		Antianemic preparations	WHO ATC level 4 grouping	{"atc":"B03"}	GLOBAL	2026.10
-N	atc.C01	atc_level_2		Cardiac therapy	WHO ATC level 4 grouping	{"atc":"C01"}	GLOBAL	2026.10
-N	atc.C02	atc_level_2		Antihypertensives	WHO ATC level 4 grouping	{"atc":"C02"}	GLOBAL	2026.10
-N	atc.C03	atc_level_2		Diuretics	WHO ATC level 4 grouping	{"atc":"C03"}	GLOBAL	2026.10
-N	atc.C07	atc_level_2		Beta blocking agents	WHO ATC level 4 grouping	{"atc":"C07"}	GLOBAL	2026.10
-N	atc.C08	atc_level_2		Calcium channel blockers	WHO ATC level 4 grouping	{"atc":"C08"}	GLOBAL	2026.10
-N	atc.C09	atc_level_2		Agents acting on the renin-angiotensin system	WHO ATC level 4 grouping	{"atc":"C09"}	GLOBAL	2026.10
-N	atc.C10	atc_level_2		Lipid modifying agents	WHO ATC level 4 grouping	{"atc":"C10"}	GLOBAL	2026.10
-N	atc.D01	atc_level_2		Antifungals for dermatological use	WHO ATC level 4 grouping	{"atc":"D01"}	GLOBAL	2026.10
-N	atc.D02	atc_level_2		Emollients and protectives	WHO ATC level 4 grouping	{"atc":"D02"}	GLOBAL	2026.10
-N	atc.D03	atc_level_2		Preparations for treatment of wounds and ulcers	WHO ATC level 4 grouping	{"atc":"D03"}	GLOBAL	2026.10
-N	atc.D06	atc_level_2		Antibiotics and chemotherapeutics for dermatological use	WHO ATC level 4 grouping	{"atc":"D06"}	GLOBAL	2026.10
-N	atc.D07	atc_level_2		Corticosteroids, dermatological preparations	WHO ATC level 4 grouping	{"atc":"D07"}	GLOBAL	2026.10
-N	atc.D10	atc_level_2		Anti-acne preparations	WHO ATC level 4 grouping	{"atc":"D10"}	GLOBAL	2026.10
-N	atc.G01	atc_level_2		Anti-infectives and antiseptics, excluding combinations with corticosteroids	WHO ATC level 4 grouping	{"atc":"G01"}	GLOBAL	2026.10
-N	atc.G02	atc_level_2		Other gynaecologicals	WHO ATC level 4 grouping	{"atc":"G02"}	GLOBAL	2026.10
-N	atc.G03	atc_level_2		Sex hormones and modulators of the genital system	WHO ATC level 4 grouping	{"atc":"G03"}	GLOBAL	2026.10
-N	atc.G04	atc_level_2		Urologicals	WHO ATC level 4 grouping	{"atc":"G04"}	GLOBAL	2026.10
-N	atc.H01	atc_level_2		Pituitary and hypothalamic hormones and analogues	WHO ATC level 4 grouping	{"atc":"H01"}	GLOBAL	2026.10
-N	atc.H02	atc_level_2		Corticosteroids for systemic use	WHO ATC level 4 grouping	{"atc":"H02"}	GLOBAL	2026.10
-N	atc.H03	atc_level_2		Thyroid therapy	WHO ATC level 4 grouping	{"atc":"H03"}	GLOBAL	2026.10
-N	atc.H04	atc_level_2		Pancreatic hormones	WHO ATC level 4 grouping	{"atc":"H04"}	GLOBAL	2026.10
-N	atc.H05	atc_level_2		Calcium homeostasis	WHO ATC level 4 grouping	{"atc":"H05"}	GLOBAL	2026.10
-N	atc.J01	atc_level_2		Antibacterials for systemic use	WHO ATC level 4 grouping	{"atc":"J01"}	GLOBAL	2026.10
-N	atc.J02	atc_level_2		Antimycotics for systemic use	WHO ATC level 4 grouping	{"atc":"J02"}	GLOBAL	2026.10
-N	atc.J04	atc_level_2		Antimycobacterials	WHO ATC level 4 grouping	{"atc":"J04"}	GLOBAL	2026.10
-N	atc.J05	atc_level_2		Antivirals for systemic use	WHO ATC level 4 grouping	{"atc":"J05"}	GLOBAL	2026.10
-N	atc.J06	atc_level_2		Immune sera and immunoglobulins	WHO ATC level 4 grouping	{"atc":"J06"}	GLOBAL	2026.10
-N	atc.J07	atc_level_2		Vaccines	WHO ATC level 4 grouping	{"atc":"J07"}	GLOBAL	2026.10
-N	atc.L01	atc_level_2		Antineoplastic agents	WHO ATC level 4 grouping	{"atc":"L01"}	GLOBAL	2026.10
-N	atc.L02	atc_level_2		Endocrine therapy	WHO ATC level 4 grouping	{"atc":"L02"}	GLOBAL	2026.10
-N	atc.L03	atc_level_2		Immunostimulants	WHO ATC level 4 grouping	{"atc":"L03"}	GLOBAL	2026.10
-N	atc.L04	atc_level_2		Immunosuppressants	WHO ATC level 4 grouping	{"atc":"L04"}	GLOBAL	2026.10
-N	atc.M01	atc_level_2		Antiinflammatory and antirheumatic products	WHO ATC level 4 grouping	{"atc":"M01"}	GLOBAL	2026.10
-N	atc.M02	atc_level_2		Topical products for joint and muscular pain	WHO ATC level 4 grouping	{"atc":"M02"}	GLOBAL	2026.10
-N	atc.M03	atc_level_2		Muscle relaxants	WHO ATC level 4 grouping	{"atc":"M03"}	GLOBAL	2026.10
-N	atc.M04	atc_level_2		Antigout preparations	WHO ATC level 4 grouping	{"atc":"M04"}	GLOBAL	2026.10
-N	atc.M05	atc_level_2		Drugs for treatment of bone diseases	WHO ATC level 4 grouping	{"atc":"M05"}	GLOBAL	2026.10
-N	atc.N01	atc_level_2		Anaesthetics	WHO ATC level 4 grouping	{"atc":"N01"}	GLOBAL	2026.10
-N	atc.N02	atc_level_2		Analgesics	WHO ATC level 4 grouping	{"atc":"N02"}	GLOBAL	2026.10
-N	atc.N03	atc_level_2		Antiepileptics	WHO ATC level 4 grouping	{"atc":"N03"}	GLOBAL	2026.10
-N	atc.N04	atc_level_2		Anti-parkinson drugs	WHO ATC level 4 grouping	{"atc":"N04"}	GLOBAL	2026.10
-N	atc.N05	atc_level_2		Psycholeptics	WHO ATC level 4 grouping	{"atc":"N05"}	GLOBAL	2026.10
-N	atc.N06	atc_level_2		Psychoanaleptics	WHO ATC level 4 grouping	{"atc":"N06"}	GLOBAL	2026.10
-N	atc.N07	atc_level_2		Other nervous system drugs	WHO ATC level 4 grouping	{"atc":"N07"}	GLOBAL	2026.10
-N	atc.P01	atc_level_2		Antiprotozoals	WHO ATC level 4 grouping	{"atc":"P01"}	GLOBAL	2026.10
-N	atc.P02	atc_level_2		Anthelmintics	WHO ATC level 4 grouping	{"atc":"P02"}	GLOBAL	2026.10
-N	atc.P03	atc_level_2		Ectoparasiticides, incl. scabicides, insecticides	WHO ATC level 4 grouping	{"atc":"P03"}	GLOBAL	2026.10
-N	atc.R01	atc_level_2		Nasal preparations	WHO ATC level 4 grouping	{"atc":"R01"}	GLOBAL	2026.10
-N	atc.R02	atc_level_2		Throat preparations	WHO ATC level 4 grouping	{"atc":"R02"}	GLOBAL	2026.10
-N	atc.R03	atc_level_2		Drugs for obstructive airway diseases	WHO ATC level 4 grouping	{"atc":"R03"}	GLOBAL	2026.10
-N	atc.R05	atc_level_2		Cough and cold preparations	WHO ATC level 4 grouping	{"atc":"R05"}	GLOBAL	2026.10
-N	atc.R06	atc_level_2		Antihistamines for systemic use	WHO ATC level 4 grouping	{"atc":"R06"}	GLOBAL	2026.10
-N	atc.S01	atc_level_2		Ophthalmologicals	WHO ATC level 4 grouping	{"atc":"S01"}	GLOBAL	2026.10
-N	atc.S02	atc_level_2		Otic preparations	WHO ATC level 4 grouping	{"atc":"S02"}	GLOBAL	2026.10
-N	atc.S03	atc_level_2		Ophthalmological and otological preparations	WHO ATC level 4 grouping	{"atc":"S03"}	GLOBAL	2026.10
-N	atc.V01	atc_level_2		Allergen extracts	WHO ATC level 4 grouping	{"atc":"V01"}	GLOBAL	2026.10
-N	atc.V03	atc_level_2		All other therapeutic products	WHO ATC level 4 grouping	{"atc":"V03"}	GLOBAL	2026.10
-N	atc.V04	atc_level_2		Diagnostic agents	WHO ATC level 4 grouping	{"atc":"V04"}	GLOBAL	2026.10
-N	atc.V06	atc_level_2		General nutrients	WHO ATC level 4 grouping	{"atc":"V06"}	GLOBAL	2026.10
 N	class.penicillin.beta_lactamase_sensitive	class	class.penicillin	Natural penicillins	Penicillins with activity characteristic of natural penicillins	{}	GLOBAL	2026.10
 N	class.penicillin.beta_lactamase_resistant	class	class.penicillin	Penicillinase-resistant penicillins	Anti-staphylococcal penicillins	{}	GLOBAL	2026.10
 N	class.penicillin.broad_spectrum	class	class.penicillin	Broad-spectrum penicillins	Extended-spectrum penicillins	{}	GLOBAL	2026.10
