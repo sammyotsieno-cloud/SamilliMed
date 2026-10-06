@@ -553,3 +553,7 @@ R	rel.calcium_gluconate.atc	drug.calcium_gluconate	has_atc	atc.A	{}	ev.who.atc	G
 R	rel.prazosin.atc	drug.prazosin	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.methyldopa.atc	drug.methyldopa	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.hydralazine.atc	drug.hydralazine	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+
+E	ev.who.devices.nomenclature	WHO	Nomenclature of medical devices: EMDN and GMDN	https://www.who.int/teams/health-product-and-policy-standards/assistive-and-medical-technology/medical-devices/nomenclature	2026-10-06	GLOBAL	2026.10
+E	ev.who.diagnostics	WHO	Diagnostics	https://www.who.int/health-topics/diagnostics	2026-10-06	GLOBAL	2026.10
+E	ev.who.medical_devices	WHO	Medical devices	https://www.who.int/health-topics/medical-devices	2026-10-06	GLOBAL	2026.10
