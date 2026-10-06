@@ -1,0 +1,175 @@
+# type id subject/type/predicate object/name description qualifiers/evidence scope/version
+E	ev.who.atc	WHO	Anatomical Therapeutic Chemical (ATC/DDD) classification system	https://www.who.int/standards/classifications/other-classifications/the-anatomical-therapeutic-chemical-classification-system-with-defined-daily-doses	2026-10-06	GLOBAL	2026.10
+E	ev.who.products	WHO	Health products policy and standards	https://www.who.int/teams/health-product-and-policy-standards/inn/atc-ddd	2026-10-06	GLOBAL	2026.10
+E	ev.who.aware	WHO	Antibiotic AWaRe classification	https://www.who.int/data/gho/indicator-metadata-registry/imr-details/5767	2026-10-06	GLOBAL	2026.10
+N	cat.medicines	category		Medicines	Pharmaceutical products including medicines and vaccines	{}	GLOBAL	2026.10
+N	cat.consumables	category		Consumables	Single-use clinical and medical consumables	{}	GLOBAL	2026.10
+N	cat.diagnostics	category		Diagnostics and laboratory	Diagnostic tests, reagents and laboratory supplies	{}	GLOBAL	2026.10
+N	cat.devices	category		Medical devices and equipment	Reusable medical devices and equipment	{}	GLOBAL	2026.10
+N	cat.wound	category		Wound care and procedures	Dressings, procedure supplies and minor procedure equipment	{}	GLOBAL	2026.10
+N	cat.ipc	category		Infection prevention and control	IPC products and environmental safety supplies	{}	GLOBAL	2026.10
+N	cat.maternal	category		Maternal, newborn and family planning	Maternal, newborn and reproductive-health supplies	{}	GLOBAL	2026.10
+N	cat.personal	category		Personal care and hygiene	Personal hygiene and continence products	{}	GLOBAL	2026.10
+N	cat.nutrition	category		Nutrition and supplements	Rehydration, therapeutic nutrition and supplements	{}	GLOBAL	2026.10
+N	cat.facility	category		Facility and non-medical supplies	Facility operations and non-clinical supplies	{}	GLOBAL	2026.10
+N	atc.A	atc_level_1		Alimentary tract and metabolism	WHO ATC main group A	{"atc":"A"}	GLOBAL	2026.10
+N	atc.B	atc_level_1		Blood and blood forming organs	WHO ATC main group B	{"atc":"B"}	GLOBAL	2026.10
+N	atc.C	atc_level_1		Cardiovascular system	WHO ATC main group C	{"atc":"C"}	GLOBAL	2026.10
+N	atc.D	atc_level_1		Dermatologicals	WHO ATC main group D	{"atc":"D"}	GLOBAL	2026.10
+N	atc.G	atc_level_1		Genito urinary system and sex hormones	WHO ATC main group G	{"atc":"G"}	GLOBAL	2026.10
+N	atc.H	atc_level_1		Systemic hormonal preparations excluding sex hormones and insulins	WHO ATC main group H	{"atc":"H"}	GLOBAL	2026.10
+N	atc.J	atc_level_1		Anti-infectives for systemic use	WHO ATC main group J	{"atc":"J"}	GLOBAL	2026.10
+N	atc.L	atc_level_1		Antineoplastic and immunomodulating agents	WHO ATC main group L	{"atc":"L"}	GLOBAL	2026.10
+N	atc.M	atc_level_1		Musculo-skeletal system	WHO ATC main group M	{"atc":"M"}	GLOBAL	2026.10
+N	atc.N	atc_level_1		Nervous system	WHO ATC main group N	{"atc":"N"}	GLOBAL	2026.10
+N	atc.P	atc_level_1		Antiparasitic products, insecticides and repellents	WHO ATC main group P	{"atc":"P"}	GLOBAL	2026.10
+N	atc.R	atc_level_1		Respiratory system	WHO ATC main group R	{"atc":"R"}	GLOBAL	2026.10
+N	atc.S	atc_level_1		Sensory organs	WHO ATC main group S	{"atc":"S"}	GLOBAL	2026.10
+N	atc.V	atc_level_1		Various	WHO ATC main group V	{"atc":"V"}	GLOBAL	2026.10
+N	grp.antibacterials	group	cat.medicines	Antibacterials	Medicines used against bacterial infections	{"atcPrefix":"J01"}	GLOBAL	2026.10
+N	grp.antimycobacterials	group	cat.medicines	Antimycobacterials	Tuberculosis and other mycobacterial medicines	{"atcPrefix":"J04"}	GLOBAL	2026.10
+N	grp.antimalarials	group	cat.medicines	Antimalarials	Medicines used against malaria	{"atcPrefix":"P01B"}	GLOBAL	2026.10
+N	grp.antifungals	group	cat.medicines	Antifungals	Systemic and topical antifungal medicines	{"atcPrefix":"D01","alsoAtc":"J02"}	GLOBAL	2026.10
+N	grp.antivirals	group	cat.medicines	Antivirals	Antiviral medicines including HIV and viral hepatitis therapies	{"atcPrefix":"J05"}	GLOBAL	2026.10
+N	grp.anthelmintics	group	cat.medicines	Anthelmintics	Medicines for helminthic infections	{"atcPrefix":"P02"}	GLOBAL	2026.10
+N	grp.analgesics	group	cat.medicines	Analgesics and antipyretics	Pain and fever medicines	{"atcPrefix":"N02"}	GLOBAL	2026.10
+N	grp.antihypertensives	group	cat.medicines	Antihypertensives	Blood-pressure-lowering medicines	{"atcPrefix":"C02","alsoAtc":"C03","C07":"beta-blockers","C08":"calcium-channel blockers","C09":"RAAS agents"}	GLOBAL	2026.10
+N	grp.antidiabetics	group	cat.medicines	Antidiabetics	Glucose-lowering medicines including insulin	{"atcPrefix":"A10"}	GLOBAL	2026.10
+N	grp.respiratory	group	cat.medicines	Respiratory medicines	Bronchodilators, inhaled corticosteroids and related agents	{"atcPrefix":"R03"}	GLOBAL	2026.10
+N	grp.gi	group	cat.medicines	Gastrointestinal medicines	Acid suppression, antiemetics, laxatives and antidiarrhoeals	{"atcPrefix":"A02","alsoAtc":"A03","A04","A06","A07"}	GLOBAL	2026.10
+N	grp.obgyn	group	cat.medicines	Obstetric and gynaecological medicines	Uterotonics, eclampsia medicines and reproductive-health medicines	{"atcPrefixes":["G02","G03"]}	GLOBAL	2026.10
+N	grp.dermatology	group	cat.medicines	Dermatological medicines	Topical anti-infectives, corticosteroids and acne/scabies therapies	{"atcPrefix":"D"}	GLOBAL	2026.10
+N	grp.emergency	group	cat.medicines	Emergency and critical care	Resuscitation, anaphylaxis, hypoglycaemia and seizure emergency medicines	{"tags":["emergency","critical-care"]}	GLOBAL	2026.10
+N	grp.vaccines	group	cat.medicines	Vaccines and immunologicals	Vaccines and immunological preparations	{"atcPrefix":"J07"}	GLOBAL	2026.10
+N	grp.vitamins	group	cat.medicines	Vitamins minerals and rehydration	Micronutrients and fluid/electrolyte replacement	{"atcPrefix":"A11","alsoAtc":"A12","A07CA"}	GLOBAL	2026.10
+N	class.beta_lactam	class	grp.antibacterials	Beta-lactam antibacterials	Antibacterials containing a beta-lactam pharmacophore	{"mechanismClass":"cell-wall synthesis inhibition"}	GLOBAL	2026.10
+N	class.penicillin	class	class.beta_lactam	Penicillins	Beta-lactam subclass	{"mechanismClass":"transpeptidase/PBP inhibition"}	GLOBAL	2026.10
+N	class.aminopenicillin	subclass	class.penicillin	Aminopenicillins	Penicillin subclass including amoxicillin and ampicillin	{"examples":["amoxicillin","ampicillin"]}	GLOBAL	2026.10
+N	class.cephalosporin	class	class.beta_lactam	Cephalosporins	Beta-lactam subclass	{}	GLOBAL	2026.10
+N	class.carbapenem	class	class.beta_lactam	Carbapenems	Broad-spectrum beta-lactam subclass	{}	GLOBAL	2026.10
+N	class.aminoglycoside	class	grp.antibacterials	Aminoglycosides	Protein-synthesis inhibitors targeting bacterial ribosomes	{"target":"30S"}	GLOBAL	2026.10
+N	class.tetracycline	class	grp.antibacterials	Tetracyclines	Protein-synthesis inhibitors targeting bacterial 30S ribosome	{"target":"30S"}	GLOBAL	2026.10
+N	class.macrolide	class	grp.antibacterials	Macrolides	Protein-synthesis inhibitors targeting bacterial 50S ribosome	{"target":"50S"}	GLOBAL	2026.10
+N	class.fluoroquinolone	class	grp.antibacterials	Fluoroquinolones	DNA gyrase/topoisomerase inhibitors	{"targets":["DNA gyrase","topoisomerase IV"]}	GLOBAL	2026.10
+N	class.sulfonamide	class	grp.antibacterials	Sulfonamides and trimethoprim	Folate-pathway inhibitors	{"pathway":"folate synthesis"}	GLOBAL	2026.10
+N	class.glycopeptide	class	grp.antibacterials	Glycopeptides	Cell-wall active antibacterials	{}	GLOBAL	2026.10
+N	class.nitroimidazole	class	grp.antibacterials	Nitroimidazoles	Agents requiring reduction to reactive metabolites	{}	GLOBAL	2026.10
+N	class.rifamycin	class	grp.antimycobacterials	Rifamycins	RNA polymerase inhibitors	{"target":"DNA-dependent RNA polymerase"}	GLOBAL	2026.10
+N	class.artemisinin	class	grp.antimalarials	Artemisinin derivatives	Rapidly acting antimalarial class	{}	GLOBAL	2026.10
+N	class.azole	class	grp.antifungals	Azole antifungals	Ergosterol synthesis inhibitors	{"target":"14-alpha-demethylase"}	GLOBAL	2026.10
+N	class.nsaid	class	grp.analgesics	NSAIDs	Non-steroidal anti-inflammatory analgesics	{"target":"cyclooxygenase"}	GLOBAL	2026.10
+N	class.opioid	class	grp.analgesics	Opioid analgesics	Analgesics acting at opioid receptors	{"target":"mu opioid receptor"}	GLOBAL	2026.10
+N	class.acei	class	grp.antihypertensives	ACE inhibitors	Agents inhibiting angiotensin-converting enzyme	{"effect":"reduced angiotensin II formation"}	GLOBAL	2026.10
+N	class.arb	class	grp.antihypertensives	Angiotensin II receptor blockers	AT1 receptor antagonists	{"target":"AT1 receptor"}	GLOBAL	2026.10
+N	class.ccb	class	grp.antihypertensives	Calcium-channel blockers	Agents reducing calcium-channel mediated vascular/cardiac activity	{}	GLOBAL	2026.10
+N	class.biguanide	class	grp.antidiabetics	Biguanides	Insulin-sensitizing glucose-lowering class	{}	GLOBAL	2026.10
+N	class.insulin	class	grp.antidiabetics	Insulins	Peptide hormones for glucose regulation	{"target":"insulin receptor"}	GLOBAL	2026.10
+N	class.saba	class	grp.respiratory	Short-acting beta2 agonists	Rapid bronchodilators	{"target":"beta2 adrenergic receptor"}	GLOBAL	2026.10
+N	class.ics	class	grp.respiratory	Inhaled corticosteroids	Anti-inflammatory inhaled medicines	{}	GLOBAL	2026.10
+N	class.ppi	class	grp.gi	Proton-pump inhibitors	Acid-suppressing medicines	{"target":"gastric H+/K+ ATPase"}	GLOBAL	2026.10
+N	class.antiemetic	class	grp.gi	Antiemetics	Medicines used to prevent or treat nausea and vomiting	{}	GLOBAL	2026.10
+N	class.uterotonic	class	grp.obgyn	Uterotonics	Agents that increase uterine contractility	{}	GLOBAL	2026.10
+N	class.topical_steroid	class	grp.dermatology	Topical corticosteroids	Topical anti-inflammatory corticosteroids	{}	GLOBAL	2026.10
+N	class.local_anesthetic	class	cat.medicines	Local anaesthetics	Local agents producing reversible sensory blockade	{"target":"voltage-gated sodium channels"}	GLOBAL	2026.10
+N	class.antiseptic	class	cat.ipc	Antiseptics	Agents used on living tissue to reduce microbial burden	{}	GLOBAL	2026.10
+N	drug.amoxicillin	drug	class.aminopenicillin	Amoxicillin	An aminopenicillin antibacterial	{"activeIngredients":["amoxicillin"],"atc":"J01CA04","mechanism":"inhibits bacterial cell-wall synthesis through penicillin-binding proteins","routes":["oral"],"forms":["capsule","tablet","oral suspension"],"keyUses":["susceptible bacterial infections"],"safety":["penicillin hypersensitivity","dose adjustment may be relevant in renal impairment"],"antimicrobialNote":"Activity must be interpreted with organism susceptibility, site, resistance and local guidance."}	GLOBAL	2026.10
+N	drug.ampicillin	drug	class.aminopenicillin	Ampicillin	An aminopenicillin antibacterial	{"activeIngredients":["ampicillin"],"atc":"J01CA01","mechanism":"inhibits bacterial cell-wall synthesis","routes":["oral","parenteral"],"forms":["capsule","injection"]}	GLOBAL	2026.10
+N	drug.benzylpenicillin	drug	class.penicillin	Benzylpenicillin	Parenteral penicillin	{"activeIngredients":["benzylpenicillin"],"atc":"J01CE01","routes":["intravenous","intramuscular"],"forms":["injection"]}	GLOBAL	2026.10
+N	drug.ceftriaxone	drug	class.cephalosporin	Ceftriaxone	Third-generation cephalosporin	{"activeIngredients":["ceftriaxone"],"atc":"J01DD04","generation":3,"routes":["intravenous","intramuscular"],"forms":["injection"]}	GLOBAL	2026.10
+N	drug.azithromycin	drug	class.macrolide	Azithromycin	Macrolide antibacterial	{"activeIngredients":["azithromycin"],"atc":"J01FA10","routes":["oral","intravenous"],"forms":["tablet","capsule","suspension","injection"]}	GLOBAL	2026.10
+N	drug.doxycycline	drug	class.tetracycline	Doxycycline	Tetracycline antibacterial	{"activeIngredients":["doxycycline"],"atc":"J01AA02","routes":["oral","intravenous"],"forms":["capsule","tablet","injection"]}	GLOBAL	2026.10
+N	drug.gentamicin	drug	class.aminoglycoside	Gentamicin	Aminoglycoside antibacterial	{"activeIngredients":["gentamicin"],"atc":"J01GB03","mechanism":"30S ribosomal binding with disruption of bacterial protein synthesis","routes":["intramuscular","intravenous","topical","ophthalmic"],"forms":["injection","cream","eye preparations"],"safety":["nephrotoxicity","ototoxicity"]}	GLOBAL	2026.10
+N	drug.ciprofloxacin	drug	class.fluoroquinolone	Ciprofloxacin	Fluoroquinolone antibacterial	{"activeIngredients":["ciprofloxacin"],"atc":"J01MA02","mechanism":"inhibits bacterial DNA gyrase/topoisomerase IV","routes":["oral","intravenous"],"forms":["tablet","solution","ophthalmic"]}	GLOBAL	2026.10
+N	drug.metronidazole	drug	class.nitroimidazole	Metronidazole	Nitroimidazole antimicrobial	{"activeIngredients":["metronidazole"],"atc":"J01XD01","routes":["oral","intravenous","topical","vaginal"],"forms":["tablet","infusion","gel","vaginal preparation"]}	GLOBAL	2026.10
+N	drug.rifampicin	drug	class.rifamycin	Rifampicin	Rifamycin antimycobacterial	{"activeIngredients":["rifampicin"],"atc":"J04AB02","mechanism":"inhibits bacterial DNA-dependent RNA polymerase","routes":["oral"],"forms":["capsule","tablet"]}	GLOBAL	2026.10
+N	drug.isoniazid	drug	subclass		Isoniazid	Antimycobacterial medicine	{"activeIngredients":["isoniazid"],"atc":"J04AC01","routes":["oral"]}	GLOBAL	2026.10
+N	drug.ar.t3	drug	class.artemisinin	Artemether/lumefantrine	Artemisinin-based combination antimalarial	{"activeIngredients":["artemether","lumefantrine"],"atc":"P01BF01","forms":["tablet"],"useContext":"malaria"}	GLOBAL	2026.10
+N	drug.chloroquine	drug	grp.antimalarials	Chloroquine	4-aminoquinoline antimalarial	{"activeIngredients":["chloroquine"],"atc":"P01BA02","useContext":"malaria"}	GLOBAL	2026.10
+N	drug.albendazole	drug	grp.anthelmintics	Albendazole	Benzimidazole anthelmintic	{"activeIngredients":["albendazole"],"atc":"P02CA03","forms":["tablet","suspension"]}	GLOBAL	2026.10
+N	drug.fluconazole	drug	class.azole	Fluconazole	Triazole antifungal	{"activeIngredients":["fluconazole"],"atc":"J02AC01","routes":["oral","intravenous"],"forms":["capsule","tablet","suspension","infusion"]}	GLOBAL	2026.10
+N	drug.aciclovir	drug	grp.antivirals	Aciclovir	Anti-herpes antiviral	{"activeIngredients":["aciclovir"],"atc":"J05AB01","routes":["oral","intravenous","topical"],"forms":["tablet","cream","injection"]}	GLOBAL	2026.10
+N	drug.paracetamol	drug	grp.analgesics	Paracetamol	Analgesic and antipyretic	{"activeIngredients":["paracetamol"],"atc":"N02BE01","routes":["oral","intravenous","rectal"],"forms":["tablet","syrup","infusion","suppository"]}	GLOBAL	2026.10
+N	drug.ibuprofen	drug	class.nsaid	Ibuprofen	NSAID analgesic and anti-inflammatory	{"activeIngredients":["ibuprofen"],"atc":"M01AE01","routes":["oral","topical"],"forms":["tablet","capsule","suspension","gel"]}	GLOBAL	2026.10
+N	drug.morphine	drug	class.opioid	Morphine	Opioid analgesic	{"activeIngredients":["morphine"],"atc":"N02AA01","routes":["oral","parenteral"],"forms":["tablet","solution","injection"]}	GLOBAL	2026.10
+N	drug.enalapril	drug	class.acei	Enalapril	ACE inhibitor	{"activeIngredients":["enalapril"],"atc":"C09AA02","routes":["oral"],"forms":["tablet"]}	GLOBAL	2026.10
+N	drug.losartan	drug	class.arb	Losartan	Angiotensin II receptor blocker	{"activeIngredients":["losartan"],"atc":"C09CA01","routes":["oral"],"forms":["tablet"]}	GLOBAL	2026.10
+N	drug.amlodipine	drug	class.ccb	Amlodipine	Calcium-channel blocker	{"activeIngredients":["amlodipine"],"atc":"C08CA01","routes":["oral"],"forms":["tablet"]}	GLOBAL	2026.10
+N	drug.furosemide	drug	grp.antihypertensives	Furosemide	Loop diuretic	{"activeIngredients":["furosemide"],"atc":"C03CA01","routes":["oral","intravenous","intramuscular"],"forms":["tablet","injection"]}	GLOBAL	2026.10
+N	drug.metformin	drug	class.biguanide	Metformin	Biguanide glucose-lowering medicine	{"activeIngredients":["metformin"],"atc":"A10BA02","routes":["oral"],"forms":["tablet","extended-release tablet"]}	GLOBAL	2026.10
+N	drug.insulin_regular	drug	class.insulin	Human insulin regular	Short-acting human insulin	{"activeIngredients":["human insulin"],"atc":"A10AB01","routes":["subcutaneous","intravenous"],"forms":["solution"]}	GLOBAL	2026.10
+N	drug.salbutamol	drug	class.saba	Salbutamol	Short-acting beta2 agonist bronchodilator	{"activeIngredients":["salbutamol"],"atc":"R03AC02","routes":["inhaled","oral"],"forms":["inhaler","nebule","syrup","tablet"]}	GLOBAL	2026.10
+N	drug.budesonide	drug	class.ics	Budesonide	Inhaled corticosteroid	{"activeIngredients":["budesonide"],"atc":"R03BA02","routes":["inhaled"],"forms":["inhaler","nebulizer suspension"]}	GLOBAL	2026.10
+N	drug.omperazole	drug	class.ppi	Omeprazole	Proton-pump inhibitor	{"activeIngredients":["omeprazole"],"atc":"A02BC01","routes":["oral","intravenous"],"forms":["capsule","tablet","injection"]}	GLOBAL	2026.10
+N	drug.ondansetron	drug	class.antiemetic	Ondansetron	5-HT3 receptor antagonist antiemetic	{"activeIngredients":["ondansetron"],"atc":"A04AA01","routes":["oral","intravenous","intramuscular"],"forms":["tablet","injection"]}	GLOBAL	2026.10
+N	drug.magnesium_sulfate	drug	class.uterotonic	Magnesium sulfate	Magnesium salt used in obstetric emergency care and other indications	{"activeIngredients":["magnesium sulfate"],"atc":"A12CC02","routes":["intravenous","intramuscular"],"forms":["injection"],"clinicalContext":["eclampsia/preeclampsia","magnesium replacement"]}	GLOBAL	2026.10
+N	drug.oxytocin	drug	class.uterotonic	Oxytocin	Uterotonic peptide hormone	{"activeIngredients":["oxytocin"],"atc":"H01BB02","routes":["intravenous","intramuscular"],"forms":["injection"]}	GLOBAL	2026.10
+N	drug.lidocaine	drug	class.local_anesthetic	Lidocaine	Local anaesthetic	{"activeIngredients":["lidocaine"],"atc":"N01BB02","routes":["local","topical","intravenous"],"forms":["injection","gel","cream","spray"]}	GLOBAL	2026.10
+N	drug.hydrocortisone	drug	class.topical_steroid	Hydrocortisone	Corticosteroid available in multiple topical and systemic preparations	{"activeIngredients":["hydrocortisone"],"atc":"D07AA02","routes":["topical","oral","intravenous"],"forms":["cream","ointment","tablet","injection"]}	GLOBAL	2026.10
+N	drug.adrenaline	drug	grp.emergency	Adrenaline (epinephrine)	Emergency sympathomimetic medicine	{"activeIngredients":["epinephrine"],"atc":"C01CA24","routes":["intramuscular","intravenous"],"forms":["injection"],"emergencyUses":["anaphylaxis","resuscitation"]}	GLOBAL	2026.10
+N	drug.diazepam	drug	grp.emergency	Diazepam	Benzodiazepine with anticonvulsant and anxiolytic properties	{"activeIngredients":["diazepam"],"atc":"N05BA01","routes":["oral","rectal","intravenous"],"forms":["tablet","injection","rectal preparation"]}	GLOBAL	2026.10
+N	drug.calcium_gluconate	drug	grp.emergency	Calcium gluconate	Calcium salt for replacement and emergency indications	{"activeIngredients":["calcium gluconate"],"atc":"A12AA03","routes":["intravenous"],"forms":["injection"]}	GLOBAL	2026.10
+N	drug.folic_acid	drug	grp.vitamins	Folic acid	Folate vitamin	{"activeIngredients":["folic acid"],"atc":"B03BB01","routes":["oral"],"forms":["tablet"]}	GLOBAL	2026.10
+N	drug.ferrous_sulfate	drug	grp.vitamins	Ferrous sulfate	Iron replacement medicine	{"activeIngredients":["ferrous sulfate"],"atc":"B03AA07","routes":["oral"],"forms":["tablet","syrup"]}	GLOBAL	2026.10
+N	drug.ors	drug	grp.vitamins	Oral rehydration salts	Oral glucose-electrolyte rehydration preparation	{"activeIngredients":["sodium chloride","potassium chloride","glucose","citrate"],"atc":"A07CA","forms":["powder for solution"],"purpose":"oral rehydration"}	GLOBAL	2026.10
+N	prep.amoxicillin.500mg_capsule	preparation	drug.amoxicillin	Amoxicillin 500 mg capsule	Preparation-level identity linking substance to strength and dosage form	{"strength":"500 mg","dosageForm":"capsule","route":"oral","activeIngredient":"amoxicillin"}	GLOBAL	2026.10
+N	prep.amoxicillin.250mg5ml_suspension	preparation	drug.amoxicillin	Amoxicillin 250 mg/5 mL oral suspension	Preparation-level identity	{"strength":"250 mg/5 mL","dosageForm":"oral suspension","route":"oral","activeIngredient":"amoxicillin","requiresReconstitution":true}	GLOBAL	2026.10
+N	prep.paracetamol.500mg_tablet	preparation	drug.paracetamol	Paracetamol 500 mg tablet	Preparation-level identity	{"strength":"500 mg","dosageForm":"tablet","route":"oral","activeIngredient":"paracetamol"}	GLOBAL	2026.10
+N	prep.metformin.500mg_tablet	preparation	drug.metformin	Metformin 500 mg tablet	Preparation-level identity	{"strength":"500 mg","dosageForm":"tablet","route":"oral","activeIngredient":"metformin"}	GLOBAL	2026.10
+N	device.syringe	supplies	cat.consumables	Syringe	Single-use fluid administration/withdrawal device	{"deviceFields":["type","volume","sterility","needleCompatibility","safetyMechanism","material","intendedUse","manufacturer","model"]}	GLOBAL	2026.10
+N	device.glucometer	device	cat.devices	Glucometer	Blood glucose measuring device	{"deviceFields":["measurementPrinciple","specimen","sampleVolume","measuringRange","testTime","calibration","memory","connectivity","power","compatibleStrips","controlSolution","maintenance","manufacturer","model"]}	GLOBAL	2026.10
+N	device.bp_monitor	device	cat.devices	Blood pressure monitor	Device for non-invasive blood pressure measurement	{"deviceFields":["method","cuffRange","measurementRange","accuracy","power","memory","validation","manufacturer","model"]}	GLOBAL	2026.10
+N	device.pulse_oximeter	device	cat.devices	Pulse oximeter	Non-invasive oxygen saturation and pulse-rate monitor	{"deviceFields":["SpO2Range","pulseRange","accuracy","probeType","display","power","manufacturer","model"]}	GLOBAL	2026.10
+N	device.nebulizer	device	cat.devices	Nebulizer	Device that converts liquid medicine into inhalable aerosol	{"deviceFields":["nebulizationMethod","particleCharacteristics","outputRate","residualVolume","power","maintenance","manufacturer","model"]}	GLOBAL	2026.10
+N	diagnostic.malaria_rdt	diagnostic	cat.diagnostics	Malaria rapid diagnostic test	Lateral-flow diagnostic test for malaria antigen detection	{"diagnosticFields":["target","specimen","detectionMethod","sensitivity","specificity","detectionThreshold","procedure","resultInterpretation","invalidConditions","storage","shelfLife","manufacturer","product"]}	GLOBAL	2026.10
+N	diagnostic.hiv_rdt	diagnostic	cat.diagnostics	HIV rapid diagnostic test	Rapid test for HIV infection markers	{"diagnosticFields":["target","specimen","detectionMethod","sensitivity","specificity","procedure","resultInterpretation","invalidConditions","storage","manufacturer","product"]}	GLOBAL	2026.10
+N	diagnostic.pregnancy_test	diagnostic	cat.diagnostics	Pregnancy test	Diagnostic test detecting human chorionic gonadotropin	{"target":"hCG","specimens":["urine","serum"],"method":"immunoassay"}	GLOBAL	2026.10
+N	diagnostic.glucose_strip	diagnostic	cat.diagnostics	Blood glucose test strip	Single-use reagent strip compatible with specified glucose meters	{"diagnosticFields":["meterCompatibility","sampleType","sampleVolume","measurementRange","storage","expiry","manufacturer","product"]}	GLOBAL	2026.10
+N	consumable.iv_cannula	supplies	cat.consumables	Peripheral IV cannula	Sterile catheter for peripheral venous access	{"fields":["gauge","length","material","safetyFeature","sterility","packaging","manufacturer","model"]}	GLOBAL	2026.10
+N	consumable.iv_set	supplies	cat.consumables	IV administration set	Sterile set for intravenous fluid administration	{"fields":["dropFactor","vent","filter","connector","length","sterility","singleUse","manufacturer","model"]}	GLOBAL	2026.10
+N	consumable.gloves	supplies	cat.consumables	Medical examination gloves	Single-use examination gloves	{"fields":["material","powderFree","sterility","size","cuff","packaging","manufacturer"]}	GLOBAL	2026.10
+N	consumable.gauze	supplies	cat.consumables	Sterile gauze	Absorbent sterile wound-dressing material	{"fields":["material","ply","size","sterility","absorbency","packaging","manufacturer"]}	GLOBAL	2026.10
+N	consumable.suture	supplies	cat.consumables	Suture	Surgical wound-closure material	{"fields":["material","absorbable","monofilamentOrBraided","needleType","needleSize","sutureSize","sterility","manufacturer"]}	GLOBAL	2026.10
+N	ipc.hand_sanitizer	supplies	cat.ipc	Alcohol-based hand rub	Hand antiseptic preparation	{"fields":["activeAlcohol","volume","dispensingFormat","storage","manufacturer"]}	GLOBAL	2026.10
+N	ipc.sharps_container	supplies	cat.ipc	Sharps safety container	Puncture-resistant container for sharps waste	{"fields":["capacity","closure","punctureResistance","disposalMethod","manufacturer"]}	GLOBAL	2026.10
+N	maternal.delivery_kit	supplies	cat.maternal	Delivery kit	Grouped supplies for clean delivery procedures	{"fields":["contents","sterility","packConfiguration","manufacturer"]}	GLOBAL	2026.10
+N	maternal.condom	supplies	cat.maternal	Condom	Barrier contraceptive product	{"fields":["material","size","lubrication","sterility","packSize","manufacturer"]}	GLOBAL	2026.10
+N	nutrition.rutf	supplies	cat.nutrition	Ready-to-use therapeutic food	Therapeutic nutrition product for severe acute malnutrition programmes	{"fields":["energyDensity","proteinSource","micronutrients","packWeight","storage","programmeContext","manufacturer"]}	GLOBAL	2026.10
+N	personal.sanitary_pad	supplies	cat.personal	Sanitary pad	Menstrual hygiene absorbent product	{"fields":["absorbency","size","wings","material","packSize","manufacturer"]}	GLOBAL	2026.10
+N	facility.cleaner	supplies	cat.facility	Facility cleaning product	Non-clinical cleaning supply	{"fields":["chemicalType","concentration","intendedSurface","hazards","storage","manufacturer"]}	GLOBAL	2026.10
+R	rel.amoxicillin.beta	drug.amoxicillin	in_class	class.aminopenicillin	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amoxicillin.atc	drug.amoxicillin	has_atc	atc.J01	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amoxicillin.prep1	drug.amoxicillin	has_preparation	prep.amoxicillin.500mg_capsule	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amoxicillin.prep2	drug.amoxicillin	has_preparation	prep.amoxicillin.250mg5ml_suspension	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amoxicillin.mechanism	drug.amoxicillin	has_mechanism	mechanism.beta_lactam_pbp	{"note":"cell-wall synthesis inhibition"}	ev.who.atc	GLOBAL	2026.10
+R	rel.amoxicillin.alias	drug.amoxicillin	alias_of	alias.amox	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.paracetamol.prep	drug.paracetamol	has_preparation	prep.paracetamol.500mg_tablet	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.metformin.prep	drug.metformin	has_preparation	prep.metformin.500mg_tablet	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.metformin.class	drug.metformin	in_class	class.biguanide	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.gentamicin.class	drug.gentamicin	in_class	class.aminoglycoside	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.gentamicin.safety	drug.gentamicin	has_safety	safety.nephrotoxicity	{"severity":"important"}	GLOBAL	2026.10
+R	rel.ceftriaxone.class	drug.ceftriaxone	in_class	class.cephalosporin	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.azithro.class	drug.azithromycin	in_class	class.macrolide	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.doxy.class	drug.doxycycline	in_class	class.tetracycline	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.cipro.class	drug.ciprofloxacin	in_class	class.fluoroquinolone	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.metronidazole.class	drug.metronidazole	in_class	class.nitroimidazole	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.rifampicin.class	drug.rifampicin	in_class	class.rifamycin	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.fluconazole.class	drug.fluconazole	in_class	class.azole	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.paracetamol.class	drug.paracetamol	in_class	grp.analgesics	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ibuprofen.class	drug.ibuprofen	in_class	class.nsaid	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.enalapril.class	drug.enalapril	in_class	class.acei	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.losartan.class	drug.losartan	in_class	class.arb	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amlodipine.class	drug.amlodipine	in_class	class.ccb	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.salbutamol.class	drug.salbutamol	in_class	class.saba	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.budesonide.class	drug.budesonide	in_class	class.ics	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.omeprazole.class	drug.omperazole	in_class	class.ppi	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ondansetron.class	drug.ondansetron	in_class	class.antiemetic	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.oxytocin.class	drug.oxytocin	in_class	class.uterotonic	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.lidocaine.class	drug.lidocaine	in_class	class.local_anesthetic	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.hydrocortisone.class	drug.hydrocortisone	in_class	class.topical_steroid	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.adrenaline.class	drug.adrenaline	in_class	grp.emergency	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ors.class	drug.ors	in_class	grp.vitamins	{}	ev.who.atc	GLOBAL	2026.10
+A	alias.amox	drug.amoxicillin	amoxicillin	GENERIC	ev.who.atc	GLOBAL	2026.10
+A	alias.amoxicillin_caps	drug.amoxicillin	amox	SEARCH	ev.who.atc	GLOBAL	2026.10
+A	alias.paracetamol	drug.paracetamol	panadol	BRAND_OR_COMMON	ev.who.atc	GLOBAL	2026.10
+A	alias.acetaminophen	drug.paracetamol	acetaminophen	SYNONYM	ev.who.atc	GLOBAL	2026.10
+A	alias.adrenaline	drug.adrenaline	epinephrine	SYNONYM	ev.who.atc	GLOBAL	2026.10
