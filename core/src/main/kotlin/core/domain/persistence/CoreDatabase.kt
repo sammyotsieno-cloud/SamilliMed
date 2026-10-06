@@ -5,6 +5,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
+import core.domain.knowledge.KnowledgeSeeder
 import core.domain.model.FacilityProfile
 import core.domain.model.GoodsReceipt
 import core.domain.model.GoodsReceiptItem
@@ -27,6 +28,10 @@ import core.domain.model.StockBatch
 import core.domain.model.StockMovement
 import core.domain.model.Supplier
 import core.domain.model.UnitPriceConfig
+import core.domain.model.KnowledgeNode
+import core.domain.model.KnowledgeRelation
+import core.domain.model.KnowledgeEvidence
+import core.domain.model.KnowledgeAlias
 
 /**
  * Room Database definition for core inventory, receiving, dispensing,
@@ -62,6 +67,10 @@ import core.domain.model.UnitPriceConfig
         ProductTag::class,
         ProductTagAssignment::class,
         UnitPriceConfig::class,
+        KnowledgeNode::class,
+        KnowledgeRelation::class,
+        KnowledgeEvidence::class,
+        KnowledgeAlias::class,
         PriceHistory::class,
         FacilityProfile::class,
         Supplier::class,
@@ -74,7 +83,7 @@ import core.domain.model.UnitPriceConfig
         Sale::class,
         SaleItem::class
     ],
-    version = 3,
+    version = 4,
     exportSchema = false
 )
 @TypeConverters(RoomConverters::class)
@@ -186,6 +195,70 @@ abstract class CoreDatabase : RoomDatabase() {
             }
         }
 
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("""CREATE TABLE IF NOT EXISTS knowledge_nodes (
+                    id TEXT NOT NULL PRIMARY KEY,
+                    node_type TEXT NOT NULL,
+                    parent_id TEXT,
+                    canonical_name TEXT NOT NULL,
+                    description TEXT,
+                    attributes_json TEXT NOT NULL,
+                    scope TEXT NOT NULL,
+                    version TEXT NOT NULL,
+                    is_active INTEGER NOT NULL,
+                    created_at INTEGER NOT NULL,
+                    updated_at INTEGER NOT NULL
+                )""")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_nodes_node_type ON knowledge_nodes(node_type)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_nodes_parent_id ON knowledge_nodes(parent_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_nodes_canonical_name ON knowledge_nodes(canonical_name)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_nodes_scope_version ON knowledge_nodes(scope, version)")
+                db.execSQL("""CREATE TABLE IF NOT EXISTS knowledge_relations (
+                    id TEXT NOT NULL PRIMARY KEY,
+                    subject_id TEXT NOT NULL,
+                    predicate TEXT NOT NULL,
+                    object_id TEXT NOT NULL,
+                    qualifiers_json TEXT NOT NULL,
+                    evidence_id TEXT,
+                    scope TEXT NOT NULL,
+                    version TEXT NOT NULL,
+                    is_active INTEGER NOT NULL,
+                    created_at INTEGER NOT NULL
+                )""")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_knowledge_relations_subject_id_predicate_object_id ON knowledge_relations(subject_id, predicate, object_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_relations_subject_id ON knowledge_relations(subject_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_relations_object_id ON knowledge_relations(object_id)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_relations_predicate ON knowledge_relations(predicate)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_relations_scope_version ON knowledge_relations(scope, version)")
+                db.execSQL("""CREATE TABLE IF NOT EXISTS knowledge_evidence (
+                    id TEXT NOT NULL PRIMARY KEY,
+                    source TEXT NOT NULL,
+                    title TEXT NOT NULL,
+                    url TEXT,
+                    publicationDate TEXT,
+                    effectiveDate TEXT,
+                    jurisdiction TEXT NOT NULL,
+                    version TEXT NOT NULL,
+                    evidenceLevel TEXT,
+                    retrievedAt INTEGER NOT NULL
+                )""")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_evidence_source ON knowledge_evidence(source)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_evidence_jurisdiction ON knowledge_evidence(jurisdiction)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_evidence_version ON knowledge_evidence(version)")
+                db.execSQL("""CREATE TABLE IF NOT EXISTS knowledge_aliases (
+                    id TEXT NOT NULL PRIMARY KEY,
+                    entity_id TEXT NOT NULL,
+                    alias TEXT NOT NULL,
+                    normalized_alias TEXT NOT NULL,
+                    alias_type TEXT NOT NULL,
+                    source TEXT NOT NULL
+                )""")
+                db.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS index_knowledge_aliases_normalized_alias ON knowledge_aliases(normalized_alias)")
+                db.execSQL("CREATE INDEX IF NOT EXISTS index_knowledge_aliases_entity_id ON knowledge_aliases(entity_id)")
+            }
+        }
+
         @Volatile
         private var INSTANCE: CoreDatabase? = null
 
@@ -196,9 +269,9 @@ abstract class CoreDatabase : RoomDatabase() {
                     CoreDatabase::class.java,
                     "SamilliMed_ground.db"
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
-                    .also { INSTANCE = it }
+                    .also { db -> INSTANCE = db; KnowledgeSeeder.seed(context, db) }
             }
         }
     }
