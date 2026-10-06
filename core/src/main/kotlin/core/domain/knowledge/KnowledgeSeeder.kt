@@ -15,8 +15,9 @@ object KnowledgeSeeder {
     private const val MANIFEST_ID = "manifest.samillimed.knowledge"
 
     fun seed(context: Context, database: CoreDatabase) {
-        val dao = database.knowledgeDao()
-        if (dao.findNode(MANIFEST_ID) != null) return
+        synchronized(database) {
+            val dao = database.knowledgeDao()
+            if (dao.findNode(MANIFEST_ID) != null) return@synchronized
         val now = System.currentTimeMillis()
         val nodes = mutableListOf<KnowledgeNode>()
         val relations = mutableListOf<KnowledgeRelation>()
@@ -83,11 +84,12 @@ object KnowledgeSeeder {
             attributesJson="""{"schemaVersion":"1.0","seedVersion":"$VERSION","atcDataset":"WHO-2026-04-25","scope":"GLOBAL"}""",
             version=VERSION, createdAt=now, updatedAt=now
         )
-        database.runInTransaction {
-            dao.insertEvidence(evidence)
-            dao.insertNodes(nodes)
-            dao.insertRelations(relations)
-            dao.insertAliases(aliases)
+            database.runInTransaction {
+                dao.insertEvidence(evidence)
+                dao.insertNodes(nodes)
+                dao.insertRelations(relations)
+                dao.insertAliases(aliases)
+            }
         }
     }
 }
