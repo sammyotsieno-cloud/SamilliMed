@@ -36,15 +36,16 @@ N	grp.analgesics	group	cat.medicines	Analgesics and antipyretics	Pain and fever 
 N	grp.antihypertensives	group	cat.medicines	Antihypertensives	Blood-pressure-lowering medicines	{"atcPrefix":"C02","alsoAtc":"C03","C07":"beta-blockers","C08":"calcium-channel blockers","C09":"RAAS agents"}	GLOBAL	2026.10
 N	grp.antidiabetics	group	cat.medicines	Antidiabetics	Glucose-lowering medicines including insulin	{"atcPrefix":"A10"}	GLOBAL	2026.10
 N	grp.respiratory	group	cat.medicines	Respiratory medicines	Bronchodilators, inhaled corticosteroids and related agents	{"atcPrefix":"R03"}	GLOBAL	2026.10
-N	grp.gi	group	cat.medicines	Gastrointestinal medicines	Acid suppression, antiemetics, laxatives and antidiarrhoeals	{"atcPrefix":"A02","alsoAtc":"A03","A04","A06","A07"}	GLOBAL	2026.10
+N	grp.gi	group	cat.medicines	Gastrointestinal medicines	Acid suppression, antiemetics, laxatives and antidiarrhoeals	{"atcPrefixes":["A02","A03","A04","A06","A07"]}	GLOBAL	2026.10
 N	grp.obgyn	group	cat.medicines	Obstetric and gynaecological medicines	Uterotonics, eclampsia medicines and reproductive-health medicines	{"atcPrefixes":["G02","G03"]}	GLOBAL	2026.10
 N	grp.dermatology	group	cat.medicines	Dermatological medicines	Topical anti-infectives, corticosteroids and acne/scabies therapies	{"atcPrefix":"D"}	GLOBAL	2026.10
 N	grp.emergency	group	cat.medicines	Emergency and critical care	Resuscitation, anaphylaxis, hypoglycaemia and seizure emergency medicines	{"tags":["emergency","critical-care"]}	GLOBAL	2026.10
 N	grp.vaccines	group	cat.medicines	Vaccines and immunologicals	Vaccines and immunological preparations	{"atcPrefix":"J07"}	GLOBAL	2026.10
-N	grp.vitamins	group	cat.medicines	Vitamins minerals and rehydration	Micronutrients and fluid/electrolyte replacement	{"atcPrefix":"A11","alsoAtc":"A12","A07CA"}	GLOBAL	2026.10
+N	grp.vitamins	group	cat.medicines	Vitamins minerals and rehydration	Micronutrients and fluid/electrolyte replacement	{"atcPrefixes":["A11","A12","A07CA"]}	GLOBAL	2026.10
 N	class.beta_lactam	class	grp.antibacterials	Beta-lactam antibacterials	Antibacterials containing a beta-lactam pharmacophore	{"mechanismClass":"cell-wall synthesis inhibition"}	GLOBAL	2026.10
 N	class.penicillin	class	class.beta_lactam	Penicillins	Beta-lactam subclass	{"mechanismClass":"transpeptidase/PBP inhibition"}	GLOBAL	2026.10
 N	class.aminopenicillin	subclass	class.penicillin	Aminopenicillins	Penicillin subclass including amoxicillin and ampicillin	{"examples":["amoxicillin","ampicillin"]}	GLOBAL	2026.10
+N	class.broad	class	class.penicillin	Broad-spectrum penicillins	Extended-spectrum penicillin subclass	{}	GLOBAL	2026.10
 N	class.cephalosporin	class	class.beta_lactam	Cephalosporins	Beta-lactam subclass	{}	GLOBAL	2026.10
 N	class.carbapenem	class	class.beta_lactam	Carbapenems	Broad-spectrum beta-lactam subclass	{}	GLOBAL	2026.10
 N	class.aminoglycoside	class	grp.antibacterials	Aminoglycosides	Protein-synthesis inhibitors targeting bacterial ribosomes	{"target":"30S"}	GLOBAL	2026.10
@@ -82,7 +83,7 @@ N	drug.gentamicin	drug	class.aminoglycoside	Gentamicin	Aminoglycoside antibacter
 N	drug.ciprofloxacin	drug	class.fluoroquinolone	Ciprofloxacin	Fluoroquinolone antibacterial	{"activeIngredients":["ciprofloxacin"],"atc":"J01MA02","mechanism":"inhibits bacterial DNA gyrase/topoisomerase IV","routes":["oral","intravenous"],"forms":["tablet","solution","ophthalmic"]}	GLOBAL	2026.10
 N	drug.metronidazole	drug	class.nitroimidazole	Metronidazole	Nitroimidazole antimicrobial	{"activeIngredients":["metronidazole"],"atc":"J01XD01","routes":["oral","intravenous","topical","vaginal"],"forms":["tablet","infusion","gel","vaginal preparation"]}	GLOBAL	2026.10
 N	drug.rifampicin	drug	class.rifamycin	Rifampicin	Rifamycin antimycobacterial	{"activeIngredients":["rifampicin"],"atc":"J04AB02","mechanism":"inhibits bacterial DNA-dependent RNA polymerase","routes":["oral"],"forms":["capsule","tablet"]}	GLOBAL	2026.10
-N	drug.isoniazid	drug	subclass		Isoniazid	Antimycobacterial medicine	{"activeIngredients":["isoniazid"],"atc":"J04AC01","routes":["oral"]}	GLOBAL	2026.10
+N	drug.isoniazid	drug	grp.antimycobacterials	Isoniazid	Antimycobacterial medicine	{"activeIngredients":["isoniazid"],"atc":"J04AC01","routes":["oral"]}	GLOBAL	2026.10
 N	drug.ar.t3	drug	class.artemisinin	Artemether/lumefantrine	Artemisinin-based combination antimalarial	{"activeIngredients":["artemether","lumefantrine"],"atc":"P01BF01","forms":["tablet"],"useContext":"malaria"}	GLOBAL	2026.10
 N	drug.chloroquine	drug	grp.antimalarials	Chloroquine	4-aminoquinoline antimalarial	{"activeIngredients":["chloroquine"],"atc":"P01BA02","useContext":"malaria"}	GLOBAL	2026.10
 N	drug.albendazole	drug	grp.anthelmintics	Albendazole	Benzimidazole anthelmintic	{"activeIngredients":["albendazole"],"atc":"P02CA03","forms":["tablet","suspension"]}	GLOBAL	2026.10
@@ -173,7 +174,6 @@ A	alias.amoxicillin_caps	drug.amoxicillin	amox	SEARCH	ev.who.atc	GLOBAL	2026.10
 A	alias.paracetamol	drug.paracetamol	panadol	BRAND_OR_COMMON	ev.who.atc	GLOBAL	2026.10
 A	alias.acetaminophen	drug.paracetamol	acetaminophen	SYNONYM	ev.who.atc	GLOBAL	2026.10
 A	alias.adrenaline	drug.adrenaline	epinephrine	SYNONYM	ev.who.atc	GLOBAL	2026.10
-
 N	atc.A02	atc_level_2		Drugs for acid related disorders	WHO ATC level 4 grouping	{"atc":"A02"}	GLOBAL	2026.10
 N	atc.A03	atc_level_2		Drugs for functional gastrointestinal disorders	WHO ATC level 4 grouping	{"atc":"A03"}	GLOBAL	2026.10
 N	atc.A04	atc_level_2		Antiemetics and antinauseants	WHO ATC level 4 grouping	{"atc":"A04"}	GLOBAL	2026.10
@@ -251,7 +251,6 @@ N	class.cephalosporin.first	class	class.cephalosporin	First-generation cephalosp
 N	class.cephalosporin.second	class	class.cephalosporin	Second-generation cephalosporins	Second-generation cephalosporins	{}	GLOBAL	2026.10
 N	class.cephalosporin.third	class	class.cephalosporin	Third-generation cephalosporins	Third-generation cephalosporins	{}	GLOBAL	2026.10
 N	class.cephalosporin.fourth	class	class.cephalosporin	Fourth-generation cephalosporins	Fourth-generation cephalosporins	{}	GLOBAL	2026.10
-N	class.carbapenem	class	class.beta_lactam	Carbapenems	Broad-spectrum beta-lactam antibacterials	{}	GLOBAL	2026.10
 N	class.antifungal.polyene	class	grp.antifungals	Polyenes	Polyenic antifungal agents	{}	GLOBAL	2026.10
 N	class.antifungal.echinocandin	class	grp.antifungals	Echinocandins	Fungal cell-wall synthesis inhibitors	{}	GLOBAL	2026.10
 N	class.antiviral.hiv.nrtI	class	grp.antivirals	HIV nucleoside/nucleotide reverse transcriptase inhibitors	NRTI/NtRTI class	{}	GLOBAL	2026.10
@@ -274,7 +273,6 @@ N	class.nsaid.propionic	class	class.nsaid	Propionic acid derivatives	NSAID subcl
 N	class.nsaid.oxicam	class	class.nsaid	Oxicams	NSAID subclass	{}	GLOBAL	2026.10
 N	class.antipsychotic.atypical	class	grp.emergency	Atypical antipsychotics	Second-generation antipsychotics	{}	GLOBAL	2026.10
 N	class.benzodiazepine	class	grp.emergency	Benzodiazepines	Anxiolytic, hypnotic and anticonvulsant class	{}	GLOBAL	2026.10
-N	class.ppi	class	class.ppi	Proton-pump inhibitors	Gastric acid secretion inhibitors	{}	GLOBAL	2026.10
 N	class.h2_blocker	class	grp.gi	H2-receptor antagonists	Histamine H2 receptor blockers	{}	GLOBAL	2026.10
 N	class.laxative.osmotic	class	grp.gi	Osmotic laxatives	Laxatives increasing luminal osmotic content	{}	GLOBAL	2026.10
 N	class.antidiarrheal	class	grp.gi	Antidiarrhoeal agents	Symptomatic antidiarrhoeal medicines	{}	GLOBAL	2026.10
@@ -284,8 +282,8 @@ N	drug.penicillin_v	drug	class.penicillin	Phenoxymethylpenicillin	Phenoxymethylp
 N	drug.flucloxacillin	drug	class.penicillin	Flucloxacillin	Flucloxacillin medicine	{"activeIngredients":["Flucloxacillin"],"atc":"J01CF05"}	GLOBAL	2026.10
 N	drug.cloxacillin	drug	class.penicillin	Cloxacillin	Cloxacillin medicine	{"activeIngredients":["Cloxacillin"],"atc":"J01CF02"}	GLOBAL	2026.10
 N	drug.piperacillin	drug	class.penicillin	Piperacillin	Piperacillin medicine	{"activeIngredients":["Piperacillin"],"atc":"J01CR05"}	GLOBAL	2026.10
-N	drug.amoxicillin_clavulanate	drug	class.broad	Amoxicillin/clavulanic acid	Amoxicillin/clavulanic acid medicine	{"activeIngredients":["Amoxicillin/clavulanic acid"],"atc":"J01CR02"}	GLOBAL	2026.10
-N	drug.piperacillin_tazobactam	drug	class.broad	Piperacillin/tazobactam	Piperacillin/tazobactam medicine	{"activeIngredients":["Piperacillin/tazobactam"],"atc":"J01CR05"}	GLOBAL	2026.10
+N	drug.amoxicillin_clavulanate	drug	class.broad	Amoxicillin/clavulanic acid	Amoxicillin/clavulanic acid medicine	{"activeIngredients":["amoxicillin","clavulanic acid"],"atc":"J01CR02"}	GLOBAL	2026.10
+N	drug.piperacillin_tazobactam	drug	class.broad	Piperacillin/tazobactam	Piperacillin/tazobactam medicine	{"activeIngredients":["piperacillin","tazobactam"],"atc":"J01CR05"}	GLOBAL	2026.10
 N	drug.cefalexin	drug	class.cephalosporin.first	Cefalexin	Cefalexin medicine	{"activeIngredients":["Cefalexin"],"atc":"J01DB01"}	GLOBAL	2026.10
 N	drug.cefuroxime	drug	class.cephalosporin.second	Cefuroxime	Cefuroxime medicine	{"activeIngredients":["Cefuroxime"],"atc":"J01DC02"}	GLOBAL	2026.10
 N	drug.cefotaxime	drug	class.cephalosporin.third	Cefotaxime	Cefotaxime medicine	{"activeIngredients":["Cefotaxime"],"atc":"J01DD01"}	GLOBAL	2026.10
@@ -414,7 +412,6 @@ N	drug.glucagon	drug	grp.emergency	Glucagon	Glucagon medicine	{"activeIngredient
 N	drug.misoprostol	drug	class.uterotonic	Misoprostol	Misoprostol medicine	{"activeIngredients":["Misoprostol"],"atc":"A02BB01"}	GLOBAL	2026.10
 N	drug.ergometrine	drug	class.uterotonic	Ergometrine	Ergometrine medicine	{"activeIngredients":["Ergometrine"],"atc":"G02AB03"}	GLOBAL	2026.10
 N	drug.tranexamic_acid	drug	grp.emergency	Tranexamic acid	Tranexamic acid medicine	{"activeIngredients":["Tranexamic acid"],"atc":"B02AA02"}	GLOBAL	2026.10
-N	drug.calcium_gluconate	drug	grp.emergency	Calcium gluconate	Calcium gluconate medicine	{"activeIngredients":["Calcium gluconate"],"atc":"A12AA03"}	GLOBAL	2026.10
 N	drug.prazosin	drug	grp.antihypertensives	Prazosin	Prazosin medicine	{"activeIngredients":["Prazosin"],"atc":"C02CA01"}	GLOBAL	2026.10
 N	drug.methyldopa	drug	grp.antihypertensives	Methyldopa	Methyldopa medicine	{"activeIngredients":["Methyldopa"],"atc":"C02AB01"}	GLOBAL	2026.10
 N	drug.hydralazine	drug	grp.antihypertensives	Hydralazine	Hydralazine medicine	{"activeIngredients":["Hydralazine"],"atc":"C02DB02"}	GLOBAL	2026.10
@@ -552,7 +549,7 @@ R	rel.glucagon.atc	drug.glucagon	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.misoprostol.atc	drug.misoprostol	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.ergometrine.atc	drug.ergometrine	has_atc	atc.G0	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.tranexamic_acid.atc	drug.tranexamic_acid	has_atc	atc.B0	{}	ev.who.atc	GLOBAL	2026.10
-R	rel.calcium_gluconate.atc	drug.calcium_gluconate	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.calcium_gluconate.atc	drug.calcium_gluconate	has_atc	atc.A	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.prazosin.atc	drug.prazosin	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.methyldopa.atc	drug.methyldopa	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.hydralazine.atc	drug.hydralazine	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
