@@ -66,6 +66,17 @@ object KnowledgeSeeder {
         readSeed("knowledge/diagnostic_taxonomy.tsv")
         readSeed("knowledge/nonmedicine_taxonomy.tsv")
 
+        val nodeIds = nodes.map { it.id }
+        require(nodeIds.size == nodeIds.toSet().size) { "Duplicate knowledge node IDs in seed assets" }
+        val nodeIdSet = nodeIds.toSet()
+        nodes.filter { it.parentId != null }.forEach { node ->
+            require(node.parentId in nodeIdSet) { "Missing parent ${node.parentId} for ${node.id}" }
+        }
+        relations.forEach { relation ->
+            require(relation.subjectId in nodeIdSet) { "Missing relation subject ${relation.subjectId}" }
+            require(relation.objectId in nodeIdSet) { "Missing relation object ${relation.objectId}" }
+        }
+
         nodes += KnowledgeNode(
             id=MANIFEST_ID, nodeType="manifest", canonicalName="SamilliMed Knowledge",
             description="Versioned master health-product knowledge graph.",
