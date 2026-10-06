@@ -18,13 +18,13 @@ object KnowledgeSeeder {
         synchronized(database) {
             val dao = database.knowledgeDao()
             if (dao.findNode(MANIFEST_ID) != null) return@synchronized
-        val now = System.currentTimeMillis()
-        val nodes = mutableListOf<KnowledgeNode>()
-        val relations = mutableListOf<KnowledgeRelation>()
-        val evidence = mutableListOf<KnowledgeEvidence>()
-        val aliases = mutableListOf<KnowledgeAlias>()
+            val now = System.currentTimeMillis()
+            val nodes = mutableListOf<KnowledgeNode>()
+            val relations = mutableListOf<KnowledgeRelation>()
+            val evidence = mutableListOf<KnowledgeEvidence>()
+            val aliases = mutableListOf<KnowledgeAlias>()
 
-        fun readSeed(assetName: String) {
+            fun readSeed(assetName: String) {
             context.assets.open(assetName).use { input ->
                 BufferedReader(InputStreamReader(input, Charsets.UTF_8)).useLines { lines ->
                     lines.filter { it.isNotBlank() && !it.startsWith("#") }.forEach { line ->
@@ -59,7 +59,7 @@ object KnowledgeSeeder {
             }
         }
 
-        readSeed("knowledge/knowledge_seed.tsv")
+            readSeed("knowledge/knowledge_seed.tsv")
         readSeed("knowledge/atc_2026.tsv")
         readSeed("knowledge/atc_combinations_2026.tsv")
         readSeed("knowledge/product_domains.tsv")
@@ -67,18 +67,18 @@ object KnowledgeSeeder {
         readSeed("knowledge/diagnostic_taxonomy.tsv")
         readSeed("knowledge/nonmedicine_taxonomy.tsv")
 
-        val nodeIds = nodes.map { it.id }
-        require(nodeIds.size == nodeIds.toSet().size) { "Duplicate knowledge node IDs in seed assets" }
-        val nodeIdSet = nodeIds.toSet()
-        nodes.filter { it.parentId != null }.forEach { node ->
+            val nodeIds = nodes.map { it.id }
+            require(nodeIds.size == nodeIds.toSet().size) { "Duplicate knowledge node IDs in seed assets" }
+            val nodeIdSet = nodeIds.toSet()
+            nodes.filter { it.parentId != null }.forEach { node ->
             require(node.parentId in nodeIdSet) { "Missing parent ${node.parentId} for ${node.id}" }
         }
-        relations.forEach { relation ->
+            relations.forEach { relation ->
             require(relation.subjectId in nodeIdSet) { "Missing relation subject ${relation.subjectId}" }
             require(relation.objectId in nodeIdSet) { "Missing relation object ${relation.objectId}" }
         }
 
-        nodes += KnowledgeNode(
+            nodes += KnowledgeNode(
             id=MANIFEST_ID, nodeType="manifest", canonicalName="SamilliMed Knowledge",
             description="Versioned master health-product knowledge graph.",
             attributesJson="""{"schemaVersion":"1.0","seedVersion":"$VERSION","atcDataset":"WHO-2026-04-25","scope":"GLOBAL"}""",
