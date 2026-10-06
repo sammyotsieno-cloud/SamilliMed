@@ -173,3 +173,387 @@ A	alias.amoxicillin_caps	drug.amoxicillin	amox	SEARCH	ev.who.atc	GLOBAL	2026.10
 A	alias.paracetamol	drug.paracetamol	panadol	BRAND_OR_COMMON	ev.who.atc	GLOBAL	2026.10
 A	alias.acetaminophen	drug.paracetamol	acetaminophen	SYNONYM	ev.who.atc	GLOBAL	2026.10
 A	alias.adrenaline	drug.adrenaline	epinephrine	SYNONYM	ev.who.atc	GLOBAL	2026.10
+
+N	atc.A02	atc_level_2		Drugs for acid related disorders	WHO ATC level 4 grouping	{"atc":"A02"}	GLOBAL	2026.10
+N	atc.A03	atc_level_2		Drugs for functional gastrointestinal disorders	WHO ATC level 4 grouping	{"atc":"A03"}	GLOBAL	2026.10
+N	atc.A04	atc_level_2		Antiemetics and antinauseants	WHO ATC level 4 grouping	{"atc":"A04"}	GLOBAL	2026.10
+N	atc.A06	atc_level_2		Drugs for constipation	WHO ATC level 4 grouping	{"atc":"A06"}	GLOBAL	2026.10
+N	atc.A07	atc_level_2		Antidiarrheals, intestinal anti-inflammatory agents	WHO ATC level 4 grouping	{"atc":"A07"}	GLOBAL	2026.10
+N	atc.A10	atc_level_2		Drugs used in diabetes	WHO ATC level 4 grouping	{"atc":"A10"}	GLOBAL	2026.10
+N	atc.A11	atc_level_2		Vitamins	WHO ATC level 4 grouping	{"atc":"A11"}	GLOBAL	2026.10
+N	atc.A12	atc_level_2		Mineral supplements	WHO ATC level 4 grouping	{"atc":"A12"}	GLOBAL	2026.10
+N	atc.B01	atc_level_2		Antithrombotic agents	WHO ATC level 4 grouping	{"atc":"B01"}	GLOBAL	2026.10
+N	atc.B02	atc_level_2		Antihemorrhagics	WHO ATC level 4 grouping	{"atc":"B02"}	GLOBAL	2026.10
+N	atc.B03	atc_level_2		Antianemic preparations	WHO ATC level 4 grouping	{"atc":"B03"}	GLOBAL	2026.10
+N	atc.C01	atc_level_2		Cardiac therapy	WHO ATC level 4 grouping	{"atc":"C01"}	GLOBAL	2026.10
+N	atc.C02	atc_level_2		Antihypertensives	WHO ATC level 4 grouping	{"atc":"C02"}	GLOBAL	2026.10
+N	atc.C03	atc_level_2		Diuretics	WHO ATC level 4 grouping	{"atc":"C03"}	GLOBAL	2026.10
+N	atc.C07	atc_level_2		Beta blocking agents	WHO ATC level 4 grouping	{"atc":"C07"}	GLOBAL	2026.10
+N	atc.C08	atc_level_2		Calcium channel blockers	WHO ATC level 4 grouping	{"atc":"C08"}	GLOBAL	2026.10
+N	atc.C09	atc_level_2		Agents acting on the renin-angiotensin system	WHO ATC level 4 grouping	{"atc":"C09"}	GLOBAL	2026.10
+N	atc.C10	atc_level_2		Lipid modifying agents	WHO ATC level 4 grouping	{"atc":"C10"}	GLOBAL	2026.10
+N	atc.D01	atc_level_2		Antifungals for dermatological use	WHO ATC level 4 grouping	{"atc":"D01"}	GLOBAL	2026.10
+N	atc.D02	atc_level_2		Emollients and protectives	WHO ATC level 4 grouping	{"atc":"D02"}	GLOBAL	2026.10
+N	atc.D03	atc_level_2		Preparations for treatment of wounds and ulcers	WHO ATC level 4 grouping	{"atc":"D03"}	GLOBAL	2026.10
+N	atc.D06	atc_level_2		Antibiotics and chemotherapeutics for dermatological use	WHO ATC level 4 grouping	{"atc":"D06"}	GLOBAL	2026.10
+N	atc.D07	atc_level_2		Corticosteroids, dermatological preparations	WHO ATC level 4 grouping	{"atc":"D07"}	GLOBAL	2026.10
+N	atc.D10	atc_level_2		Anti-acne preparations	WHO ATC level 4 grouping	{"atc":"D10"}	GLOBAL	2026.10
+N	atc.G01	atc_level_2		Anti-infectives and antiseptics, excluding combinations with corticosteroids	WHO ATC level 4 grouping	{"atc":"G01"}	GLOBAL	2026.10
+N	atc.G02	atc_level_2		Other gynaecologicals	WHO ATC level 4 grouping	{"atc":"G02"}	GLOBAL	2026.10
+N	atc.G03	atc_level_2		Sex hormones and modulators of the genital system	WHO ATC level 4 grouping	{"atc":"G03"}	GLOBAL	2026.10
+N	atc.G04	atc_level_2		Urologicals	WHO ATC level 4 grouping	{"atc":"G04"}	GLOBAL	2026.10
+N	atc.H01	atc_level_2		Pituitary and hypothalamic hormones and analogues	WHO ATC level 4 grouping	{"atc":"H01"}	GLOBAL	2026.10
+N	atc.H02	atc_level_2		Corticosteroids for systemic use	WHO ATC level 4 grouping	{"atc":"H02"}	GLOBAL	2026.10
+N	atc.H03	atc_level_2		Thyroid therapy	WHO ATC level 4 grouping	{"atc":"H03"}	GLOBAL	2026.10
+N	atc.H04	atc_level_2		Pancreatic hormones	WHO ATC level 4 grouping	{"atc":"H04"}	GLOBAL	2026.10
+N	atc.H05	atc_level_2		Calcium homeostasis	WHO ATC level 4 grouping	{"atc":"H05"}	GLOBAL	2026.10
+N	atc.J01	atc_level_2		Antibacterials for systemic use	WHO ATC level 4 grouping	{"atc":"J01"}	GLOBAL	2026.10
+N	atc.J02	atc_level_2		Antimycotics for systemic use	WHO ATC level 4 grouping	{"atc":"J02"}	GLOBAL	2026.10
+N	atc.J04	atc_level_2		Antimycobacterials	WHO ATC level 4 grouping	{"atc":"J04"}	GLOBAL	2026.10
+N	atc.J05	atc_level_2		Antivirals for systemic use	WHO ATC level 4 grouping	{"atc":"J05"}	GLOBAL	2026.10
+N	atc.J06	atc_level_2		Immune sera and immunoglobulins	WHO ATC level 4 grouping	{"atc":"J06"}	GLOBAL	2026.10
+N	atc.J07	atc_level_2		Vaccines	WHO ATC level 4 grouping	{"atc":"J07"}	GLOBAL	2026.10
+N	atc.L01	atc_level_2		Antineoplastic agents	WHO ATC level 4 grouping	{"atc":"L01"}	GLOBAL	2026.10
+N	atc.L02	atc_level_2		Endocrine therapy	WHO ATC level 4 grouping	{"atc":"L02"}	GLOBAL	2026.10
+N	atc.L03	atc_level_2		Immunostimulants	WHO ATC level 4 grouping	{"atc":"L03"}	GLOBAL	2026.10
+N	atc.L04	atc_level_2		Immunosuppressants	WHO ATC level 4 grouping	{"atc":"L04"}	GLOBAL	2026.10
+N	atc.M01	atc_level_2		Antiinflammatory and antirheumatic products	WHO ATC level 4 grouping	{"atc":"M01"}	GLOBAL	2026.10
+N	atc.M02	atc_level_2		Topical products for joint and muscular pain	WHO ATC level 4 grouping	{"atc":"M02"}	GLOBAL	2026.10
+N	atc.M03	atc_level_2		Muscle relaxants	WHO ATC level 4 grouping	{"atc":"M03"}	GLOBAL	2026.10
+N	atc.M04	atc_level_2		Antigout preparations	WHO ATC level 4 grouping	{"atc":"M04"}	GLOBAL	2026.10
+N	atc.M05	atc_level_2		Drugs for treatment of bone diseases	WHO ATC level 4 grouping	{"atc":"M05"}	GLOBAL	2026.10
+N	atc.N01	atc_level_2		Anaesthetics	WHO ATC level 4 grouping	{"atc":"N01"}	GLOBAL	2026.10
+N	atc.N02	atc_level_2		Analgesics	WHO ATC level 4 grouping	{"atc":"N02"}	GLOBAL	2026.10
+N	atc.N03	atc_level_2		Antiepileptics	WHO ATC level 4 grouping	{"atc":"N03"}	GLOBAL	2026.10
+N	atc.N04	atc_level_2		Anti-parkinson drugs	WHO ATC level 4 grouping	{"atc":"N04"}	GLOBAL	2026.10
+N	atc.N05	atc_level_2		Psycholeptics	WHO ATC level 4 grouping	{"atc":"N05"}	GLOBAL	2026.10
+N	atc.N06	atc_level_2		Psychoanaleptics	WHO ATC level 4 grouping	{"atc":"N06"}	GLOBAL	2026.10
+N	atc.N07	atc_level_2		Other nervous system drugs	WHO ATC level 4 grouping	{"atc":"N07"}	GLOBAL	2026.10
+N	atc.P01	atc_level_2		Antiprotozoals	WHO ATC level 4 grouping	{"atc":"P01"}	GLOBAL	2026.10
+N	atc.P02	atc_level_2		Anthelmintics	WHO ATC level 4 grouping	{"atc":"P02"}	GLOBAL	2026.10
+N	atc.P03	atc_level_2		Ectoparasiticides, incl. scabicides, insecticides	WHO ATC level 4 grouping	{"atc":"P03"}	GLOBAL	2026.10
+N	atc.R01	atc_level_2		Nasal preparations	WHO ATC level 4 grouping	{"atc":"R01"}	GLOBAL	2026.10
+N	atc.R02	atc_level_2		Throat preparations	WHO ATC level 4 grouping	{"atc":"R02"}	GLOBAL	2026.10
+N	atc.R03	atc_level_2		Drugs for obstructive airway diseases	WHO ATC level 4 grouping	{"atc":"R03"}	GLOBAL	2026.10
+N	atc.R05	atc_level_2		Cough and cold preparations	WHO ATC level 4 grouping	{"atc":"R05"}	GLOBAL	2026.10
+N	atc.R06	atc_level_2		Antihistamines for systemic use	WHO ATC level 4 grouping	{"atc":"R06"}	GLOBAL	2026.10
+N	atc.S01	atc_level_2		Ophthalmologicals	WHO ATC level 4 grouping	{"atc":"S01"}	GLOBAL	2026.10
+N	atc.S02	atc_level_2		Otic preparations	WHO ATC level 4 grouping	{"atc":"S02"}	GLOBAL	2026.10
+N	atc.S03	atc_level_2		Ophthalmological and otological preparations	WHO ATC level 4 grouping	{"atc":"S03"}	GLOBAL	2026.10
+N	atc.V01	atc_level_2		Allergen extracts	WHO ATC level 4 grouping	{"atc":"V01"}	GLOBAL	2026.10
+N	atc.V03	atc_level_2		All other therapeutic products	WHO ATC level 4 grouping	{"atc":"V03"}	GLOBAL	2026.10
+N	atc.V04	atc_level_2		Diagnostic agents	WHO ATC level 4 grouping	{"atc":"V04"}	GLOBAL	2026.10
+N	atc.V06	atc_level_2		General nutrients	WHO ATC level 4 grouping	{"atc":"V06"}	GLOBAL	2026.10
+N	class.penicillin.beta_lactamase_sensitive	class	class.penicillin	Natural penicillins	Penicillins with activity characteristic of natural penicillins	{}	GLOBAL	2026.10
+N	class.penicillin.beta_lactamase_resistant	class	class.penicillin	Penicillinase-resistant penicillins	Anti-staphylococcal penicillins	{}	GLOBAL	2026.10
+N	class.penicillin.broad_spectrum	class	class.penicillin	Broad-spectrum penicillins	Extended-spectrum penicillins	{}	GLOBAL	2026.10
+N	class.cephalosporin.first	class	class.cephalosporin	First-generation cephalosporins	First-generation cephalosporins	{}	GLOBAL	2026.10
+N	class.cephalosporin.second	class	class.cephalosporin	Second-generation cephalosporins	Second-generation cephalosporins	{}	GLOBAL	2026.10
+N	class.cephalosporin.third	class	class.cephalosporin	Third-generation cephalosporins	Third-generation cephalosporins	{}	GLOBAL	2026.10
+N	class.cephalosporin.fourth	class	class.cephalosporin	Fourth-generation cephalosporins	Fourth-generation cephalosporins	{}	GLOBAL	2026.10
+N	class.carbapenem	class	class.beta_lactam	Carbapenems	Broad-spectrum beta-lactam antibacterials	{}	GLOBAL	2026.10
+N	class.antifungal.polyene	class	grp.antifungals	Polyenes	Polyenic antifungal agents	{}	GLOBAL	2026.10
+N	class.antifungal.echinocandin	class	grp.antifungals	Echinocandins	Fungal cell-wall synthesis inhibitors	{}	GLOBAL	2026.10
+N	class.antiviral.hiv.nrtI	class	grp.antivirals	HIV nucleoside/nucleotide reverse transcriptase inhibitors	NRTI/NtRTI class	{}	GLOBAL	2026.10
+N	class.antiviral.hiv.nnrtI	class	grp.antivirals	HIV non-nucleoside reverse transcriptase inhibitors	NNRTI class	{}	GLOBAL	2026.10
+N	class.antiviral.hiv.pi	class	grp.antivirals	HIV protease inhibitors	Protease inhibitor class	{}	GLOBAL	2026.10
+N	class.antiviral.hiv.integ	class	grp.antivirals	HIV integrase inhibitors	Integrase strand transfer inhibitors	{}	GLOBAL	2026.10
+N	class.ccb.dihydropyridine	class	class.ccb	Dihydropyridine calcium-channel blockers	Predominantly vascular calcium-channel blockers	{}	GLOBAL	2026.10
+N	class.ccb.non_dihydropyridine	class	class.ccb	Non-dihydropyridine calcium-channel blockers	Cardiac and vascular calcium-channel blockers	{}	GLOBAL	2026.10
+N	class.beta_blocker	class	grp.antihypertensives	Beta blockers	Beta-adrenergic receptor antagonists	{}	GLOBAL	2026.10
+N	class.thiazide	class	grp.antihypertensives	Thiazide and thiazide-like diuretics	Diuretic antihypertensives	{}	GLOBAL	2026.10
+N	class.loop_diuretic	class	grp.antihypertensives	Loop diuretics	Potent natriuretic diuretics	{}	GLOBAL	2026.10
+N	class.statin	class	grp.antihypertensives	Statins	HMG-CoA reductase inhibitors	{}	GLOBAL	2026.10
+N	class.antiplatelet	class	grp.antihypertensives	Antiplatelet agents	Medicines reducing platelet aggregation	{}	GLOBAL	2026.10
+N	class.anticoagulant	class	grp.antihypertensives	Anticoagulants	Medicines reducing coagulation	{}	GLOBAL	2026.10
+N	class.sulfonylurea	class	grp.antidiabetics	Sulfonylureas	Insulin secretagogues	{}	GLOBAL	2026.10
+N	class.dpp4	class	grp.antidiabetics	DPP-4 inhibitors	Incretin pathway glucose-lowering medicines	{}	GLOBAL	2026.10
+N	class.sglt2	class	grp.antidiabetics	SGLT2 inhibitors	Renal glucose reabsorption inhibitors	{}	GLOBAL	2026.10
+N	class.glp1	class	grp.antidiabetics	GLP-1 receptor agonists	Incretin receptor agonists	{}	GLOBAL	2026.10
+N	class.nsaid.propionic	class	class.nsaid	Propionic acid derivatives	NSAID subclass	{}	GLOBAL	2026.10
+N	class.nsaid.oxicam	class	class.nsaid	Oxicams	NSAID subclass	{}	GLOBAL	2026.10
+N	class.ssri	class	grp.analgesics	Selective serotonin reuptake inhibitors	Antidepressant class	"{\"note\":\"Psychiatric classification; not an analgesic despite shared initial group\"}"	GLOBAL	2026.10
+N	class.antipsychotic.atypical	class	grp.emergency	Atypical antipsychotics	Second-generation antipsychotics	{}	GLOBAL	2026.10
+N	class.benzodiazepine	class	grp.emergency	Benzodiazepines	Anxiolytic, hypnotic and anticonvulsant class	{}	GLOBAL	2026.10
+N	class.ppi	class	class.ppi	Proton-pump inhibitors	Gastric acid secretion inhibitors	{}	GLOBAL	2026.10
+N	class.h2_blocker	class	grp.gi	H2-receptor antagonists	Histamine H2 receptor blockers	{}	GLOBAL	2026.10
+N	class.laxative.osmotic	class	grp.gi	Osmotic laxatives	Laxatives increasing luminal osmotic content	{}	GLOBAL	2026.10
+N	class.antidiarrheal	class	grp.gi	Antidiarrhoeal agents	Symptomatic antidiarrhoeal medicines	{}	GLOBAL	2026.10
+N	class.thyroid.hormone	class	grp.vitamins	Thyroid hormones	Thyroid hormone replacement	{}	GLOBAL	2026.10
+N	class.antithyroid	class	grp.vitamins	Antithyroid preparations	Medicines reducing thyroid hormone synthesis or release	{}	GLOBAL	2026.10
+N	drug.penicillin_v	drug	class.penicillin	Phenoxymethylpenicillin	Phenoxymethylpenicillin medicine	{"activeIngredients":["Phenoxymethylpenicillin"],"atc":"J01CE02"}	GLOBAL	2026.10
+N	drug.flucloxacillin	drug	class.penicillin	Flucloxacillin	Flucloxacillin medicine	{"activeIngredients":["Flucloxacillin"],"atc":"J01CF05"}	GLOBAL	2026.10
+N	drug.cloxacillin	drug	class.penicillin	Cloxacillin	Cloxacillin medicine	{"activeIngredients":["Cloxacillin"],"atc":"J01CF02"}	GLOBAL	2026.10
+N	drug.piperacillin	drug	class.penicillin	Piperacillin	Piperacillin medicine	{"activeIngredients":["Piperacillin"],"atc":"J01CR05"}	GLOBAL	2026.10
+N	drug.amoxicillin_clavulanate	drug	class.broad	Amoxicillin/clavulanic acid	Amoxicillin/clavulanic acid medicine	{"activeIngredients":["Amoxicillin/clavulanic acid"],"atc":"J01CR02"}	GLOBAL	2026.10
+N	drug.piperacillin_tazobactam	drug	class.broad	Piperacillin/tazobactam	Piperacillin/tazobactam medicine	{"activeIngredients":["Piperacillin/tazobactam"],"atc":"J01CR05"}	GLOBAL	2026.10
+N	drug.cefalexin	drug	class.cephalosporin.first	Cefalexin	Cefalexin medicine	{"activeIngredients":["Cefalexin"],"atc":"J01DB01"}	GLOBAL	2026.10
+N	drug.cefuroxime	drug	class.cephalosporin.second	Cefuroxime	Cefuroxime medicine	{"activeIngredients":["Cefuroxime"],"atc":"J01DC02"}	GLOBAL	2026.10
+N	drug.cefotaxime	drug	class.cephalosporin.third	Cefotaxime	Cefotaxime medicine	{"activeIngredients":["Cefotaxime"],"atc":"J01DD01"}	GLOBAL	2026.10
+N	drug.ceftazidime	drug	class.cephalosporin.third	Ceftazidime	Ceftazidime medicine	{"activeIngredients":["Ceftazidime"],"atc":"J01DD02"}	GLOBAL	2026.10
+N	drug.cefepime	drug	class.cephalosporin.fourth	Cefepime	Cefepime medicine	{"activeIngredients":["Cefepime"],"atc":"J01DE01"}	GLOBAL	2026.10
+N	drug.meropenem	drug	class.carbapenem	Meropenem	Meropenem medicine	{"activeIngredients":["Meropenem"],"atc":"J01DH02"}	GLOBAL	2026.10
+N	drug.imipenem_cilastatin	drug	class.carbapenem	Imipenem/cilastatin	Imipenem/cilastatin medicine	{"activeIngredients":["Imipenem/cilastatin"],"atc":"J01DH51"}	GLOBAL	2026.10
+N	drug.chloramphenicol	drug	grp.antibacterials	Chloramphenicol	Chloramphenicol medicine	{"activeIngredients":["Chloramphenicol"],"atc":"J01BA01"}	GLOBAL	2026.10
+N	drug.clindamycin	drug	class.macrolide	Clindamycin	Clindamycin medicine	{"activeIngredients":["Clindamycin"],"atc":"J01FF01"}	GLOBAL	2026.10
+N	drug.clarithromycin	drug	class.macrolide	Clarithromycin	Clarithromycin medicine	{"activeIngredients":["Clarithromycin"],"atc":"J01FA09"}	GLOBAL	2026.10
+N	drug.erythromycin	drug	class.macrolide	Erythromycin	Erythromycin medicine	{"activeIngredients":["Erythromycin"],"atc":"J01FA01"}	GLOBAL	2026.10
+N	drug.levofloxacin	drug	class.fluoroquinolone	Levofloxacin	Levofloxacin medicine	{"activeIngredients":["Levofloxacin"],"atc":"J01MA12"}	GLOBAL	2026.10
+N	drug.moxifloxacin	drug	class.fluoroquinolone	Moxifloxacin	Moxifloxacin medicine	{"activeIngredients":["Moxifloxacin"],"atc":"J01MA14"}	GLOBAL	2026.10
+N	drug.trimethoprim_sulfamethoxazole	drug	class.sulfonamide	Sulfamethoxazole/trimethoprim	Sulfamethoxazole/trimethoprim medicine	{"activeIngredients":["Sulfamethoxazole/trimethoprim"],"atc":"J01EE01"}	GLOBAL	2026.10
+N	drug.vancomycin	drug	class.glycopeptide	Vancomycin	Vancomycin medicine	{"activeIngredients":["Vancomycin"],"atc":"J01XA01"}	GLOBAL	2026.10
+N	drug.linezolid	drug	grp.antibacterials	Linezolid	Linezolid medicine	{"activeIngredients":["Linezolid"],"atc":"J01XX08"}	GLOBAL	2026.10
+N	drug.fosfomycin	drug	grp.antibacterials	Fosfomycin	Fosfomycin medicine	{"activeIngredients":["Fosfomycin"],"atc":"J01XX01"}	GLOBAL	2026.10
+N	drug.nitrofurantoin	drug	grp.antibacterials	Nitrofurantoin	Nitrofurantoin medicine	{"activeIngredients":["Nitrofurantoin"],"atc":"J01XE01"}	GLOBAL	2026.10
+N	drug.pyrazinamide	drug	grp.antimycobacterials	Pyrazinamide	Pyrazinamide medicine	{"activeIngredients":["Pyrazinamide"],"atc":"J04AK01"}	GLOBAL	2026.10
+N	drug.ethambutol	drug	grp.antimycobacterials	Ethambutol	Ethambutol medicine	{"activeIngredients":["Ethambutol"],"atc":"J04AK02"}	GLOBAL	2026.10
+N	drug.rifabutin	drug	class.rifamycin	Rifabutin	Rifabutin medicine	{"activeIngredients":["Rifabutin"],"atc":"J04AB04"}	GLOBAL	2026.10
+N	drug.rifapentine	drug	class.rifamycin	Rifapentine	Rifapentine medicine	{"activeIngredients":["Rifapentine"],"atc":"J04AB05"}	GLOBAL	2026.10
+N	drug.levofloxacin_tb	drug	grp.antimycobacterials	Levofloxacin	Levofloxacin medicine	{"activeIngredients":["Levofloxacin"],"atc":"J04MA12"}	GLOBAL	2026.10
+N	drug.bedaquiline	drug	grp.antimycobacterials	Bedaquiline	Bedaquiline medicine	{"activeIngredients":["Bedaquiline"],"atc":"J04AK05"}	GLOBAL	2026.10
+N	drug.delamanid	drug	grp.antimycobacterials	Delamanid	Delamanid medicine	{"activeIngredients":["Delamanid"],"atc":"J04AK06"}	GLOBAL	2026.10
+N	drug.artesunate	drug	class.artemisinin	Artesunate	Artesunate medicine	{"activeIngredients":["Artesunate"],"atc":"P01BE03"}	GLOBAL	2026.10
+N	drug.artemether	drug	class.artemisinin	Artemether	Artemether medicine	{"activeIngredients":["Artemether"],"atc":"P01BE02"}	GLOBAL	2026.10
+N	drug.lumefantrine	drug	grp.antimalarials	Lumefantrine	Lumefantrine medicine	{"activeIngredients":["Lumefantrine"],"atc":"P01BF01"}	GLOBAL	2026.10
+N	drug.mefloquine	drug	grp.antimalarials	Mefloquine	Mefloquine medicine	{"activeIngredients":["Mefloquine"],"atc":"P01BC02"}	GLOBAL	2026.10
+N	drug.primaquine	drug	grp.antimalarials	Primaquine	Primaquine medicine	{"activeIngredients":["Primaquine"],"atc":"P01BA02"}	GLOBAL	2026.10
+N	drug.quinine	drug	grp.antimalarials	Quinine	Quinine medicine	{"activeIngredients":["Quinine"],"atc":"P01BC01"}	GLOBAL	2026.10
+N	drug.atovaquone_proguanil	drug	grp.antimalarials	Atovaquone/proguanil	Atovaquone/proguanil medicine	{"activeIngredients":["Atovaquone/proguanil"],"atc":"P01BB51"}	GLOBAL	2026.10
+N	drug.amphotericin_b	drug	class.antifungal.polyene	Amphotericin B	Amphotericin B medicine	{"activeIngredients":["Amphotericin B"],"atc":"J02AA01"}	GLOBAL	2026.10
+N	drug.itraconazole	drug	class.azole	Itraconazole	Itraconazole medicine	{"activeIngredients":["Itraconazole"],"atc":"J02AC02"}	GLOBAL	2026.10
+N	drug.voriconazole	drug	class.azole	Voriconazole	Voriconazole medicine	{"activeIngredients":["Voriconazole"],"atc":"J02AC03"}	GLOBAL	2026.10
+N	drug.ketoconazole	drug	class.azole	Ketoconazole	Ketoconazole medicine	{"activeIngredients":["Ketoconazole"],"atc":"J02AB02"}	GLOBAL	2026.10
+N	drug.terbinafine	drug	grp.antifungals	Terbinafine	Terbinafine medicine	{"activeIngredients":["Terbinafine"],"atc":"D01BA02"}	GLOBAL	2026.10
+N	drug.nystatin	drug	class.antifungal.polyene	Nystatin	Nystatin medicine	{"activeIngredients":["Nystatin"],"atc":"A07AA02"}	GLOBAL	2026.10
+N	drug.caspofungin	drug	class.antifungal.echinocandin	Caspofungin	Caspofungin medicine	{"activeIngredients":["Caspofungin"],"atc":"J02AX04"}	GLOBAL	2026.10
+N	drug.lamivudine	drug	class.antiviral.hiv.nrtI	Lamivudine	Lamivudine medicine	{"activeIngredients":["Lamivudine"],"atc":"J05AF05"}	GLOBAL	2026.10
+N	drug.tenofovir	drug	class.antiviral.hiv.nrtI	Tenofovir	Tenofovir medicine	{"activeIngredients":["Tenofovir"],"atc":"J05AF07"}	GLOBAL	2026.10
+N	drug.emtricitabine	drug	class.antiviral.hiv.nrtI	Emtricitabine	Emtricitabine medicine	{"activeIngredients":["Emtricitabine"],"atc":"J05AF09"}	GLOBAL	2026.10
+N	drug.zidovudine	drug	class.antiviral.hiv.nrtI	Zidovudine	Zidovudine medicine	{"activeIngredients":["Zidovudine"],"atc":"J05AF01"}	GLOBAL	2026.10
+N	drug.efavirenz	drug	class.antiviral.hiv.nnrtI	Efavirenz	Efavirenz medicine	{"activeIngredients":["Efavirenz"],"atc":"J05AG03"}	GLOBAL	2026.10
+N	drug.nevirapine	drug	class.antiviral.hiv.nnrtI	Nevirapine	Nevirapine medicine	{"activeIngredients":["Nevirapine"],"atc":"J05AG01"}	GLOBAL	2026.10
+N	drug.dolutegravir	drug	class.antiviral.hiv.integ	Dolutegravir	Dolutegravir medicine	{"activeIngredients":["Dolutegravir"],"atc":"J05AJ03"}	GLOBAL	2026.10
+N	drug.raltegravir	drug	class.antiviral.hiv.integ	Raltegravir	Raltegravir medicine	{"activeIngredients":["Raltegravir"],"atc":"J05AJ01"}	GLOBAL	2026.10
+N	drug.lopinavir_ritonavir	drug	class.antiviral.hiv.pi	Lopinavir/ritonavir	Lopinavir/ritonavir medicine	{"activeIngredients":["Lopinavir/ritonavir"],"atc":"J05AR10"}	GLOBAL	2026.10
+N	drug.oseltamivir	drug	grp.antivirals	Oseltamivir	Oseltamivir medicine	{"activeIngredients":["Oseltamivir"],"atc":"J05AH02"}	GLOBAL	2026.10
+N	drug.acyclovir	drug	grp.antivirals	Aciclovir	Aciclovir medicine	{"activeIngredients":["Aciclovir"],"atc":"J05AB01"}	GLOBAL	2026.10
+N	drug.sofosbuvir	drug	grp.antivirals	Sofosbuvir	Sofosbuvir medicine	{"activeIngredients":["Sofosbuvir"],"atc":"J05AP08"}	GLOBAL	2026.10
+N	drug.naproxen	drug	class.nsaid.propionic	Naproxen	Naproxen medicine	{"activeIngredients":["Naproxen"],"atc":"M01AE02"}	GLOBAL	2026.10
+N	drug.diclofenac	drug	class.nsaid	Diclofenac	Diclofenac medicine	{"activeIngredients":["Diclofenac"],"atc":"M01AB05"}	GLOBAL	2026.10
+N	drug.ketorolac	drug	class.nsaid	Ketorolac	Ketorolac medicine	{"activeIngredients":["Ketorolac"],"atc":"M01AB15"}	GLOBAL	2026.10
+N	drug.meloxicam	drug	class.nsaid.oxicam	Meloxicam	Meloxicam medicine	{"activeIngredients":["Meloxicam"],"atc":"M01AC06"}	GLOBAL	2026.10
+N	drug.celecoxib	drug	class.nsaid	Celecoxib	Celecoxib medicine	{"activeIngredients":["Celecoxib"],"atc":"M01AH01"}	GLOBAL	2026.10
+N	drug.tramadol	drug	class.opioid	Tramadol	Tramadol medicine	{"activeIngredients":["Tramadol"],"atc":"N02AX02"}	GLOBAL	2026.10
+N	drug.codeine	drug	class.opioid	Codeine	Codeine medicine	{"activeIngredients":["Codeine"],"atc":"N02AA59"}	GLOBAL	2026.10
+N	drug.atenolol	drug	class.beta_blocker	Atenolol	Atenolol medicine	{"activeIngredients":["Atenolol"],"atc":"C07AB03"}	GLOBAL	2026.10
+N	drug.propranolol	drug	class.beta_blocker	Propranolol	Propranolol medicine	{"activeIngredients":["Propranolol"],"atc":"C07AA05"}	GLOBAL	2026.10
+N	drug.bisoprolol	drug	class.beta_blocker	Bisoprolol	Bisoprolol medicine	{"activeIngredients":["Bisoprolol"],"atc":"C07AB07"}	GLOBAL	2026.10
+N	drug.hydrochlorothiazide	drug	class.thiazide	Hydrochlorothiazide	Hydrochlorothiazide medicine	{"activeIngredients":["Hydrochlorothiazide"],"atc":"C03AA03"}	GLOBAL	2026.10
+N	drug.spironolactone	drug	grp.antihypertensives	Spironolactone	Spironolactone medicine	{"activeIngredients":["Spironolactone"],"atc":"C03DA01"}	GLOBAL	2026.10
+N	drug.nifedipine	drug	class.ccb	Nifedipine	Nifedipine medicine	{"activeIngredients":["Nifedipine"],"atc":"C08CA05"}	GLOBAL	2026.10
+N	drug.verapamil	drug	class.ccb.non_dihydropyridine	Verapamil	Verapamil medicine	{"activeIngredients":["Verapamil"],"atc":"C08DA01"}	GLOBAL	2026.10
+N	drug.diltiazem	drug	class.ccb.non_dihydropyridine	Diltiazem	Diltiazem medicine	{"activeIngredients":["Diltiazem"],"atc":"C08DB01"}	GLOBAL	2026.10
+N	drug.valsartan	drug	class.arb	Valsartan	Valsartan medicine	{"activeIngredients":["Valsartan"],"atc":"C09CA03"}	GLOBAL	2026.10
+N	drug.telmisartan	drug	class.arb	Telmisartan	Telmisartan medicine	{"activeIngredients":["Telmisartan"],"atc":"C09CA07"}	GLOBAL	2026.10
+N	drug.captopril	drug	class.acei	Captopril	Captopril medicine	{"activeIngredients":["Captopril"],"atc":"C09AA01"}	GLOBAL	2026.10
+N	drug.lisinopril	drug	class.acei	Lisinopril	Lisinopril medicine	{"activeIngredients":["Lisinopril"],"atc":"C09AA03"}	GLOBAL	2026.10
+N	drug.atorvastatin	drug	class.statin	Atorvastatin	Atorvastatin medicine	{"activeIngredients":["Atorvastatin"],"atc":"C10AA05"}	GLOBAL	2026.10
+N	drug.simvastatin	drug	class.statin	Simvastatin	Simvastatin medicine	{"activeIngredients":["Simvastatin"],"atc":"C10AA01"}	GLOBAL	2026.10
+N	drug.aspirin	drug	class.antiplatelet	Acetylsalicylic acid	Acetylsalicylic acid medicine	{"activeIngredients":["Acetylsalicylic acid"],"atc":"B01AC06"}	GLOBAL	2026.10
+N	drug.clopidogrel	drug	class.antiplatelet	Clopidogrel	Clopidogrel medicine	{"activeIngredients":["Clopidogrel"],"atc":"B01AC04"}	GLOBAL	2026.10
+N	drug.warfarin	drug	class.anticoagulant	Warfarin	Warfarin medicine	{"activeIngredients":["Warfarin"],"atc":"B01AA03"}	GLOBAL	2026.10
+N	drug.heparin	drug	class.anticoagulant	Heparin	Heparin medicine	{"activeIngredients":["Heparin"],"atc":"B01AB01"}	GLOBAL	2026.10
+N	drug.gliclazide	drug	class.sulfonylurea	Gliclazide	Gliclazide medicine	{"activeIngredients":["Gliclazide"],"atc":"A10BB09"}	GLOBAL	2026.10
+N	drug.glibenclamide	drug	class.sulfonylurea	Glibenclamide	Glibenclamide medicine	{"activeIngredients":["Glibenclamide"],"atc":"A10BB01"}	GLOBAL	2026.10
+N	drug.sitagliptin	drug	class.dpp4	Sitagliptin	Sitagliptin medicine	{"activeIngredients":["Sitagliptin"],"atc":"A10BH01"}	GLOBAL	2026.10
+N	drug.empagliflozin	drug	class.sglt2	Empagliflozin	Empagliflozin medicine	{"activeIngredients":["Empagliflozin"],"atc":"A10BK03"}	GLOBAL	2026.10
+N	drug.dapagliflozin	drug	class.sglt2	Dapagliflozin	Dapagliflozin medicine	{"activeIngredients":["Dapagliflozin"],"atc":"A10BK01"}	GLOBAL	2026.10
+N	drug.semaglutide	drug	class.glp1	Semaglutide	Semaglutide medicine	{"activeIngredients":["Semaglutide"],"atc":"A10BJ06"}	GLOBAL	2026.10
+N	drug.ipratropium	drug	grp.respiratory	Ipratropium	Ipratropium medicine	{"activeIngredients":["Ipratropium"],"atc":"R03BB01"}	GLOBAL	2026.10
+N	drug.tiotropium	drug	grp.respiratory	Tiotropium	Tiotropium medicine	{"activeIngredients":["Tiotropium"],"atc":"R03BB04"}	GLOBAL	2026.10
+N	drug.formoterol	drug	grp.respiratory	Formoterol	Formoterol medicine	{"activeIngredients":["Formoterol"],"atc":"R03AC13"}	GLOBAL	2026.10
+N	drug.salmeterol	drug	grp.respiratory	Salmeterol	Salmeterol medicine	{"activeIngredients":["Salmeterol"],"atc":"R03AC12"}	GLOBAL	2026.10
+N	drug.beclometasone	drug	class.ics	Beclometasone	Beclometasone medicine	{"activeIngredients":["Beclometasone"],"atc":"R03BA01"}	GLOBAL	2026.10
+N	drug.montelukast	drug	grp.respiratory	Montelukast	Montelukast medicine	{"activeIngredients":["Montelukast"],"atc":"R03DC03"}	GLOBAL	2026.10
+N	drug.theophylline	drug	grp.respiratory	Theophylline	Theophylline medicine	{"activeIngredients":["Theophylline"],"atc":"R03DA04"}	GLOBAL	2026.10
+N	drug.pantoprazole	drug	class.ppi	Pantoprazole	Pantoprazole medicine	{"activeIngredients":["Pantoprazole"],"atc":"A02BC02"}	GLOBAL	2026.10
+N	drug.esomeprazole	drug	class.ppi	Esomeprazole	Esomeprazole medicine	{"activeIngredients":["Esomeprazole"],"atc":"A02BC05"}	GLOBAL	2026.10
+N	drug.famotidine	drug	class.h2_blocker	Famotidine	Famotidine medicine	{"activeIngredients":["Famotidine"],"atc":"A02BA03"}	GLOBAL	2026.10
+N	drug.metoclopramide	drug	class.antiemetic	Metoclopramide	Metoclopramide medicine	{"activeIngredients":["Metoclopramide"],"atc":"A03FA01"}	GLOBAL	2026.10
+N	drug.domperidone	drug	class.antiemetic	Domperidone	Domperidone medicine	{"activeIngredients":["Domperidone"],"atc":"A03FA03"}	GLOBAL	2026.10
+N	drug.loperamide	drug	class.antidiarrheal	Loperamide	Loperamide medicine	{"activeIngredients":["Loperamide"],"atc":"A07DA03"}	GLOBAL	2026.10
+N	drug.lactulose	drug	class.laxative.osmotic	Lactulose	Lactulose medicine	{"activeIngredients":["Lactulose"],"atc":"A06AD11"}	GLOBAL	2026.10
+N	drug.polyethylene_glycol	drug	class.laxative.osmotic	Macrogol	Macrogol medicine	{"activeIngredients":["Macrogol"],"atc":"A06AD15"}	GLOBAL	2026.10
+N	drug.levothyroxine	drug	class.thyroid.hormone	Levothyroxine	Levothyroxine medicine	{"activeIngredients":["Levothyroxine"],"atc":"H03AA01"}	GLOBAL	2026.10
+N	drug.carbimazole	drug	class.antithyroid	Carbimazole	Carbimazole medicine	{"activeIngredients":["Carbimazole"],"atc":"H03BB01"}	GLOBAL	2026.10
+N	drug.propylthiouracil	drug	class.antithyroid	Propylthiouracil	Propylthiouracil medicine	{"activeIngredients":["Propylthiouracil"],"atc":"H03BA02"}	GLOBAL	2026.10
+N	drug.prednisolone	drug	grp.emergency	Prednisolone	Prednisolone medicine	{"activeIngredients":["Prednisolone"],"atc":"H02AB06"}	GLOBAL	2026.10
+N	drug.dexamethasone	drug	grp.emergency	Dexamethasone	Dexamethasone medicine	{"activeIngredients":["Dexamethasone"],"atc":"H02AB02"}	GLOBAL	2026.10
+N	drug.hydrocortisone_systemic	drug	grp.emergency	Hydrocortisone	Hydrocortisone medicine	{"activeIngredients":["Hydrocortisone"],"atc":"H02AB09"}	GLOBAL	2026.10
+N	drug.clotrimazole	drug	class.azole	Clotrimazole	Clotrimazole medicine	{"activeIngredients":["Clotrimazole"],"atc":"D01AC01"}	GLOBAL	2026.10
+N	drug.miconazole	drug	class.azole	Miconazole	Miconazole medicine	{"activeIngredients":["Miconazole"],"atc":"D01AC02"}	GLOBAL	2026.10
+N	drug.benzoyl_peroxide	drug	grp.dermatology	Benzoyl peroxide	Benzoyl peroxide medicine	{"activeIngredients":["Benzoyl peroxide"],"atc":"D10AE01"}	GLOBAL	2026.10
+N	drug.permethrin	drug	grp.anthelmintics	Permethrin	Permethrin medicine	{"activeIngredients":["Permethrin"],"atc":"P03AC04"}	GLOBAL	2026.10
+N	drug.carbamazepine	drug	grp.emergency	Carbamazepine	Carbamazepine medicine	{"activeIngredients":["Carbamazepine"],"atc":"N03AF01"}	GLOBAL	2026.10
+N	drug.valproic_acid	drug	grp.emergency	Valproic acid	Valproic acid medicine	{"activeIngredients":["Valproic acid"],"atc":"N03AG01"}	GLOBAL	2026.10
+N	drug.levetiracetam	drug	grp.emergency	Levetiracetam	Levetiracetam medicine	{"activeIngredients":["Levetiracetam"],"atc":"N03AX14"}	GLOBAL	2026.10
+N	drug.phenytoin	drug	grp.emergency	Phenytoin	Phenytoin medicine	{"activeIngredients":["Phenytoin"],"atc":"N03AB02"}	GLOBAL	2026.10
+N	drug.amitriptyline	drug	grp.emergency	Amitriptyline	Amitriptyline medicine	{"activeIngredients":["Amitriptyline"],"atc":"N06AA09"}	GLOBAL	2026.10
+N	drug.fluoxetine	drug	grp.emergency	Fluoxetine	Fluoxetine medicine	{"activeIngredients":["Fluoxetine"],"atc":"N06AB03"}	GLOBAL	2026.10
+N	drug.sertraline	drug	grp.emergency	Sertraline	Sertraline medicine	{"activeIngredients":["Sertraline"],"atc":"N06AB06"}	GLOBAL	2026.10
+N	drug.haloperidol	drug	grp.emergency	Haloperidol	Haloperidol medicine	{"activeIngredients":["Haloperidol"],"atc":"N05AD01"}	GLOBAL	2026.10
+N	drug.risperidone	drug	class.antipsychotic.atypical	Risperidone	Risperidone medicine	{"activeIngredients":["Risperidone"],"atc":"N05AX08"}	GLOBAL	2026.10
+N	drug.olanzapine	drug	class.antipsychotic.atypical	Olanzapine	Olanzapine medicine	{"activeIngredients":["Olanzapine"],"atc":"N05AH03"}	GLOBAL	2026.10
+N	drug.lorazepam	drug	class.benzodiazepine	Lorazepam	Lorazepam medicine	{"activeIngredients":["Lorazepam"],"atc":"N05BA06"}	GLOBAL	2026.10
+N	drug.bupivacaine	drug	class.local_anesthetic	Bupivacaine	Bupivacaine medicine	{"activeIngredients":["Bupivacaine"],"atc":"N01BB01"}	GLOBAL	2026.10
+N	drug.propofol	drug	grp.emergency	Propofol	Propofol medicine	{"activeIngredients":["Propofol"],"atc":"N01AX10"}	GLOBAL	2026.10
+N	drug.ketamine	drug	grp.emergency	Ketamine	Ketamine medicine	{"activeIngredients":["Ketamine"],"atc":"N01AX03"}	GLOBAL	2026.10
+N	drug.atropine	drug	grp.emergency	Atropine	Atropine medicine	{"activeIngredients":["Atropine"],"atc":"A03BA01"}	GLOBAL	2026.10
+N	drug.naloxone	drug	grp.emergency	Naloxone	Naloxone medicine	{"activeIngredients":["Naloxone"],"atc":"V03AB15"}	GLOBAL	2026.10
+N	drug.flumazenil	drug	grp.emergency	Flumazenil	Flumazenil medicine	{"activeIngredients":["Flumazenil"],"atc":"V03AB25"}	GLOBAL	2026.10
+N	drug.glucagon	drug	grp.emergency	Glucagon	Glucagon medicine	{"activeIngredients":["Glucagon"],"atc":"H04AA01"}	GLOBAL	2026.10
+N	drug.misoprostol	drug	class.uterotonic	Misoprostol	Misoprostol medicine	{"activeIngredients":["Misoprostol"],"atc":"A02BB01"}	GLOBAL	2026.10
+N	drug.ergometrine	drug	class.uterotonic	Ergometrine	Ergometrine medicine	{"activeIngredients":["Ergometrine"],"atc":"G02AB03"}	GLOBAL	2026.10
+N	drug.tranexamic_acid	drug	grp.emergency	Tranexamic acid	Tranexamic acid medicine	{"activeIngredients":["Tranexamic acid"],"atc":"B02AA02"}	GLOBAL	2026.10
+N	drug.calcium_gluconate	drug	grp.emergency	Calcium gluconate	Calcium gluconate medicine	{"activeIngredients":["Calcium gluconate"],"atc":"A12AA03"}	GLOBAL	2026.10
+N	drug.prazosin	drug	grp.antihypertensives	Prazosin	Prazosin medicine	{"activeIngredients":["Prazosin"],"atc":"C02CA01"}	GLOBAL	2026.10
+N	drug.methyldopa	drug	grp.antihypertensives	Methyldopa	Methyldopa medicine	{"activeIngredients":["Methyldopa"],"atc":"C02AB01"}	GLOBAL	2026.10
+N	drug.hydralazine	drug	grp.antihypertensives	Hydralazine	Hydralazine medicine	{"activeIngredients":["Hydralazine"],"atc":"C02DB02"}	GLOBAL	2026.10
+R	rel.penicillin_v.atc	drug.penicillin_v	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.flucloxacillin.atc	drug.flucloxacillin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.cloxacillin.atc	drug.cloxacillin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.piperacillin.atc	drug.piperacillin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amoxicillin_clavulanate.atc	drug.amoxicillin_clavulanate	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.piperacillin_tazobactam.atc	drug.piperacillin_tazobactam	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.cefalexin.atc	drug.cefalexin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.cefuroxime.atc	drug.cefuroxime	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.cefotaxime.atc	drug.cefotaxime	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ceftazidime.atc	drug.ceftazidime	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.cefepime.atc	drug.cefepime	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.meropenem.atc	drug.meropenem	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.imipenem_cilastatin.atc	drug.imipenem_cilastatin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.chloramphenicol.atc	drug.chloramphenicol	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.clindamycin.atc	drug.clindamycin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.clarithromycin.atc	drug.clarithromycin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.erythromycin.atc	drug.erythromycin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.levofloxacin.atc	drug.levofloxacin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.moxifloxacin.atc	drug.moxifloxacin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.trimethoprim_sulfamethoxazole.atc	drug.trimethoprim_sulfamethoxazole	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.vancomycin.atc	drug.vancomycin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.linezolid.atc	drug.linezolid	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.fosfomycin.atc	drug.fosfomycin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.nitrofurantoin.atc	drug.nitrofurantoin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.pyrazinamide.atc	drug.pyrazinamide	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ethambutol.atc	drug.ethambutol	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.rifabutin.atc	drug.rifabutin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.rifapentine.atc	drug.rifapentine	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.levofloxacin_tb.atc	drug.levofloxacin_tb	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.bedaquiline.atc	drug.bedaquiline	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.delamanid.atc	drug.delamanid	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.artesunate.atc	drug.artesunate	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.artemether.atc	drug.artemether	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.lumefantrine.atc	drug.lumefantrine	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.mefloquine.atc	drug.mefloquine	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.primaquine.atc	drug.primaquine	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.quinine.atc	drug.quinine	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.atovaquone_proguanil.atc	drug.atovaquone_proguanil	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amphotericin_b.atc	drug.amphotericin_b	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.itraconazole.atc	drug.itraconazole	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.voriconazole.atc	drug.voriconazole	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ketoconazole.atc	drug.ketoconazole	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.terbinafine.atc	drug.terbinafine	has_atc	atc.D0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.nystatin.atc	drug.nystatin	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.caspofungin.atc	drug.caspofungin	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.lamivudine.atc	drug.lamivudine	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.tenofovir.atc	drug.tenofovir	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.emtricitabine.atc	drug.emtricitabine	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.zidovudine.atc	drug.zidovudine	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.efavirenz.atc	drug.efavirenz	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.nevirapine.atc	drug.nevirapine	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.dolutegravir.atc	drug.dolutegravir	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.raltegravir.atc	drug.raltegravir	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.lopinavir_ritonavir.atc	drug.lopinavir_ritonavir	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.oseltamivir.atc	drug.oseltamivir	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.acyclovir.atc	drug.acyclovir	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.sofosbuvir.atc	drug.sofosbuvir	has_atc	atc.J0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.naproxen.atc	drug.naproxen	has_atc	atc.M0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.diclofenac.atc	drug.diclofenac	has_atc	atc.M0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ketorolac.atc	drug.ketorolac	has_atc	atc.M0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.meloxicam.atc	drug.meloxicam	has_atc	atc.M0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.celecoxib.atc	drug.celecoxib	has_atc	atc.M0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.tramadol.atc	drug.tramadol	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.codeine.atc	drug.codeine	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.atenolol.atc	drug.atenolol	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.propranolol.atc	drug.propranolol	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.bisoprolol.atc	drug.bisoprolol	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.hydrochlorothiazide.atc	drug.hydrochlorothiazide	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.spironolactone.atc	drug.spironolactone	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.nifedipine.atc	drug.nifedipine	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.verapamil.atc	drug.verapamil	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.diltiazem.atc	drug.diltiazem	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.valsartan.atc	drug.valsartan	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.telmisartan.atc	drug.telmisartan	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.captopril.atc	drug.captopril	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.lisinopril.atc	drug.lisinopril	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.atorvastatin.atc	drug.atorvastatin	has_atc	atc.C1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.simvastatin.atc	drug.simvastatin	has_atc	atc.C1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.aspirin.atc	drug.aspirin	has_atc	atc.B0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.clopidogrel.atc	drug.clopidogrel	has_atc	atc.B0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.warfarin.atc	drug.warfarin	has_atc	atc.B0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.heparin.atc	drug.heparin	has_atc	atc.B0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.gliclazide.atc	drug.gliclazide	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.glibenclamide.atc	drug.glibenclamide	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.sitagliptin.atc	drug.sitagliptin	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.empagliflozin.atc	drug.empagliflozin	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.dapagliflozin.atc	drug.dapagliflozin	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.semaglutide.atc	drug.semaglutide	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ipratropium.atc	drug.ipratropium	has_atc	atc.R0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.tiotropium.atc	drug.tiotropium	has_atc	atc.R0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.formoterol.atc	drug.formoterol	has_atc	atc.R0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.salmeterol.atc	drug.salmeterol	has_atc	atc.R0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.beclometasone.atc	drug.beclometasone	has_atc	atc.R0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.montelukast.atc	drug.montelukast	has_atc	atc.R0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.theophylline.atc	drug.theophylline	has_atc	atc.R0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.pantoprazole.atc	drug.pantoprazole	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.esomeprazole.atc	drug.esomeprazole	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.famotidine.atc	drug.famotidine	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.metoclopramide.atc	drug.metoclopramide	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.domperidone.atc	drug.domperidone	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.loperamide.atc	drug.loperamide	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.lactulose.atc	drug.lactulose	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.polyethylene_glycol.atc	drug.polyethylene_glycol	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.levothyroxine.atc	drug.levothyroxine	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.carbimazole.atc	drug.carbimazole	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.propylthiouracil.atc	drug.propylthiouracil	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.prednisolone.atc	drug.prednisolone	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.dexamethasone.atc	drug.dexamethasone	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.hydrocortisone_systemic.atc	drug.hydrocortisone_systemic	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.clotrimazole.atc	drug.clotrimazole	has_atc	atc.D0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.miconazole.atc	drug.miconazole	has_atc	atc.D0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.benzoyl_peroxide.atc	drug.benzoyl_peroxide	has_atc	atc.D1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.permethrin.atc	drug.permethrin	has_atc	atc.P0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.carbamazepine.atc	drug.carbamazepine	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.valproic_acid.atc	drug.valproic_acid	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.levetiracetam.atc	drug.levetiracetam	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.phenytoin.atc	drug.phenytoin	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.amitriptyline.atc	drug.amitriptyline	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.fluoxetine.atc	drug.fluoxetine	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.sertraline.atc	drug.sertraline	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.haloperidol.atc	drug.haloperidol	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.risperidone.atc	drug.risperidone	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.olanzapine.atc	drug.olanzapine	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.lorazepam.atc	drug.lorazepam	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.bupivacaine.atc	drug.bupivacaine	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.propofol.atc	drug.propofol	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ketamine.atc	drug.ketamine	has_atc	atc.N0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.atropine.atc	drug.atropine	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.naloxone.atc	drug.naloxone	has_atc	atc.V0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.flumazenil.atc	drug.flumazenil	has_atc	atc.V0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.glucagon.atc	drug.glucagon	has_atc	atc.H0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.misoprostol.atc	drug.misoprostol	has_atc	atc.A0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.ergometrine.atc	drug.ergometrine	has_atc	atc.G0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.tranexamic_acid.atc	drug.tranexamic_acid	has_atc	atc.B0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.calcium_gluconate.atc	drug.calcium_gluconate	has_atc	atc.A1	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.prazosin.atc	drug.prazosin	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.methyldopa.atc	drug.methyldopa	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
+R	rel.hydralazine.atc	drug.hydralazine	has_atc	atc.C0	{}	ev.who.atc	GLOBAL	2026.10
