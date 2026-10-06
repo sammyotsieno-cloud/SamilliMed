@@ -1,0 +1,116 @@
+# Non-medicine health-product taxonomy
+N	consumable.syringes	group	cat.consumables	syringes	Functional group: syringes	{"domain":"consumable"}	GLOBAL	2026.10
+N,consumable.syringes.syringe,item_type,consumable.syringes,syringe,Generic item type within syringes,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.syringes.safety_syringe,item_type,consumable.syringes,safety syringe,Generic item type within syringes,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.syringes.insulin_syringe,item_type,consumable.syringes,insulin syringe,Generic item type within syringes,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.syringes.tuberculin_syringe,item_type,consumable.syringes,tuberculin syringe,Generic item type within syringes,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.syringes.needle,item_type,consumable.syringes,needle,Generic item type within syringes,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.syringes.spinal_needle,item_type,consumable.syringes,spinal needle,Generic item type within syringes,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.syringes.blood_collection_needle,item_type,consumable.syringes,blood collection needle,Generic item type within syringes,{"domain":"consumable"},GLOBAL,2026.10
+N	consumable.infusion	group	cat.consumables	infusion	Functional group: infusion	{"domain":"consumable"}	GLOBAL	2026.10
+N,consumable.infusion.iv_set,item_type,consumable.infusion,iv set,Generic item type within infusion,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.infusion.blood_transfusion_set,item_type,consumable.infusion,blood transfusion set,Generic item type within infusion,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.infusion.extension_set,item_type,consumable.infusion,extension set,Generic item type within infusion,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.infusion.three_way_stopcock,item_type,consumable.infusion,three way stopcock,Generic item type within infusion,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.infusion.iv_cannula,item_type,consumable.infusion,iv cannula,Generic item type within infusion,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.infusion.needleless_connector,item_type,consumable.infusion,needleless connector,Generic item type within infusion,{"domain":"consumable"},GLOBAL,2026.10
+N	consumable.catheter	group	cat.consumables	catheter	Functional group: catheter	{"domain":"consumable"}	GLOBAL	2026.10
+N,consumable.catheter.urinary_catheter,item_type,consumable.catheter,urinary catheter,Generic item type within catheter,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.catheter.foley_catheter,item_type,consumable.catheter,foley catheter,Generic item type within catheter,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.catheter.feeding_tube,item_type,consumable.catheter,feeding tube,Generic item type within catheter,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.catheter.nasogastric_tube,item_type,consumable.catheter,nasogastric tube,Generic item type within catheter,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.catheter.suction_catheter,item_type,consumable.catheter,suction catheter,Generic item type within catheter,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.catheter.rectal_tube,item_type,consumable.catheter,rectal tube,Generic item type within catheter,{"domain":"consumable"},GLOBAL,2026.10
+N	consumable.specimen	group	cat.consumables	specimen	Functional group: specimen	{"domain":"consumable"}	GLOBAL	2026.10
+N,consumable.specimen.urine_container,item_type,consumable.specimen,urine container,Generic item type within specimen,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.specimen.stool_container,item_type,consumable.specimen,stool container,Generic item type within specimen,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.specimen.sputum_container,item_type,consumable.specimen,sputum container,Generic item type within specimen,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.specimen.blood_tube,item_type,consumable.specimen,blood tube,Generic item type within specimen,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.specimen.swab,item_type,consumable.specimen,swab,Generic item type within specimen,{"domain":"consumable"},GLOBAL,2026.10
+N,consumable.specimen.specimen_bag,item_type,consumable.specimen,specimen bag,Generic item type within specimen,{"domain":"consumable"},GLOBAL,2026.10
+N	wound.dressing	group	cat.wound	dressing	Functional group: dressing	{"domain":"wound"}	GLOBAL	2026.10
+N,wound.dressing.gauze,item_type,wound.dressing,gauze,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.nonwoven_swab,item_type,wound.dressing,nonwoven swab,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.absorbent_dressing,item_type,wound.dressing,absorbent dressing,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.nonadherent_dressing,item_type,wound.dressing,nonadherent dressing,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.transparent_film,item_type,wound.dressing,transparent film,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.hydrocolloid,item_type,wound.dressing,hydrocolloid,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.hydrogel,item_type,wound.dressing,hydrogel,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.foam_dressing,item_type,wound.dressing,foam dressing,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N,wound.dressing.alginate_dressing,item_type,wound.dressing,alginate dressing,Generic item type within dressing,{"domain":"wound"},GLOBAL,2026.10
+N	wound.bandage	group	cat.wound	bandage	Functional group: bandage	{"domain":"wound"}	GLOBAL	2026.10
+N,wound.bandage.crepe_bandage,item_type,wound.bandage,crepe bandage,Generic item type within bandage,{"domain":"wound"},GLOBAL,2026.10
+N,wound.bandage.elastic_bandage,item_type,wound.bandage,elastic bandage,Generic item type within bandage,{"domain":"wound"},GLOBAL,2026.10
+N,wound.bandage.triangular_bandage,item_type,wound.bandage,triangular bandage,Generic item type within bandage,{"domain":"wound"},GLOBAL,2026.10
+N,wound.bandage.adhesive_bandage,item_type,wound.bandage,adhesive bandage,Generic item type within bandage,{"domain":"wound"},GLOBAL,2026.10
+N,wound.bandage.tubular_bandage,item_type,wound.bandage,tubular bandage,Generic item type within bandage,{"domain":"wound"},GLOBAL,2026.10
+N	wound.suture	group	cat.wound	suture	Functional group: suture	{"domain":"wound"}	GLOBAL	2026.10
+N,wound.suture.absorbable_suture,item_type,wound.suture,absorbable suture,Generic item type within suture,{"domain":"wound"},GLOBAL,2026.10
+N,wound.suture.nonabsorbable_suture,item_type,wound.suture,nonabsorbable suture,Generic item type within suture,{"domain":"wound"},GLOBAL,2026.10
+N,wound.suture.monofilament_suture,item_type,wound.suture,monofilament suture,Generic item type within suture,{"domain":"wound"},GLOBAL,2026.10
+N,wound.suture.braided_suture,item_type,wound.suture,braided suture,Generic item type within suture,{"domain":"wound"},GLOBAL,2026.10
+N,wound.suture.surgical_staple,item_type,wound.suture,surgical staple,Generic item type within suture,{"domain":"wound"},GLOBAL,2026.10
+N,wound.suture.skin_closure_strip,item_type,wound.suture,skin closure strip,Generic item type within suture,{"domain":"wound"},GLOBAL,2026.10
+N	ipc.ppe	group	cat.ipc	ppe	Functional group: ppe	{"domain":"ipc"}	GLOBAL	2026.10
+N,ipc.ppe.examination_gloves,item_type,ipc.ppe,examination gloves,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.surgical_gloves,item_type,ipc.ppe,surgical gloves,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.respirator,item_type,ipc.ppe,respirator,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.surgical_mask,item_type,ipc.ppe,surgical mask,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.gown,item_type,ipc.ppe,gown,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.apron,item_type,ipc.ppe,apron,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.face_shield,item_type,ipc.ppe,face shield,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.protective_eyewear,item_type,ipc.ppe,protective eyewear,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.head_cover,item_type,ipc.ppe,head cover,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.ppe.shoe_cover,item_type,ipc.ppe,shoe cover,Generic item type within ppe,{"domain":"ipc"},GLOBAL,2026.10
+N	ipc.hygiene	group	cat.ipc	hygiene	Functional group: hygiene	{"domain":"ipc"}	GLOBAL	2026.10
+N,ipc.hygiene.hand_rub,item_type,ipc.hygiene,hand rub,Generic item type within hygiene,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.hygiene.hand_wash,item_type,ipc.hygiene,hand wash,Generic item type within hygiene,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.hygiene.chlorhexidine,item_type,ipc.hygiene,chlorhexidine,Generic item type within hygiene,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.hygiene.alcohol_antiseptic,item_type,ipc.hygiene,alcohol antiseptic,Generic item type within hygiene,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.hygiene.surface_disinfectant,item_type,ipc.hygiene,surface disinfectant,Generic item type within hygiene,{"domain":"ipc"},GLOBAL,2026.10
+N	ipc.sharps	group	cat.ipc	sharps	Functional group: sharps	{"domain":"ipc"}	GLOBAL	2026.10
+N,ipc.sharps.sharps_container,item_type,ipc.sharps,sharps container,Generic item type within sharps,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.sharps.needle_destroyer,item_type,ipc.sharps,needle destroyer,Generic item type within sharps,{"domain":"ipc"},GLOBAL,2026.10
+N,ipc.sharps.safety_needle,item_type,ipc.sharps,safety needle,Generic item type within sharps,{"domain":"ipc"},GLOBAL,2026.10
+N	maternal.contraception	group	cat.maternal	contraception	Functional group: contraception	{"domain":"maternal"}	GLOBAL	2026.10
+N,maternal.contraception.condom,item_type,maternal.contraception,condom,Generic item type within contraception,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.contraception.oral_contraceptive,item_type,maternal.contraception,oral contraceptive,Generic item type within contraception,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.contraception.injectable_contraceptive,item_type,maternal.contraception,injectable contraceptive,Generic item type within contraception,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.contraception.implant,item_type,maternal.contraception,implant,Generic item type within contraception,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.contraception.iud,item_type,maternal.contraception,iud,Generic item type within contraception,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.contraception.emergency_contraception,item_type,maternal.contraception,emergency contraception,Generic item type within contraception,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.contraception.spermicidal_product,item_type,maternal.contraception,spermicidal product,Generic item type within contraception,{"domain":"maternal"},GLOBAL,2026.10
+N	maternal.newborn	group	cat.maternal	newborn	Functional group: newborn	{"domain":"maternal"}	GLOBAL	2026.10
+N,maternal.newborn.cord_care,item_type,maternal.newborn,cord care,Generic item type within newborn,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.newborn.newborn_thermometer,item_type,maternal.newborn,newborn thermometer,Generic item type within newborn,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.newborn.newborn_scale,item_type,maternal.newborn,newborn scale,Generic item type within newborn,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.newborn.newborn_resuscitation_mask,item_type,maternal.newborn,newborn resuscitation mask,Generic item type within newborn,{"domain":"maternal"},GLOBAL,2026.10
+N,maternal.newborn.breastfeeding_aid,item_type,maternal.newborn,breastfeeding aid,Generic item type within newborn,{"domain":"maternal"},GLOBAL,2026.10
+N	nutrition.supplement	group	cat.nutrition	supplement	Functional group: supplement	{"domain":"nutrition"}	GLOBAL	2026.10
+N,nutrition.supplement.oral_rehydration,item_type,nutrition.supplement,oral rehydration,Generic item type within supplement,{"domain":"nutrition"},GLOBAL,2026.10
+N,nutrition.supplement.ready_to_use_therapeutic_food,item_type,nutrition.supplement,ready to use therapeutic food,Generic item type within supplement,{"domain":"nutrition"},GLOBAL,2026.10
+N,nutrition.supplement.micronutrient_powder,item_type,nutrition.supplement,micronutrient powder,Generic item type within supplement,{"domain":"nutrition"},GLOBAL,2026.10
+N,nutrition.supplement.iron_folate,item_type,nutrition.supplement,iron folate,Generic item type within supplement,{"domain":"nutrition"},GLOBAL,2026.10
+N,nutrition.supplement.vitamin_a,item_type,nutrition.supplement,vitamin a,Generic item type within supplement,{"domain":"nutrition"},GLOBAL,2026.10
+N,nutrition.supplement.therapeutic_milk,item_type,nutrition.supplement,therapeutic milk,Generic item type within supplement,{"domain":"nutrition"},GLOBAL,2026.10
+N	personal.oral	group	cat.personal	oral	Functional group: oral	{"domain":"personal"}	GLOBAL	2026.10
+N,personal.oral.toothbrush,item_type,personal.oral,toothbrush,Generic item type within oral,{"domain":"personal"},GLOBAL,2026.10
+N,personal.oral.toothpaste,item_type,personal.oral,toothpaste,Generic item type within oral,{"domain":"personal"},GLOBAL,2026.10
+N,personal.oral.mouth_rinse,item_type,personal.oral,mouth rinse,Generic item type within oral,{"domain":"personal"},GLOBAL,2026.10
+N,personal.oral.dental_floss,item_type,personal.oral,dental floss,Generic item type within oral,{"domain":"personal"},GLOBAL,2026.10
+N	personal.feminine	group	cat.personal	feminine	Functional group: feminine	{"domain":"personal"}	GLOBAL	2026.10
+N,personal.feminine.sanitary_pad,item_type,personal.feminine,sanitary pad,Generic item type within feminine,{"domain":"personal"},GLOBAL,2026.10
+N,personal.feminine.tampon,item_type,personal.feminine,tampon,Generic item type within feminine,{"domain":"personal"},GLOBAL,2026.10
+N,personal.feminine.menstrual_cup,item_type,personal.feminine,menstrual cup,Generic item type within feminine,{"domain":"personal"},GLOBAL,2026.10
+N,personal.feminine.intimate_hygiene,item_type,personal.feminine,intimate hygiene,Generic item type within feminine,{"domain":"personal"},GLOBAL,2026.10
+N	facility.cleaning	group	cat.facility	cleaning	Functional group: cleaning	{"domain":"facility"}	GLOBAL	2026.10
+N,facility.cleaning.detergent,item_type,facility.cleaning,detergent,Generic item type within cleaning,{"domain":"facility"},GLOBAL,2026.10
+N,facility.cleaning.bleach,item_type,facility.cleaning,bleach,Generic item type within cleaning,{"domain":"facility"},GLOBAL,2026.10
+N,facility.cleaning.cleaning_cloth,item_type,facility.cleaning,cleaning cloth,Generic item type within cleaning,{"domain":"facility"},GLOBAL,2026.10
+N,facility.cleaning.mop,item_type,facility.cleaning,mop,Generic item type within cleaning,{"domain":"facility"},GLOBAL,2026.10
+N,facility.cleaning.waste_bag,item_type,facility.cleaning,waste bag,Generic item type within cleaning,{"domain":"facility"},GLOBAL,2026.10
+N	facility.waste	group	cat.facility	waste	Functional group: waste	{"domain":"facility"}	GLOBAL	2026.10
+N,facility.waste.clinical_waste_bag,item_type,facility.waste,clinical waste bag,Generic item type within waste,{"domain":"facility"},GLOBAL,2026.10
+N,facility.waste.general_waste_bag,item_type,facility.waste,general waste bag,Generic item type within waste,{"domain":"facility"},GLOBAL,2026.10
+N,facility.waste.sharps_bin,item_type,facility.waste,sharps bin,Generic item type within waste,{"domain":"facility"},GLOBAL,2026.10
+N,facility.waste.waste_container,item_type,facility.waste,waste container,Generic item type within waste,{"domain":"facility"},GLOBAL,2026.10
