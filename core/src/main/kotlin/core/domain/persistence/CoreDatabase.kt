@@ -32,6 +32,7 @@ import core.domain.model.KnowledgeNode
 import core.domain.model.KnowledgeRelation
 import core.domain.model.KnowledgeEvidence
 import core.domain.model.KnowledgeAlias
+import core.domain.persistence.KnowledgeDao
 
 /**
  * Room Database definition for core inventory, receiving, dispensing,
@@ -106,6 +107,8 @@ abstract class CoreDatabase : RoomDatabase() {
     abstract fun productCategoryDao(): ProductCategoryDao
 
     abstract fun productRecognitionDao(): ProductRecognitionDao
+
+    abstract fun knowledgeDao(): KnowledgeDao
 
     companion object {
 
