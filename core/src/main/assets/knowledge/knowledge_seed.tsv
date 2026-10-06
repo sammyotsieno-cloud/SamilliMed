@@ -272,7 +272,6 @@ N	class.sglt2	class	grp.antidiabetics	SGLT2 inhibitors	Renal glucose reabsorptio
 N	class.glp1	class	grp.antidiabetics	GLP-1 receptor agonists	Incretin receptor agonists	{}	GLOBAL	2026.10
 N	class.nsaid.propionic	class	class.nsaid	Propionic acid derivatives	NSAID subclass	{}	GLOBAL	2026.10
 N	class.nsaid.oxicam	class	class.nsaid	Oxicams	NSAID subclass	{}	GLOBAL	2026.10
-N	class.ssri	class	grp.analgesics	Selective serotonin reuptake inhibitors	Antidepressant class	"{\"note\":\"Psychiatric classification; not an analgesic despite shared initial group\"}"	GLOBAL	2026.10
 N	class.antipsychotic.atypical	class	grp.emergency	Atypical antipsychotics	Second-generation antipsychotics	{}	GLOBAL	2026.10
 N	class.benzodiazepine	class	grp.emergency	Benzodiazepines	Anxiolytic, hypnotic and anticonvulsant class	{}	GLOBAL	2026.10
 N	class.ppi	class	class.ppi	Proton-pump inhibitors	Gastric acid secretion inhibitors	{}	GLOBAL	2026.10
