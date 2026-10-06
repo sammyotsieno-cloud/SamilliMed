@@ -358,7 +358,6 @@ R	rel.pyrazinamide.atc	drug.pyrazinamide	has_atc	atc.J04AK01	{}	ev.who.atc	GLOBA
 R	rel.ethambutol.atc	drug.ethambutol	has_atc	atc.J04AK02	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.rifabutin.atc	drug.rifabutin	has_atc	atc.J04AB04	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.rifapentine.atc	drug.rifapentine	has_atc	atc.J04AB05	{}	ev.who.atc	GLOBAL	2026.10
-R	rel.levofloxacin_tb.atc	drug.levofloxacin_tb	has_atc	atc.J04MA12	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.bedaquiline.atc	drug.bedaquiline	has_atc	atc.J04AK05	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.delamanid.atc	drug.delamanid	has_atc	atc.J04AK06	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.artesunate.atc	drug.artesunate	has_atc	atc.P01BE03	{}	ev.who.atc	GLOBAL	2026.10
