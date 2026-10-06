@@ -1,0 +1,78 @@
+# Diagnostic taxonomy; analyte/test/method/product layers remain separate
+N,diagnostic.hematology,diagnostic_group,cat.diagnostics,hematology,Diagnostic domain: hematology,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.hematology.hemoglobin,diagnostic_type,diagnostic.hematology,hemoglobin,Diagnostic type within hematology,{"domain":"hematology"},GLOBAL,2026.10
+N,diagnostic.hematology.cbc,diagnostic_type,diagnostic.hematology,cbc,Diagnostic type within hematology,{"domain":"hematology"},GLOBAL,2026.10
+N,diagnostic.hematology.hematocrit,diagnostic_type,diagnostic.hematology,hematocrit,Diagnostic type within hematology,{"domain":"hematology"},GLOBAL,2026.10
+N,diagnostic.hematology.blood_cell_counter,diagnostic_type,diagnostic.hematology,blood cell counter,Diagnostic type within hematology,{"domain":"hematology"},GLOBAL,2026.10
+N,diagnostic.hematology.esr,diagnostic_type,diagnostic.hematology,esr,Diagnostic type within hematology,{"domain":"hematology"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry,diagnostic_group,cat.diagnostics,clinical chemistry,Diagnostic domain: clinical_chemistry,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.glucose,diagnostic_type,diagnostic.clinical_chemistry,glucose,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.creatinine,diagnostic_type,diagnostic.clinical_chemistry,creatinine,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.urea,diagnostic_type,diagnostic.clinical_chemistry,urea,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.electrolytes,diagnostic_type,diagnostic.clinical_chemistry,electrolytes,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.liver_panel,diagnostic_type,diagnostic.clinical_chemistry,liver panel,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.lipid_panel,diagnostic_type,diagnostic.clinical_chemistry,lipid panel,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.amylase,diagnostic_type,diagnostic.clinical_chemistry,amylase,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.clinical_chemistry.uric_acid,diagnostic_type,diagnostic.clinical_chemistry,uric acid,Diagnostic type within clinical_chemistry,{"domain":"clinical_chemistry"},GLOBAL,2026.10
+N,diagnostic.microbiology,diagnostic_group,cat.diagnostics,microbiology,Diagnostic domain: microbiology,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.microbiology.culture_media,diagnostic_type,diagnostic.microbiology,culture media,Diagnostic type within microbiology,{"domain":"microbiology"},GLOBAL,2026.10
+N,diagnostic.microbiology.gram_stain,diagnostic_type,diagnostic.microbiology,gram stain,Diagnostic type within microbiology,{"domain":"microbiology"},GLOBAL,2026.10
+N,diagnostic.microbiology.bacterial_identification,diagnostic_type,diagnostic.microbiology,bacterial identification,Diagnostic type within microbiology,{"domain":"microbiology"},GLOBAL,2026.10
+N,diagnostic.microbiology.antimicrobial_susceptibility,diagnostic_type,diagnostic.microbiology,antimicrobial susceptibility,Diagnostic type within microbiology,{"domain":"microbiology"},GLOBAL,2026.10
+N,diagnostic.microbiology.fungal_testing,diagnostic_type,diagnostic.microbiology,fungal testing,Diagnostic type within microbiology,{"domain":"microbiology"},GLOBAL,2026.10
+N,diagnostic.microbiology.mycobacterial_testing,diagnostic_type,diagnostic.microbiology,mycobacterial testing,Diagnostic type within microbiology,{"domain":"microbiology"},GLOBAL,2026.10
+N,diagnostic.parasitology,diagnostic_group,cat.diagnostics,parasitology,Diagnostic domain: parasitology,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.parasitology.malaria_microscopy,diagnostic_type,diagnostic.parasitology,malaria microscopy,Diagnostic type within parasitology,{"domain":"parasitology"},GLOBAL,2026.10
+N,diagnostic.parasitology.malaria_antigen,diagnostic_type,diagnostic.parasitology,malaria antigen,Diagnostic type within parasitology,{"domain":"parasitology"},GLOBAL,2026.10
+N,diagnostic.parasitology.stool_ova_parasite,diagnostic_type,diagnostic.parasitology,stool ova parasite,Diagnostic type within parasitology,{"domain":"parasitology"},GLOBAL,2026.10
+N,diagnostic.parasitology.helminth_antigen,diagnostic_type,diagnostic.parasitology,helminth antigen,Diagnostic type within parasitology,{"domain":"parasitology"},GLOBAL,2026.10
+N,diagnostic.serology,diagnostic_group,cat.diagnostics,serology,Diagnostic domain: serology,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.serology.hiv_antibody,diagnostic_type,diagnostic.serology,hiv antibody,Diagnostic type within serology,{"domain":"serology"},GLOBAL,2026.10
+N,diagnostic.serology.hepatitis_b,diagnostic_type,diagnostic.serology,hepatitis b,Diagnostic type within serology,{"domain":"serology"},GLOBAL,2026.10
+N,diagnostic.serology.hepatitis_c,diagnostic_type,diagnostic.serology,hepatitis c,Diagnostic type within serology,{"domain":"serology"},GLOBAL,2026.10
+N,diagnostic.serology.syphilis,diagnostic_type,diagnostic.serology,syphilis,Diagnostic type within serology,{"domain":"serology"},GLOBAL,2026.10
+N,diagnostic.serology.pregnancy_hcg,diagnostic_type,diagnostic.serology,pregnancy hcg,Diagnostic type within serology,{"domain":"serology"},GLOBAL,2026.10
+N,diagnostic.serology.crp,diagnostic_type,diagnostic.serology,crp,Diagnostic type within serology,{"domain":"serology"},GLOBAL,2026.10
+N,diagnostic.serology.rheumatoid_factor,diagnostic_type,diagnostic.serology,rheumatoid factor,Diagnostic type within serology,{"domain":"serology"},GLOBAL,2026.10
+N,diagnostic.molecular,diagnostic_group,cat.diagnostics,molecular,Diagnostic domain: molecular,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.molecular.pcr,diagnostic_type,diagnostic.molecular,pcr,Diagnostic type within molecular,{"domain":"molecular"},GLOBAL,2026.10
+N,diagnostic.molecular.rt_pcr,diagnostic_type,diagnostic.molecular,rt pcr,Diagnostic type within molecular,{"domain":"molecular"},GLOBAL,2026.10
+N,diagnostic.molecular.naat,diagnostic_type,diagnostic.molecular,naat,Diagnostic type within molecular,{"domain":"molecular"},GLOBAL,2026.10
+N,diagnostic.molecular.isothermal_amplification,diagnostic_type,diagnostic.molecular,isothermal amplification,Diagnostic type within molecular,{"domain":"molecular"},GLOBAL,2026.10
+N,diagnostic.molecular.viral_load,diagnostic_type,diagnostic.molecular,viral load,Diagnostic type within molecular,{"domain":"molecular"},GLOBAL,2026.10
+N,diagnostic.urinalysis,diagnostic_group,cat.diagnostics,urinalysis,Diagnostic domain: urinalysis,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.urinalysis.urine_dipstick,diagnostic_type,diagnostic.urinalysis,urine dipstick,Diagnostic type within urinalysis,{"domain":"urinalysis"},GLOBAL,2026.10
+N,diagnostic.urinalysis.urine_analyzer,diagnostic_type,diagnostic.urinalysis,urine analyzer,Diagnostic type within urinalysis,{"domain":"urinalysis"},GLOBAL,2026.10
+N,diagnostic.urinalysis.urine_pregnancy_test,diagnostic_type,diagnostic.urinalysis,urine pregnancy test,Diagnostic type within urinalysis,{"domain":"urinalysis"},GLOBAL,2026.10
+N,diagnostic.point_of_care,diagnostic_group,cat.diagnostics,point of care,Diagnostic domain: point_of_care,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.point_of_care.blood_glucose_meter,diagnostic_type,diagnostic.point_of_care,blood glucose meter,Diagnostic type within point_of_care,{"domain":"point_of_care"},GLOBAL,2026.10
+N,diagnostic.point_of_care.blood_lactate,diagnostic_type,diagnostic.point_of_care,blood lactate,Diagnostic type within point_of_care,{"domain":"point_of_care"},GLOBAL,2026.10
+N,diagnostic.point_of_care.blood_gas,diagnostic_type,diagnostic.point_of_care,blood gas,Diagnostic type within point_of_care,{"domain":"point_of_care"},GLOBAL,2026.10
+N,diagnostic.point_of_care.coagulation_poc,diagnostic_type,diagnostic.point_of_care,coagulation poc,Diagnostic type within point_of_care,{"domain":"point_of_care"},GLOBAL,2026.10
+N,diagnostic.point_of_care.troponin_poc,diagnostic_type,diagnostic.point_of_care,troponin poc,Diagnostic type within point_of_care,{"domain":"point_of_care"},GLOBAL,2026.10
+N,diagnostic.blood_banking,diagnostic_group,cat.diagnostics,blood banking,Diagnostic domain: blood_banking,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.blood_banking.abo_typing,diagnostic_type,diagnostic.blood_banking,abo typing,Diagnostic type within blood_banking,{"domain":"blood_banking"},GLOBAL,2026.10
+N,diagnostic.blood_banking.rhesus_typing,diagnostic_type,diagnostic.blood_banking,rhesus typing,Diagnostic type within blood_banking,{"domain":"blood_banking"},GLOBAL,2026.10
+N,diagnostic.blood_banking.crossmatch,diagnostic_type,diagnostic.blood_banking,crossmatch,Diagnostic type within blood_banking,{"domain":"blood_banking"},GLOBAL,2026.10
+N,diagnostic.blood_banking.antibody_screen,diagnostic_type,diagnostic.blood_banking,antibody screen,Diagnostic type within blood_banking,{"domain":"blood_banking"},GLOBAL,2026.10
+N,diagnostic.blood_banking.blood_bag,diagnostic_type,diagnostic.blood_banking,blood bag,Diagnostic type within blood_banking,{"domain":"blood_banking"},GLOBAL,2026.10
+N,diagnostic.blood_banking.transfusion_filter,diagnostic_type,diagnostic.blood_banking,transfusion filter,Diagnostic type within blood_banking,{"domain":"blood_banking"},GLOBAL,2026.10
+N,diagnostic.histopathology,diagnostic_group,cat.diagnostics,histopathology,Diagnostic domain: histopathology,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.histopathology.fixative,diagnostic_type,diagnostic.histopathology,fixative,Diagnostic type within histopathology,{"domain":"histopathology"},GLOBAL,2026.10
+N,diagnostic.histopathology.tissue_processing,diagnostic_type,diagnostic.histopathology,tissue processing,Diagnostic type within histopathology,{"domain":"histopathology"},GLOBAL,2026.10
+N,diagnostic.histopathology.embedding,diagnostic_type,diagnostic.histopathology,embedding,Diagnostic type within histopathology,{"domain":"histopathology"},GLOBAL,2026.10
+N,diagnostic.histopathology.microtome,diagnostic_type,diagnostic.histopathology,microtome,Diagnostic type within histopathology,{"domain":"histopathology"},GLOBAL,2026.10
+N,diagnostic.histopathology.histology_stain,diagnostic_type,diagnostic.histopathology,histology stain,Diagnostic type within histopathology,{"domain":"histopathology"},GLOBAL,2026.10
+N,diagnostic.histopathology.cytology,diagnostic_type,diagnostic.histopathology,cytology,Diagnostic type within histopathology,{"domain":"histopathology"},GLOBAL,2026.10
+N,diagnostic.sample_collection,diagnostic_group,cat.diagnostics,sample collection,Diagnostic domain: sample_collection,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.sample_collection.blood_collection_tube,diagnostic_type,diagnostic.sample_collection,blood collection tube,Diagnostic type within sample_collection,{"domain":"sample_collection"},GLOBAL,2026.10
+N,diagnostic.sample_collection.swab,diagnostic_type,diagnostic.sample_collection,swab,Diagnostic type within sample_collection,{"domain":"sample_collection"},GLOBAL,2026.10
+N,diagnostic.sample_collection.urine_container,diagnostic_type,diagnostic.sample_collection,urine container,Diagnostic type within sample_collection,{"domain":"sample_collection"},GLOBAL,2026.10
+N,diagnostic.sample_collection.stool_container,diagnostic_type,diagnostic.sample_collection,stool container,Diagnostic type within sample_collection,{"domain":"sample_collection"},GLOBAL,2026.10
+N,diagnostic.sample_collection.sputum_container,diagnostic_type,diagnostic.sample_collection,sputum container,Diagnostic type within sample_collection,{"domain":"sample_collection"},GLOBAL,2026.10
+N,diagnostic.sample_collection.transport_medium,diagnostic_type,diagnostic.sample_collection,transport medium,Diagnostic type within sample_collection,{"domain":"sample_collection"},GLOBAL,2026.10
+N,diagnostic.quality_control,diagnostic_group,cat.diagnostics,quality control,Diagnostic domain: quality_control,{"layers":["test","analyte","method","specimen","reagent","device"]},GLOBAL,2026.10
+N,diagnostic.quality_control.control_material,diagnostic_type,diagnostic.quality_control,control material,Diagnostic type within quality_control,{"domain":"quality_control"},GLOBAL,2026.10
+N,diagnostic.quality_control.calibrator,diagnostic_type,diagnostic.quality_control,calibrator,Diagnostic type within quality_control,{"domain":"quality_control"},GLOBAL,2026.10
+N,diagnostic.quality_control.proficiency_testing,diagnostic_type,diagnostic.quality_control,proficiency testing,Diagnostic type within quality_control,{"domain":"quality_control"},GLOBAL,2026.10
+N,diagnostic.quality_control.internal_quality_control,diagnostic_type,diagnostic.quality_control,internal quality control,Diagnostic type within quality_control,{"domain":"quality_control"},GLOBAL,2026.10
