@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import core.domain.knowledge.KnowledgeSeeder
 import core.domain.model.FacilityProfile
 import core.domain.model.GoodsReceipt
 import core.domain.model.GoodsReceiptItem
@@ -274,7 +273,7 @@ abstract class CoreDatabase : RoomDatabase() {
                 )
                     .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
-                    .also { db -> INSTANCE = db; KnowledgeSeeder.seed(context, db) }
+                    .also { db -> INSTANCE = db }
             }
         }
     }
