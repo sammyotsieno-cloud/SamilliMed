@@ -61,6 +61,7 @@ object KnowledgeSeeder {
         readSeed("knowledge/knowledge_seed.tsv")
         readSeed("knowledge/atc_2026.tsv")
         readSeed("knowledge/atc_combinations_2026.tsv")
+        readSeed("knowledge/product_domains.tsv")
 
         nodes += KnowledgeNode(
             id=MANIFEST_ID, nodeType="manifest", canonicalName="SamilliMed Knowledge",
