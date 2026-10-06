@@ -1,5 +1,4 @@
 # SamilliMed health-product domain taxonomy; node records only
-N	cat.medicines	category		Medicines / Pharmaceuticals	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.medicines.prescription_medicines	domain	cat.medicines	Prescription Medicines	Domain within Medicines / Pharmaceuticals	{"domainCode":"prescription_medicines"}	GLOBAL	2026.10
 N	cat.medicines.otc_medicines	domain	cat.medicines	Otc Medicines	Domain within Medicines / Pharmaceuticals	{"domainCode":"otc_medicines"}	GLOBAL	2026.10
 N	cat.medicines.antimicrobials	domain	cat.medicines	Antimicrobials	Domain within Medicines / Pharmaceuticals	{"domainCode":"antimicrobials"}	GLOBAL	2026.10
@@ -7,7 +6,6 @@ N	cat.medicines.vaccines_immunologicals	domain	cat.medicines	Vaccines Immunologi
 N	cat.medicines.biologicals	domain	cat.medicines	Biologicals	Domain within Medicines / Pharmaceuticals	{"domainCode":"biologicals"}	GLOBAL	2026.10
 N	cat.medicines.herbal_traditional	domain	cat.medicines	Herbal Traditional	Domain within Medicines / Pharmaceuticals	{"domainCode":"herbal_traditional"}	GLOBAL	2026.10
 N	cat.medicines.radiopharmaceuticals	domain	cat.medicines	Radiopharmaceuticals	Domain within Medicines / Pharmaceuticals	{"domainCode":"radiopharmaceuticals"}	GLOBAL	2026.10
-N	cat.consumables	category		Medical Consumables	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.consumables.syringes_needles	domain	cat.consumables	Syringes Needles	Domain within Medical Consumables	{"domainCode":"syringes_needles"}	GLOBAL	2026.10
 N	cat.consumables.infusion_consumables	domain	cat.consumables	Infusion Consumables	Domain within Medical Consumables	{"domainCode":"infusion_consumables"}	GLOBAL	2026.10
 N	cat.consumables.catheters	domain	cat.consumables	Catheters	Domain within Medical Consumables	{"domainCode":"catheters"}	GLOBAL	2026.10
@@ -15,7 +13,6 @@ N	cat.consumables.specimen_containers	domain	cat.consumables	Specimen Containers
 N	cat.consumables.respiratory_consumables	domain	cat.consumables	Respiratory Consumables	Domain within Medical Consumables	{"domainCode":"respiratory_consumables"}	GLOBAL	2026.10
 N	cat.consumables.anaesthesia_consumables	domain	cat.consumables	Anaesthesia Consumables	Domain within Medical Consumables	{"domainCode":"anaesthesia_consumables"}	GLOBAL	2026.10
 N	cat.consumables.dental_consumables	domain	cat.consumables	Dental Consumables	Domain within Medical Consumables	{"domainCode":"dental_consumables"}	GLOBAL	2026.10
-N	cat.diagnostics	category		Diagnostic / Laboratory Supplies	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.diagnostics.hematology	domain	cat.diagnostics	Hematology	Domain within Diagnostic / Laboratory Supplies	{"domainCode":"hematology"}	GLOBAL	2026.10
 N	cat.diagnostics.clinical_chemistry	domain	cat.diagnostics	Clinical Chemistry	Domain within Diagnostic / Laboratory Supplies	{"domainCode":"clinical_chemistry"}	GLOBAL	2026.10
 N	cat.diagnostics.microbiology	domain	cat.diagnostics	Microbiology	Domain within Diagnostic / Laboratory Supplies	{"domainCode":"microbiology"}	GLOBAL	2026.10
@@ -28,7 +25,6 @@ N	cat.diagnostics.blood_banking	domain	cat.diagnostics	Blood Banking	Domain with
 N	cat.diagnostics.histopathology	domain	cat.diagnostics	Histopathology	Domain within Diagnostic / Laboratory Supplies	{"domainCode":"histopathology"}	GLOBAL	2026.10
 N	cat.diagnostics.sample_collection	domain	cat.diagnostics	Sample Collection	Domain within Diagnostic / Laboratory Supplies	{"domainCode":"sample_collection"}	GLOBAL	2026.10
 N	cat.diagnostics.reagents_controls_calibrators	domain	cat.diagnostics	Reagents Controls Calibrators	Domain within Diagnostic / Laboratory Supplies	{"domainCode":"reagents_controls_calibrators"}	GLOBAL	2026.10
-N	cat.devices	category		Medical Devices / Equipment	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.devices.patient_monitoring	domain	cat.devices	Patient Monitoring	Domain within Medical Devices / Equipment	{"domainCode":"patient_monitoring"}	GLOBAL	2026.10
 N	cat.devices.vital_signs	domain	cat.devices	Vital Signs	Domain within Medical Devices / Equipment	{"domainCode":"vital_signs"}	GLOBAL	2026.10
 N	cat.devices.diagnostic_imaging	domain	cat.devices	Diagnostic Imaging	Domain within Medical Devices / Equipment	{"domainCode":"diagnostic_imaging"}	GLOBAL	2026.10
@@ -52,7 +48,6 @@ N	cat.devices.maternal	domain	cat.devices	Maternal	Domain within Medical Devices
 N	cat.devices.dialysis	domain	cat.devices	Dialysis	Domain within Medical Devices / Equipment	{"domainCode":"dialysis"}	GLOBAL	2026.10
 N	cat.devices.oxygen_equipment	domain	cat.devices	Oxygen Equipment	Domain within Medical Devices / Equipment	{"domainCode":"oxygen_equipment"}	GLOBAL	2026.10
 N	cat.devices.electrical_safety	domain	cat.devices	Electrical Safety	Domain within Medical Devices / Equipment	{"domainCode":"electrical_safety"}	GLOBAL	2026.10
-N	cat.wound	category		Wound Care / Procedure Supplies	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.wound.dressings	domain	cat.wound	Dressings	Domain within Wound Care / Procedure Supplies	{"domainCode":"dressings"}	GLOBAL	2026.10
 N	cat.wound.bandages	domain	cat.wound	Bandages	Domain within Wound Care / Procedure Supplies	{"domainCode":"bandages"}	GLOBAL	2026.10
 N	cat.wound.gauze	domain	cat.wound	Gauze	Domain within Wound Care / Procedure Supplies	{"domainCode":"gauze"}	GLOBAL	2026.10
@@ -64,7 +59,6 @@ N	cat.wound.drainage	domain	cat.wound	Drainage	Domain within Wound Care / Proced
 N	cat.wound.minor_procedure_kits	domain	cat.wound	Minor Procedure Kits	Domain within Wound Care / Procedure Supplies	{"domainCode":"minor_procedure_kits"}	GLOBAL	2026.10
 N	cat.wound.burn_care	domain	cat.wound	Burn Care	Domain within Wound Care / Procedure Supplies	{"domainCode":"burn_care"}	GLOBAL	2026.10
 N	cat.wound.ostomy	domain	cat.wound	Ostomy	Domain within Wound Care / Procedure Supplies	{"domainCode":"ostomy"}	GLOBAL	2026.10
-N	cat.ipc	category		Infection Prevention / Control	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.ipc.hand_hygiene	domain	cat.ipc	Hand Hygiene	Domain within Infection Prevention / Control	{"domainCode":"hand_hygiene"}	GLOBAL	2026.10
 N	cat.ipc.skin_antisepsis	domain	cat.ipc	Skin Antisepsis	Domain within Infection Prevention / Control	{"domainCode":"skin_antisepsis"}	GLOBAL	2026.10
 N	cat.ipc.surface_disinfection	domain	cat.ipc	Surface Disinfection	Domain within Infection Prevention / Control	{"domainCode":"surface_disinfection"}	GLOBAL	2026.10
@@ -73,7 +67,6 @@ N	cat.ipc.ppe	domain	cat.ipc	Ppe	Domain within Infection Prevention / Control	{"
 N	cat.ipc.sharps_safety	domain	cat.ipc	Sharps Safety	Domain within Infection Prevention / Control	{"domainCode":"sharps_safety"}	GLOBAL	2026.10
 N	cat.ipc.waste_management	domain	cat.ipc	Waste Management	Domain within Infection Prevention / Control	{"domainCode":"waste_management"}	GLOBAL	2026.10
 N	cat.ipc.isolation_supplies	domain	cat.ipc	Isolation Supplies	Domain within Infection Prevention / Control	{"domainCode":"isolation_supplies"}	GLOBAL	2026.10
-N	cat.maternal	category		Maternal / Newborn / Family Planning	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.maternal.antenatal	domain	cat.maternal	Antenatal	Domain within Maternal / Newborn / Family Planning	{"domainCode":"antenatal"}	GLOBAL	2026.10
 N	cat.maternal.intrapartum	domain	cat.maternal	Intrapartum	Domain within Maternal / Newborn / Family Planning	{"domainCode":"intrapartum"}	GLOBAL	2026.10
 N	cat.maternal.postpartum	domain	cat.maternal	Postpartum	Domain within Maternal / Newborn / Family Planning	{"domainCode":"postpartum"}	GLOBAL	2026.10
@@ -82,7 +75,6 @@ N	cat.maternal.resuscitation_newborn	domain	cat.maternal	Resuscitation Newborn	D
 N	cat.maternal.contraceptives	domain	cat.maternal	Contraceptives	Domain within Maternal / Newborn / Family Planning	{"domainCode":"contraceptives"}	GLOBAL	2026.10
 N	cat.maternal.fertility	domain	cat.maternal	Fertility	Domain within Maternal / Newborn / Family Planning	{"domainCode":"fertility"}	GLOBAL	2026.10
 N	cat.maternal.menstrual_health	domain	cat.maternal	Menstrual Health	Domain within Maternal / Newborn / Family Planning	{"domainCode":"menstrual_health"}	GLOBAL	2026.10
-N	cat.personal	category		Personal Care / Hygiene	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.personal.oral_hygiene	domain	cat.personal	Oral Hygiene	Domain within Personal Care / Hygiene	{"domainCode":"oral_hygiene"}	GLOBAL	2026.10
 N	cat.personal.skin_care	domain	cat.personal	Skin Care	Domain within Personal Care / Hygiene	{"domainCode":"skin_care"}	GLOBAL	2026.10
 N	cat.personal.hair_care	domain	cat.personal	Hair Care	Domain within Personal Care / Hygiene	{"domainCode":"hair_care"}	GLOBAL	2026.10
@@ -91,7 +83,6 @@ N	cat.personal.adult_incontinence	domain	cat.personal	Adult Incontinence	Domain 
 N	cat.personal.continence	domain	cat.personal	Continence	Domain within Personal Care / Hygiene	{"domainCode":"continence"}	GLOBAL	2026.10
 N	cat.personal.sexual_health	domain	cat.personal	Sexual Health	Domain within Personal Care / Hygiene	{"domainCode":"sexual_health"}	GLOBAL	2026.10
 N	cat.personal.household_hygiene	domain	cat.personal	Household Hygiene	Domain within Personal Care / Hygiene	{"domainCode":"household_hygiene"}	GLOBAL	2026.10
-N	cat.nutrition	category		Nutrition / Supplements	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.nutrition.therapeutic_feeding	domain	cat.nutrition	Therapeutic Feeding	Domain within Nutrition / Supplements	{"domainCode":"therapeutic_feeding"}	GLOBAL	2026.10
 N	cat.nutrition.infant_feeding	domain	cat.nutrition	Infant Feeding	Domain within Nutrition / Supplements	{"domainCode":"infant_feeding"}	GLOBAL	2026.10
 N	cat.nutrition.oral_nutrition	domain	cat.nutrition	Oral Nutrition	Domain within Nutrition / Supplements	{"domainCode":"oral_nutrition"}	GLOBAL	2026.10
@@ -99,7 +90,6 @@ N	cat.nutrition.micronutrients	domain	cat.nutrition	Micronutrients	Domain within
 N	cat.nutrition.electrolytes	domain	cat.nutrition	Electrolytes	Domain within Nutrition / Supplements	{"domainCode":"electrolytes"}	GLOBAL	2026.10
 N	cat.nutrition.protein_energy	domain	cat.nutrition	Protein Energy	Domain within Nutrition / Supplements	{"domainCode":"protein_energy"}	GLOBAL	2026.10
 N	cat.nutrition.special_diets	domain	cat.nutrition	Special Diets	Domain within Nutrition / Supplements	{"domainCode":"special_diets"}	GLOBAL	2026.10
-N	cat.facility	category		Non-medical / Facility Supplies	Top-level health-product management category	{}	GLOBAL	2026.10
 N	cat.facility.office	domain	cat.facility	Office	Domain within Non-medical / Facility Supplies	{"domainCode":"office"}	GLOBAL	2026.10
 N	cat.facility.cleaning	domain	cat.facility	Cleaning	Domain within Non-medical / Facility Supplies	{"domainCode":"cleaning"}	GLOBAL	2026.10
 N	cat.facility.laundry	domain	cat.facility	Laundry	Domain within Non-medical / Facility Supplies	{"domainCode":"laundry"}	GLOBAL	2026.10
