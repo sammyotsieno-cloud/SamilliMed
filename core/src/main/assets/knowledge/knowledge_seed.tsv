@@ -147,7 +147,7 @@ R	rel.paracetamol.prep	drug.paracetamol	has_preparation	prep.paracetamol.500mg_t
 R	rel.metformin.prep	drug.metformin	has_preparation	prep.metformin.500mg_tablet	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.metformin.class	drug.metformin	in_class	class.biguanide	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.gentamicin.class	drug.gentamicin	in_class	class.aminoglycoside	{}	ev.who.atc	GLOBAL	2026.10
-R	rel.gentamicin.safety	drug.gentamicin	has_safety	safety.nephrotoxicity	{"severity":"important"}	GLOBAL	2026.10
+R	rel.gentamicin.safety	drug.gentamicin	has_safety	safety.nephrotoxicity	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.ceftriaxone.class	drug.ceftriaxone	in_class	class.cephalosporin	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.azithro.class	drug.azithromycin	in_class	class.macrolide	{}	ev.who.atc	GLOBAL	2026.10
 R	rel.doxy.class	drug.doxycycline	in_class	class.tetracycline	{}	ev.who.atc	GLOBAL	2026.10
