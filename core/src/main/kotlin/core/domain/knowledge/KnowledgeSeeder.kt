@@ -1,7 +1,6 @@
 package core.domain.knowledge
 
 import android.content.Context
-import androidx.room.withTransaction
 import core.domain.model.KnowledgeAlias
 import core.domain.model.KnowledgeEvidence
 import core.domain.model.KnowledgeNode
@@ -63,7 +62,7 @@ object KnowledgeSeeder {
             attributesJson="""{"schemaVersion":"1.0","seedVersion":"$VERSION","scope":"GLOBAL"}""",
             version=VERSION, createdAt=now, updatedAt=now
         )
-        database.withTransaction {
+        database.runInTransaction {
             dao.insertEvidence(evidence)
             dao.insertNodes(nodes)
             dao.insertRelations(relations)
