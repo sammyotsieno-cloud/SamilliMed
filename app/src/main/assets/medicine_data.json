@@ -1,0 +1,282 @@
+[
+  {
+    "id": "cat_1_1",
+    "name": "Anaesthesia & Perioperative Medicines",
+    "type": "category",
+    "parentId": null,
+    "atcCode": "N01",
+    "clinicalData": {
+      "mechanism_of_action": "Agents that induce a reversible state of unconsciousness, amnesia, analgesia, and muscle relaxation to allow for safe surgery.",
+      "clinical_pearls": "Always remember the triad of anesthesia: Hypnosis (sleep), Analgesia (pain relief), and Muscle Relaxation. Different drugs handle different parts of this triad."
+    },
+    "pkData": {},
+    "overrides": null
+  },
+  {
+    "id": "fam_1_1_1",
+    "name": "General Anaesthetics",
+    "type": "family",
+    "parentId": "cat_1_1",
+    "atcCode": "N01A",
+    "clinicalData": {
+      "mechanism_of_action": "Modulate GABA-A receptors, NMDA receptors, and potassium channels to depress central nervous system activity.",
+      "adverse_effects": [
+        "Postoperative nausea and vomiting (PONV)",
+        "Hypotension",
+        "Respiratory depression"
+      ],
+      "contraindications": [
+        "Known susceptibility to malignant hyperthermia",
+        "Severe uncontrolled cardiovascular instability"
+      ]
+    },
+    "pkData": {},
+    "overrides": null
+  },
+  {
+    "id": "fam_1_1_1_2",
+    "name": "Intravenous Anaesthetics",
+    "type": "family",
+    "parentId": "fam_1_1_1",
+    "atcCode": null,
+    "clinicalData": {
+      "mechanism_of_action": "Given via IV for rapid induction of unconsciousness (usually within one arm-to-brain circulation time, about 15-30 seconds).",
+      "clinical_pearls": "These are great for induction, but most are not ideal for maintenance due to accumulation and prolonged recovery."
+    },
+    "pkData": {
+      "onset": "15-30 seconds (one arm-brain circulation time)"
+    },
+    "overrides": null
+  },
+  {
+    "id": "drug_propofol",
+    "name": "Propofol",
+    "type": "drug",
+    "parentId": "fam_1_1_1_2",
+    "atcCode": "N01AX10",
+    "clinicalData": {
+      "how_it_works_clinically": "The 'milk of amnesia'. It's a positive allosteric modulator of GABA-A receptors. Patients love it because they wake up feeling clear-headed with very little hangover.",
+      "indications": "Induction and maintenance of general anesthesia, procedural sedation, ICU sedation.",
+      "adverse_effects": [
+        "Significant hypotension (vasodilation)",
+        "Respiratory depression/apnea",
+        "Pain on injection"
+      ],
+      "clinical_pearls": "It's formulated in a lipid emulsion, so it supports bacterial growth. Use within 6 hours of opening, and avoid in patients with egg/soy allergies."
+    },
+    "pkData": {
+      "onset": "15-30 seconds",
+      "duration": "5-10 minutes (single bolus)",
+      "metabolism": "Hepatic glucuronidation and extrahepatic clearance"
+    },
+    "severe_molecular_risks": [
+      {
+        "risk": "Propofol Infusion Syndrome (PRIS)",
+        "context": "A rare but fatal condition (metabolic acidosis, rhabdomyolysis, cardiac failure) seen with prolonged, high-dose infusions, especially in critically ill patients or children."
+      }
+    ],
+    "cross_classification_ids": [],
+    "overrides": {
+      "exclude_adverse_effects": [],
+      "modify_adverse_effects": [],
+      "add_adverse_effects": []
+    }
+  },
+  {
+    "id": "drug_ketamine",
+    "name": "Ketamine",
+    "type": "drug",
+    "parentId": "fam_1_1_1_2",
+    "atcCode": "N01AX03",
+    "clinicalData": {
+      "how_it_works_clinically": "A non-competitive NMDA receptor antagonist. It creates a 'dissociative' state where the patient's eyes might be open, but they are completely detached from pain and their environment.",
+      "indications": "Induction in hemodynamically unstable patients (trauma, shock), severe bronchospasm, procedural analgesia.",
+      "adverse_effects": [
+        "Emergence delirium or vivid hallucinations",
+        "Sialorrhea (excessive salivation)",
+        "Increased intracranial pressure (ICP)"
+      ],
+      "clinical_pearls": "Unlike other induction agents, Ketamine *preserves* respiratory drive and actually stimulates the sympathetic nervous system, making it the drug of choice for shock or severe asthma."
+    },
+    "pkData": {
+      "onset": "30 seconds (IV), 2-4 minutes (IM)",
+      "duration": "10-15 minutes (IV)"
+    },
+    "severe_molecular_risks": [],
+    "cross_classification_ids": [],
+    "overrides": {
+      "exclude_adverse_effects": [
+        "Respiratory depression"
+      ],
+      "modify_adverse_effects": [],
+      "add_adverse_effects": [
+        "Often co-administered with a small dose of Midazolam to prevent emergence delirium."
+      ]
+    }
+  },
+  {
+    "id": "fam_1_1_2",
+    "name": "Local Anaesthetics",
+    "type": "family",
+    "parentId": "cat_1_1",
+    "atcCode": "N01B",
+    "clinicalData": {
+      "mechanism_of_action": "Reversible blockade of voltage-gated sodium channels, preventing depolarization and nerve impulse conduction.",
+      "clinical_pearls": "They are weak bases. They work poorly in infected (acidic) tissue because the drug becomes ionized and can't cross the nerve membrane."
+    },
+    "pkData": {
+      "onset": "Depends on pKa (lower pKa = faster onset).",
+      "duration": "Depends on protein binding (higher binding = longer duration)."
+    },
+    "overrides": null
+  },
+  {
+    "id": "fam_1_1_2_2",
+    "name": "Amino-amides",
+    "type": "family",
+    "parentId": "fam_1_1_2",
+    "atcCode": null,
+    "clinicalData": {
+      "mechanism_of_action": "Metabolized hepatically by CYP450 enzymes. Very low risk of true allergic reactions compared to esters.",
+      "clinical_pearls": "Easy trick to remember: Amides have an 'i' in the prefix before '-caine' (L**i**docaine, Bup**i**vacaine). Esters do not (Procaine, Benzocaine)."
+    },
+    "pkData": {},
+    "overrides": null
+  },
+  {
+    "id": "drug_lidocaine",
+    "name": "Lidocaine",
+    "type": "drug",
+    "parentId": "fam_1_1_2_2",
+    "atcCode": "C05AD02",
+    "clinicalData": {
+      "how_it_works_clinically": "The gold standard for local anesthesia. Used for infiltration, nerve blocks, and even topically.",
+      "indications": "Minor surgeries, suturing, dental procedures, and as a Class Ib antiarrhythmic.",
+      "adverse_effects": [
+        "Transient CNS excitation (tinnitus, perioral numbness)",
+        "Localized swelling"
+      ],
+      "clinical_pearls": "Always aspirate before injecting to ensure you are not in a blood vessel. Adding epinephrine (1:200,000) constricts local vessels, prolonging the block and reducing systemic absorption."
+    },
+    "pkData": {
+      "onset": "2-5 minutes (without epinephrine)",
+      "duration": "60-120 minutes (without epinephrine)",
+      "metabolism": "Hepatic (CYP1A2, CYP3A4)"
+    },
+    "severe_molecular_risks": [
+      {
+        "risk": "Local Anesthetic Systemic Toxicity (LAST)",
+        "context": "If accidentally injected intravascularly or absorbed in high doses, it causes severe CNS toxicity (seizures) and cardiovascular collapse (refractory arrhythmias). The specific antidote is 20% Intravenous Lipid Emulsion."
+      }
+    ],
+    "cross_classification_ids": [
+      "fam_1_5_4_1"
+    ],
+    "overrides": {
+      "exclude_adverse_effects": [],
+      "modify_adverse_effects": [],
+      "add_adverse_effects": []
+    }
+  },
+  {
+    "id": "fam_1_1_3",
+    "name": "Neuromuscular Blocking Agents (NMBAs)",
+    "type": "family",
+    "parentId": "cat_1_1",
+    "atcCode": "N01C",
+    "clinicalData": {
+      "mechanism_of_action": "Paralyze skeletal muscles by blocking nicotinic acetylcholine receptors at the neuromuscular junction.",
+      "clinical_pearls": "CRITICAL: These drugs provide ZERO pain relief or sedation. The patient MUST be fully anesthetized first, or they will experience terrifying awake paralysis."
+    },
+    "pkData": {},
+    "overrides": null
+  },
+  {
+    "id": "drug_suxamethonium",
+    "name": "Suxamethonium (Succinylcholine)",
+    "type": "drug",
+    "parentId": "fam_1_1_3",
+    "atcCode": "M03AB01",
+    "clinicalData": {
+      "how_it_works_clinically": "The only depolarizing NMBA. It mimics acetylcholine, causing initial muscle fasciculations followed by persistent depolarization and paralysis.",
+      "indications": "Rapid Sequence Intubation (RSI) due to its ultra-fast onset and short duration.",
+      "adverse_effects": [
+        "Muscle fasciculations (can cause post-op myalgia)",
+        "Transient bradycardia",
+        "Increased intraocular/intragastric pressure"
+      ],
+      "clinical_pearls": "It is broken down by plasma pseudocholinesterase. If a patient has a genetic deficiency of this enzyme, paralysis can last for hours instead of minutes."
+    },
+    "pkData": {
+      "onset": "30-60 seconds",
+      "duration": "5-10 minutes",
+      "metabolism": "Plasma pseudocholinesterase"
+    },
+    "severe_molecular_risks": [
+      {
+        "risk": "Life-threatening hyperkalemia",
+        "context": "Contraindicated in major burns (>48 hours old), severe trauma, crush injuries, or denervation diseases (like ALS or spinal cord injury) due to upregulation of extrajunctional receptors."
+      },
+      {
+        "risk": "Malignant Hyperthermia trigger",
+        "context": "Absolute contraindication in patients with personal or family history of MH."
+      }
+    ],
+    "cross_classification_ids": [],
+    "overrides": {
+      "exclude_adverse_effects": [
+        "Prolonged paralysis"
+      ],
+      "modify_adverse_effects": [],
+      "add_adverse_effects": []
+    }
+  },
+  {
+    "id": "fam_1_1_4",
+    "name": "Neuromuscular Blockade Reversal Agents",
+    "type": "family",
+    "parentId": "cat_1_1",
+    "atcCode": null,
+    "clinicalData": {
+      "mechanism_of_action": "Agents used to restore neuromuscular transmission at the end of surgery so the patient can breathe on their own.",
+      "clinical_pearls": "Always confirm reversal with a peripheral nerve stimulator (Train-of-Four ratio > 0.9) before extubating."
+    },
+    "pkData": {},
+    "overrides": null
+  },
+  {
+    "id": "drug_sugammadex",
+    "name": "Sugammadex",
+    "type": "drug",
+    "parentId": "fam_1_1_4",
+    "atcCode": "V03AB35",
+    "clinicalData": {
+      "how_it_works_clinically": "A modified gamma-cyclodextrin. Think of it as a molecular 'pac-man' that encapsulates rocuronium or vecuronium in the blood, pulling it away from the neuromuscular junction instantly.",
+      "indications": "Rapid and complete reversal of rocuronium or vecuronium-induced neuromuscular blockade.",
+      "adverse_effects": [
+        "Marked bradycardia",
+        "Hypersensitivity/anaphylaxis"
+      ],
+      "clinical_pearls": "It does not cause the muscarinic side effects (salivation, bradycardia) that older reversal agents do, so you don't need to give atropine or glycopyrrolate with it."
+    },
+    "pkData": {
+      "onset": "1.5 to 3 minutes",
+      "elimination": "Renal excretion of the cyclodextrin-drug complex"
+    },
+    "severe_molecular_risks": [
+      {
+        "risk": "Interference with hormonal contraceptives",
+        "context": "Sugammadex binds to progesterone. Advise patients to use a backup non-hormonal contraceptive method for 7 days after administration."
+      }
+    ],
+    "cross_classification_ids": [],
+    "overrides": {
+      "exclude_adverse_effects": [
+        "Profound bradycardia",
+        "Salivation"
+      ],
+      "modify_adverse_effects": [],
+      "add_adverse_effects": []
+    }
+  }
+]
