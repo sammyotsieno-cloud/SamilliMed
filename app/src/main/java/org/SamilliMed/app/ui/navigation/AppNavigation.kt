@@ -247,7 +247,7 @@ fun AppNavigation(
                             }
                         }
                         pendingScanDraft = draft
-                        currentFeature = destination
+                        currentFeature = if (destination == "dashboard") null else destination
                         scanReturnFeature = null
                     }
                 )
@@ -259,7 +259,17 @@ fun AppNavigation(
                 currentFeature == "suppliers" -> PlaceholderScreen(title = "Suppliers", explanation = "Supplier entity identity is defined in database schema, but automated supplier account ledger and procurement orchestration services are pending future architectural reconciliation. Use Goods Receiving for supplier invoice & batch tracking.", onBack = { currentFeature = null })
                 currentFeature == "adjustments" -> PlaceholderScreen(title = "Stock Adjustments", explanation = "Direct stock adjustments require atomic inventory cost layer reallocation and write-off ledger reconciliation to maintain zero-drift FIFO integrity. Currently, intake is recorded via Goods Receiving and reversals via Dispensing Void.", onBack = { currentFeature = null })
                 currentFeature != null -> PlaceholderScreen(title = "Feature", onBack = { currentFeature = null })
-                currentBottomTab is BottomNavItem.Dashboard -> DashboardScreen(onFeatureClick = { route -> currentFeature = route }, modifier = Modifier.fillMaxSize())
+                currentBottomTab is BottomNavItem.Dashboard -> DashboardScreen(
+                    onFeatureClick = { route -> currentFeature = route },
+                    container = appContainer,
+                    onScanProduct = {
+                        scanReturnFeature = "dashboard"
+                        currentFeature = "product-scanner"
+                    },
+                    initialScanDraft = if (currentFeature == null) pendingScanDraft else null,
+                    onScanDraftConsumed = { pendingScanDraft = null },
+                    modifier = Modifier.fillMaxSize()
+                )
                 currentBottomTab is BottomNavItem.Notifications -> NotificationsScreen(modifier = Modifier.fillMaxSize())
                 currentBottomTab is BottomNavItem.Settings -> SettingsScreen(modifier = Modifier.fillMaxSize(), onOpenProductCategories = { currentFeature = "product-categories" }, onExportProductResearch = { currentFeature = "product-research-export" })
             }

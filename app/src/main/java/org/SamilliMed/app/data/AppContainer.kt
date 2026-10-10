@@ -25,7 +25,7 @@ class AppContainer(context: Context) {
 
     val productMasterDao: ProductMasterDao = database.productMasterDao()
     val productCategoryDao: ProductCategoryDao = database.productCategoryDao()
-    val productCategoryRepository: ProductCategoryRepository = ProductCategoryRepository(productCategoryDao)
+    val productCategoryRepository: ProductCategoryRepository = ProductCategoryRepository(productCategoryDao, context.applicationContext)
     val productRecognitionDao: ProductRecognitionDao = database.productRecognitionDao()
     val productRecognitionService: ProductRecognitionService = ProductRecognitionService(productMasterDao, productRecognitionDao, productCategoryDao)
     val productResearchExportService: ProductResearchExportService = ProductResearchExportService(productMasterDao, productCategoryDao, productRecognitionDao)

@@ -48,6 +48,11 @@ import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
+import org.SamilliMed.app.data.AppContainer
+import org.SamilliMed.app.scanner.ProductScanDraft
+import core.domain.model.ProductCategory
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 private const val PREFS_NAME = "samillimed_dashboard"
 private const val FACILITY_NAME_KEY = "facility_name"
@@ -74,7 +79,8 @@ private enum class IconKind {
 private enum class DockKind {
     Person,
     Cart,
-    Heart
+    Heart,
+    Barcode
 }
 
 private data class Feature(val title: String, val icon: IconKind, val route: String)
@@ -91,7 +97,14 @@ private val features = listOf(
 )
 
 @Composable
-fun DashboardScreen(onFeatureClick: (String) -> Unit, modifier: Modifier = Modifier) {
+fun DashboardScreen(
+    onFeatureClick: (String) -> Unit,
+    container: AppContainer? = null,
+    onScanProduct: (() -> Unit)? = null,
+    initialScanDraft: ProductScanDraft? = null,
+    onScanDraftConsumed: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     val context = LocalContext.current
     val prefs = remember(context) {
         context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
@@ -107,6 +120,25 @@ fun DashboardScreen(onFeatureClick: (String) -> Unit, modifier: Modifier = Modif
     }
     var editing by rememberSaveable { mutableStateOf(false) }
     var draft by rememberSaveable { mutableStateOf(facility) }
+
+    var showCatalogDialog by remember { mutableStateOf(false) }
+    var showRegisterProductDialog by remember { mutableStateOf(initialScanDraft != null) }
+    var categories by remember { mutableStateOf<List<ProductCategory>>(emptyList()) }
+
+    LaunchedEffect(container) {
+        if (container != null) {
+            withContext(Dispatchers.IO) {
+                container.productCategoryRepository.ensureDefaultTaxonomy()
+                categories = container.productCategoryRepository.getActive()
+            }
+        }
+    }
+
+    LaunchedEffect(initialScanDraft) {
+        if (initialScanDraft != null) {
+            showRegisterProductDialog = true
+        }
+    }
 
     fun beginEditing() {
         draft = facility
@@ -329,10 +361,42 @@ fun DashboardScreen(onFeatureClick: (String) -> Unit, modifier: Modifier = Modif
                 horizontalArrangement = Arrangement.spacedBy((tile * 0.22f).coerceIn(24.dp, 44.dp)),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                DockIcon(DockKind.Person, (tile * 0.24f).coerceIn(28.dp, 40.dp)) { onFeatureClick("settings") }
-                DockIcon(DockKind.Cart, (tile * 0.24f).coerceIn(28.dp, 40.dp)) { onFeatureClick("receiving") }
+                DockIcon(DockKind.Barcode, (tile * 0.24f).coerceIn(28.dp, 40.dp)) {
+                    if (onScanProduct != null) onScanProduct() else onFeatureClick("product-scanner")
+                }
+                DockIcon(DockKind.Cart, (tile * 0.24f).coerceIn(28.dp, 40.dp)) {
+                    if (container != null) showCatalogDialog = true else onFeatureClick("receiving")
+                }
                 DockIcon(DockKind.Heart, (tile * 0.24f).coerceIn(28.dp, 40.dp)) { onFeatureClick("dashboard") }
+                DockIcon(DockKind.Person, (tile * 0.24f).coerceIn(28.dp, 40.dp)) { onFeatureClick("settings") }
             }
+        }
+
+        if (showCatalogDialog && container != null) {
+            ProductCatalogManagementDialog(
+                container = container,
+                onDismiss = { showCatalogDialog = false },
+                onScanProduct = {
+                    showCatalogDialog = false
+                    if (onScanProduct != null) onScanProduct() else onFeatureClick("product-scanner")
+                }
+            )
+        }
+
+        if (showRegisterProductDialog && container != null) {
+            AddProductDialog(
+                container = container,
+                categories = categories,
+                initialScanDraft = initialScanDraft,
+                onDismiss = {
+                    showRegisterProductDialog = false
+                    onScanDraftConsumed()
+                },
+                onProductSaved = {
+                    showRegisterProductDialog = false
+                    onScanDraftConsumed()
+                }
+            )
         }
     }
 }
@@ -1074,8 +1138,9 @@ private fun DockIcon(
             .semantics {
                 contentDescription = when (kind) {
                     DockKind.Person -> "Settings"
-                    DockKind.Cart -> "Goods receiving"
+                    DockKind.Cart -> "Product Catalog & Receiving"
                     DockKind.Heart -> "Dashboard"
+                    DockKind.Barcode -> "Barcode Scanner"
                 }
                 role = Role.Button
             },
@@ -1086,6 +1151,15 @@ private fun DockIcon(
             val s = Stroke(width = stroke, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
             when (kind) {
+                DockKind.Barcode -> {
+                    val w = size.width
+                    val h = size.height
+                    drawLine(ICON_SAGE, Offset(w * 0.16f, h * 0.22f), Offset(w * 0.16f, h * 0.78f), stroke * 1.5f)
+                    drawLine(ICON_SAGE, Offset(w * 0.32f, h * 0.22f), Offset(w * 0.32f, h * 0.78f), stroke * 0.8f)
+                    drawLine(ICON_SAGE, Offset(w * 0.48f, h * 0.22f), Offset(w * 0.48f, h * 0.78f), stroke * 1.3f)
+                    drawLine(ICON_SAGE, Offset(w * 0.64f, h * 0.22f), Offset(w * 0.64f, h * 0.78f), stroke * 0.9f)
+                    drawLine(ICON_SAGE, Offset(w * 0.82f, h * 0.22f), Offset(w * 0.82f, h * 0.78f), stroke * 1.5f)
+                }
                 DockKind.Person -> {
                     // Head circle
                     drawCircle(ICON_SAGE, size.minDimension * 0.19f, Offset(size.width * 0.50f, size.height * 0.28f), style = s)

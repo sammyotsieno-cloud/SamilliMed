@@ -1,18 +1,25 @@
 package core.domain.category
 
+import android.content.Context
 import core.domain.model.ProductCategory
 import core.domain.persistence.ProductCategoryDao
 import java.util.UUID
 
 class ProductCategoryRepository(
-    private val dao: ProductCategoryDao
+    private val dao: ProductCategoryDao,
+    private val context: Context? = null
 ) {
     private val validator = ProductCategoryValidator(dao)
 
-    suspend fun ensureDefaultTaxonomy(): Int = ProductCategorySeeder.ensureDefaultTaxonomy(dao)
+    suspend fun ensureDefaultTaxonomy(): Int = ProductCategorySeeder.ensureDefaultTaxonomy(dao, context)
     suspend fun getAll(): List<ProductCategory> = dao.getAll()
     suspend fun getActive(): List<ProductCategory> = dao.getActive()
+    suspend fun getRoots(): List<ProductCategory> = dao.getRoots()
+    suspend fun getChildren(parentId: String): List<ProductCategory> = dao.getChildren(parentId)
+    suspend fun countChildren(parentId: String): Int = dao.countChildren(parentId)
+    suspend fun countProducts(categoryId: String): Int = dao.countProducts(categoryId)
     suspend fun getById(id: String): ProductCategory? = dao.getById(id)
+    suspend fun search(query: String): List<ProductCategory> = dao.searchByName(query.trim())
 
     suspend fun getAncestors(categoryId: String): List<ProductCategory> {
         val result = mutableListOf<ProductCategory>()
@@ -32,10 +39,28 @@ class ProductCategoryRepository(
     }
 
     suspend fun create(name: String, parentId: String? = null, description: String? = null): ProductCategory {
-        val id = UUID.randomUUID().toString()
+        val siblingCount = parentId?.let { dao.countChildren(it) } ?: dao.getRoots().size
+        // Canonical dot-notation ID if parent follows numeric/dot convention (Option 2)
+        val id = if (parentId != null) {
+            var candidate = "${parentId}.${siblingCount + 1}"
+            var offset = 1
+            while (dao.getById(candidate) != null) {
+                candidate = "${parentId}.${siblingCount + 1 + offset}"
+                offset++
+            }
+            candidate
+        } else {
+            var candidate = "${siblingCount + 1}"
+            var offset = 1
+            while (dao.getById(candidate) != null) {
+                candidate = "${siblingCount + 1 + offset}"
+                offset++
+            }
+            candidate
+        }
+
         validator.validateParentChange(id, parentId, name)
         val now = System.currentTimeMillis()
-        val siblingCount = parentId?.let { dao.countChildren(it) } ?: dao.getRoots().size
         val category = ProductCategory(
             id = id,
             parentCategoryId = parentId,

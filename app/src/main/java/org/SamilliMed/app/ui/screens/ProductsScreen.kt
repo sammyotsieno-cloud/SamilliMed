@@ -1,6 +1,13 @@
 package org.SamilliMed.app.ui.screens
 
+import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,37 +22,45 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Biotech
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.ChildCare
+import androidx.compose.material.icons.filled.CleanHands
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Healing
+import androidx.compose.material.icons.filled.LocalHospital
 import androidx.compose.material.icons.filled.Medication
+import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Restaurant
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.Spa
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -55,35 +70,27 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import core.domain.model.Money
-import core.domain.model.PharmaceuticalDetail
-import core.domain.model.ProductImage
-import org.SamilliMed.app.scanner.ProductScanDraft
-import android.net.Uri
-import core.domain.model.ProductMaster
+import androidx.compose.ui.unit.sp
 import core.domain.model.ProductCategory
-import core.domain.model.ProductRecognitionIdentifier
-import core.domain.model.ProductRecognitionObservation
-import core.domain.model.ProductUnit
-import core.domain.model.QuantityScale
-import core.domain.model.UnitPriceConfig
+import core.domain.model.ProductMaster
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.SamilliMed.app.data.AppContainer
-import java.util.UUID
+import org.SamilliMed.app.scanner.ProductScanDraft
 
-data class ProductWithDetails(
-    val product: ProductMaster,
-    val units: List<ProductUnit>,
-    val priceConfigsByUnitId: Map<String, UnitPriceConfig>
-)
+private val TEXT_PRIMARY = Color(0xFF23201D)
+private val TEXT_MUTED = Color(0xFF6B655D)
+private val BAR_SURFACE = Color(0xFFFAF7F2)
+private val BAR_BORDER = Color(0xFFE5DFD5)
+private val ACCENT_GREEN = Color(0xFF2E6B4E)
+private val ACCENT_TEAL = Color(0xFF285E61)
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProductsScreen(
     container: AppContainer,
@@ -93,1394 +100,893 @@ fun ProductsScreen(
     onScanDraftConsumed: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val snackbarHostState = remember { SnackbarHostState() }
 
-    var productsWithDetails by remember { mutableStateOf<List<ProductWithDetails>>(emptyList()) }
+    // Navigation Stack representing progressive drill-down
+    var navigationStack by remember { mutableStateOf<List<ProductCategory>>(emptyList()) }
+    val currentParent = navigationStack.lastOrNull()
+
+    // Current category level items
+    var displayedCategories by remember { mutableStateOf<List<ProductCategory>>(emptyList()) }
+    var childCounts by remember { mutableStateOf<Map<String, Int>>(emptyMap()) }
+    var productsInCurrentCategory by remember { mutableStateOf<List<ProductMaster>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
+
+    // Search state
+    var isSearchActive by remember { mutableStateOf(false) }
     var searchQuery by remember { mutableStateOf("") }
+    var searchResults by remember { mutableStateOf<List<ProductCategory>>(emptyList()) }
+    var isSearching by remember { mutableStateOf(false) }
 
-    var showAddProductDialog by remember { mutableStateOf(initialScanDraft != null) }
-    var selectedProductForDetails by remember { mutableStateOf<ProductWithDetails?>(null) }
-    var showAddUnitDialogForProduct by remember { mutableStateOf<ProductMaster?>(null) }
-    var showEditPriceDialogForUnit by remember {
-        mutableStateOf<Pair<ProductUnit, UnitPriceConfig?>?>(null)
+    // Dialog states for complete editability
+    var showAddCategoryDialog by remember { mutableStateOf(false) }
+    var categoryToEdit by remember { mutableStateOf<ProductCategory?>(null) }
+    var categoryToDelete by remember { mutableStateOf<ProductCategory?>(null) }
+    var selectedDrugDetail by remember { mutableStateOf<ProductCategory?>(null) }
+
+    // Intercept hardware/system back button to pop one hierarchy level
+    BackHandler(enabled = navigationStack.isNotEmpty()) {
+        navigationStack = navigationStack.dropLast(1)
     }
-    var categories by remember { mutableStateOf<List<ProductCategory>>(emptyList()) }
-    var showCategoryPicker by remember { mutableStateOf(false) }
-    var selectedCategoryId by remember { mutableStateOf<String?>(null) }
 
-    fun refreshProducts() {
+    fun refreshCurrentLevel() {
         scope.launch {
             isLoading = true
+            withContext(Dispatchers.IO) {
+                container.productCategoryRepository.ensureDefaultTaxonomy()
 
-            val loaded = withContext(Dispatchers.IO) {
-                val products = container.productMasterDao.getAllProducts()
-                val allUnits = container.productMasterDao.getAllUnits()
-                val allPrices = container.productMasterDao.getAllPriceConfigs()
+                val items = if (currentParent == null) {
+                    container.productCategoryRepository.getRoots()
+                } else {
+                    container.productCategoryRepository.getChildren(currentParent.id)
+                }
 
-                val unitsByProductId = allUnits.groupBy { it.productId }
-                val pricesByUnitId = allPrices.associateBy { it.productUnitId }
+                val counts = mutableMapOf<String, Int>()
+                for (cat in items) {
+                    counts[cat.id] = container.productCategoryRepository.countChildren(cat.id)
+                }
 
-                products.map { product ->
-                    ProductWithDetails(
-                        product = product,
-                        units = unitsByProductId[product.id] ?: emptyList(),
-                        priceConfigsByUnitId = pricesByUnitId
-                    )
+                val prods = if (currentParent != null) {
+                    container.productMasterDao.getProductsByCategoryId(currentParent.id)
+                } else emptyList()
+
+                withContext(Dispatchers.Main) {
+                    displayedCategories = items
+                    childCounts = counts
+                    productsInCurrentCategory = prods
+                    isLoading = false
                 }
             }
-
-            productsWithDetails = loaded
-            isLoading = false
         }
     }
 
-    LaunchedEffect(Unit) {
-        refreshProducts()
-        categories = withContext(Dispatchers.IO) {
-            container.productCategoryRepository.ensureDefaultTaxonomy()
-            container.productCategoryRepository.getActive()
-        }
+    LaunchedEffect(currentParent) {
+        refreshCurrentLevel()
     }
 
-    val filteredProducts = remember(productsWithDetails, searchQuery) {
+    // Live search query handling
+    LaunchedEffect(searchQuery) {
         if (searchQuery.isBlank()) {
-            productsWithDetails
+            searchResults = emptyList()
+            isSearching = false
         } else {
-            val q = searchQuery.trim().lowercase()
-
-            productsWithDetails.filter {
-                it.product.brandName?.lowercase()?.contains(q) == true ||
-                    it.product.genericName?.lowercase()?.contains(q) == true ||
-                    it.product.manufacturer?.lowercase()?.contains(q) == true ||
-                    it.product.productType?.lowercase()?.contains(q) == true
+            isSearching = true
+            val query = searchQuery.trim()
+            val results = withContext(Dispatchers.IO) {
+                container.productCategoryRepository.search(query)
             }
+            searchResults = results
+            isSearching = false
         }
     }
 
-    Scaffold(
-        modifier = modifier.fillMaxSize(),
-        snackbarHost = {
-            SnackbarHost(snackbarHostState)
-        },
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text("Products")
-                },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back"
-                        )
-                    }
-                }
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    showAddProductDialog = true
-                },
-                containerColor = MaterialTheme.colorScheme.primary
-            ) {
-                Icon(
-                    Icons.Default.Add,
-                    contentDescription = "Add Product"
-                )
-            }
-        }
-    ) { innerPadding ->
-
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
 
-            OutlinedButton(
-                onClick = onScanProduct,
+            // ==========================================
+            // 1. SEAMLESS TOP HEADER BAR
+            // ==========================================
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp)
+                    .padding(top = 8.dp, bottom = 4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Icon(
-                    Icons.Default.CameraAlt,
-                    contentDescription = null,
-                    modifier = Modifier.size(20.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text("Scan Product")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    IconButton(
+                        onClick = {
+                            if (navigationStack.isNotEmpty()) {
+                                navigationStack = navigationStack.dropLast(1)
+                            } else {
+                                onBack()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Back",
+                            tint = TEXT_PRIMARY
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.width(4.dp))
+
+                    Column {
+                        Text(
+                            text = "Products Database",
+                            style = MaterialTheme.typography.titleLarge.copy(
+                                fontWeight = FontWeight.Bold,
+                                letterSpacing = (-0.2).sp
+                            ),
+                            color = TEXT_PRIMARY
+                        )
+                        Text(
+                            text = if (currentParent == null) "Reference Taxonomy & Medical Formulations"
+                            else currentParent.name,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TEXT_MUTED,
+                            maxLines = 1
+                        )
+                    }
+                }
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = { isSearchActive = !isSearchActive }) {
+                        Icon(
+                            if (isSearchActive) Icons.Default.Close else Icons.Default.Search,
+                            contentDescription = "Search Database",
+                            tint = TEXT_PRIMARY
+                        )
+                    }
+
+                    IconButton(onClick = { showAddCategoryDialog = true }) {
+                        Icon(
+                            Icons.Default.Add,
+                            contentDescription = "Add Category",
+                            tint = ACCENT_GREEN
+                        )
+                    }
+                }
             }
 
-            OutlinedTextField(
-                value = searchQuery,
-                onValueChange = {
-                    searchQuery = it
-                },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp),
-                placeholder = {
-                    Text("Search by brand, generic name, type...")
-                },
-                leadingIcon = {
-                    Icon(
-                        Icons.Default.Search,
-                        contentDescription = null
+            // ==========================================
+            // 2. SEARCH BAR (COLLAPSIBLE)
+            // ==========================================
+            AnimatedVisibility(visible = isSearchActive) {
+                Column(modifier = Modifier.padding(bottom = 8.dp)) {
+                    OutlinedTextField(
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        placeholder = { Text("Search classes, substances, or formulations...") },
+                        leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                        trailingIcon = {
+                            if (searchQuery.isNotEmpty()) {
+                                IconButton(onClick = { searchQuery = "" }) {
+                                    Icon(Icons.Default.Close, contentDescription = "Clear")
+                                }
+                            }
+                        },
+                        singleLine = true,
+                        shape = RoundedCornerShape(12.dp),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
                     )
-                },
-                trailingIcon = {
-                    if (searchQuery.isNotEmpty()) {
-                        IconButton(
-                            onClick = {
-                                searchQuery = ""
+                }
+            }
+
+            // ==========================================
+            // 3. CLINICAL BREADCRUMB NAVIGATION
+            // ==========================================
+            if (navigationStack.isNotEmpty() && !isSearchActive) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .horizontalScroll(rememberScrollState())
+                        .padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color.Transparent,
+                        modifier = Modifier.clickable { navigationStack = emptyList() }
+                    ) {
+                        Text(
+                            text = "All Categories",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = ACCENT_TEAL,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+                        )
+                    }
+
+                    navigationStack.forEachIndexed { index, ancestor ->
+                        Icon(
+                            Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                            tint = TEXT_MUTED
+                        )
+
+                        val isLast = index == navigationStack.lastIndex
+                        Surface(
+                            shape = RoundedCornerShape(8.dp),
+                            color = if (isLast) Color(0xFFE9E4DC) else Color.Transparent,
+                            modifier = Modifier.clickable {
+                                navigationStack = navigationStack.take(index + 1)
                             }
                         ) {
-                            Icon(
-                                Icons.Default.Close,
-                                contentDescription = "Clear"
+                            Text(
+                                text = ancestor.name,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = if (isLast) TEXT_PRIMARY else ACCENT_TEAL,
+                                fontWeight = if (isLast) FontWeight.Bold else FontWeight.Medium,
+                                modifier = Modifier.padding(horizontal = 6.dp, vertical = 4.dp)
                             )
                         }
                     }
-                },
-                singleLine = true
-            )
+                }
+            }
 
+            // ==========================================
+            // 4. MAIN HIERARCHY CONTENT
+            // ==========================================
             if (isLoading) {
-
                 Box(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.Center
                 ) {
-                    CircularProgressIndicator()
+                    CircularProgressIndicator(color = ACCENT_GREEN)
                 }
-
-            } else if (filteredProducts.isEmpty()) {
-
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(32.dp),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
+            } else if (isSearchActive && searchQuery.isNotBlank()) {
+                // Search Mode
+                if (isSearching) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator(color = ACCENT_GREEN)
+                    }
+                } else if (searchResults.isEmpty()) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text("No matching categories or substances found.", style = MaterialTheme.typography.bodyMedium, color = TEXT_MUTED)
+                    }
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Medication,
-                            contentDescription = null,
-                            modifier = Modifier.size(64.dp),
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                alpha = 0.5f
+                        items(searchResults) { resultCat ->
+                            CategoryHorizontalBar(
+                                category = resultCat,
+                                childCount = childCounts[resultCat.id] ?: 0,
+                                isLeaf = false,
+                                onClick = {
+                                    scope.launch {
+                                        val ancestors = container.productCategoryRepository.getAncestors(resultCat.id)
+                                        navigationStack = ancestors + resultCat
+                                        isSearchActive = false
+                                        searchQuery = ""
+                                    }
+                                },
+                                onEdit = { categoryToEdit = resultCat },
+                                onDelete = { categoryToDelete = resultCat }
                             )
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = if (searchQuery.isBlank()) {
-                                "No products registered yet"
-                            } else {
-                                "No matching products found"
-                            },
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
-                        Spacer(modifier = Modifier.height(8.dp))
-
-                        Text(
-                            text = if (searchQuery.isBlank()) {
-                                "Tap the + button to register your first product."
-                            } else {
-                                "Try a different search query."
-                            },
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(
-                                alpha = 0.7f
-                            )
-                        )
+                        }
                     }
                 }
-
             } else {
+                // Normal Progressive Hierarchy
+                val isTerminalLeaf = displayedCategories.isEmpty()
 
                 LazyColumn(
                     modifier = Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(
-                        filteredProducts,
-                        key = { it.product.id }
-                    ) { item ->
+                    if (!isTerminalLeaf) {
+                        // Subclasses / Subcategories Listed Downwards as Horizontal Bars
+                        items(displayedCategories) { cat ->
+                            val childrenCount = childCounts[cat.id] ?: 0
+                            val isSubstance = childrenCount == 0 && currentParent != null
 
-                        val product = item.product
-                        val baseUnit = item.units.firstOrNull { it.isBaseUnit }
-                        val basePrice = baseUnit?.let {
-                            item.priceConfigsByUnitId[it.id]
+                            CategoryHorizontalBar(
+                                category = cat,
+                                childCount = childrenCount,
+                                isLeaf = isSubstance,
+                                onClick = {
+                                    if (isSubstance) {
+                                        selectedDrugDetail = cat
+                                    } else {
+                                        navigationStack = navigationStack + cat
+                                    }
+                                },
+                                onEdit = { categoryToEdit = cat },
+                                onDelete = { categoryToDelete = cat }
+                            )
                         }
+                    } else {
+                        // Leaf view: Reached individual substance or terminal drug level
+                        item {
+                            currentParent?.let { parentNode ->
+                                TerminalSubstanceProfileCard(
+                                    substance = parentNode,
+                                    registeredProducts = productsInCurrentCategory,
+                                    onEdit = { categoryToEdit = parentNode },
+                                    onRegisterFormulation = {
+                                        // User can register a physical product under this substance
+                                        showAddCategoryDialog = true
+                                    }
+                                )
+                            }
+                        }
+                    }
 
-                        Card(
+                    // Add Subcategory / Substance Action at bottom of list
+                    item {
+                        OutlinedButton(
+                            onClick = { showAddCategoryDialog = true },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable {
-                                    selectedProductForDetails = item
-                                },
-                            colors = CardDefaults.cardColors(
-                                containerColor = if (product.isActive) {
-                                    MaterialTheme.colorScheme.surface
-                                } else {
-                                    MaterialTheme.colorScheme.surfaceVariant.copy(
-                                        alpha = 0.6f
-                                    )
-                                }
-                            ),
-                            elevation = CardDefaults.cardElevation(
-                                defaultElevation = 1.dp
-                            )
+                                .padding(vertical = 12.dp),
+                            shape = RoundedCornerShape(12.dp),
+                            border = BorderStroke(1.dp, ACCENT_GREEN.copy(alpha = 0.5f))
                         ) {
-
-                            Column(
-                                modifier = Modifier.padding(16.dp)
-                            ) {
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
-                                ) {
-
-                                    Column(
-                                        modifier = Modifier.weight(1f)
-                                    ) {
-                                        Text(
-                                            text = product.displayName,
-                                            style = MaterialTheme.typography.titleMedium,
-                                            fontWeight = FontWeight.SemiBold
-                                        )
-
-                                        if (
-                                            !product.productType.isNullOrBlank() ||
-                                            !product.manufacturer.isNullOrBlank()
-                                        ) {
-                                            val subtitle = listOfNotNull(
-                                                product.productType,
-                                                product.manufacturer
-                                            ).joinToString(" • ")
-
-                                            Text(
-                                                text = subtitle,
-                                                style = MaterialTheme.typography.bodySmall,
-                                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                                            )
-                                        }
-                                    }
-
-                                    Surface(
-                                        color = if (product.isActive) {
-                                            MaterialTheme.colorScheme.primaryContainer
-                                        } else {
-                                            MaterialTheme.colorScheme.errorContainer
-                                        },
-                                        shape = MaterialTheme.shapes.small
-                                    ) {
-                                        Text(
-                                            text = if (product.isActive) {
-                                                "Active"
-                                            } else {
-                                                "Retired"
-                                            },
-                                            modifier = Modifier.padding(
-                                                horizontal = 8.dp,
-                                                vertical = 2.dp
-                                            ),
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = if (product.isActive) {
-                                                MaterialTheme.colorScheme.onPrimaryContainer
-                                            } else {
-                                                MaterialTheme.colorScheme.onErrorContainer
-                                            }
-                                        )
-                                    }
-                                }
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                HorizontalDivider(
-                                    color = MaterialTheme.colorScheme.outlineVariant.copy(
-                                        alpha = 0.5f
-                                    )
-                                )
-
-                                Spacer(modifier = Modifier.height(8.dp))
-
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    horizontalArrangement = Arrangement.SpaceBetween
-                                ) {
-
-                                    Column {
-                                        Text(
-                                            text = "Units: ${item.units.size} configured",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-
-                                        Text(
-                                            text = "Precision: ${product.quantityScale.decimalPlaces} decimal place(s)",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
-
-                                    if (baseUnit != null) {
-
-                                        val priceStr = basePrice?.sellingPrice?.let {
-                                            "KES ${(it.amountMinorUnits / 100)}." +
-                                                (it.amountMinorUnits % 100)
-                                                    .toString()
-                                                    .padStart(2, '0')
-                                        } ?: "Price not set"
-
-                                        Text(
-                                            text = "Base (${baseUnit.name}): $priceStr",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            fontWeight = FontWeight.Medium,
-                                            color = MaterialTheme.colorScheme.primary
-                                        )
-                                    }
-                                }
-                            }
+                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp), tint = ACCENT_GREEN)
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                text = if (currentParent == null) "Add New Primary Category"
+                                else "Add Subcategory to ${currentParent.name}",
+                                color = ACCENT_GREEN,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
                 }
             }
         }
-    }
 
-    selectedProductForDetails?.let { details ->
-
-        val product = details.product
-
-        AlertDialog(
-            onDismissRequest = {
-                selectedProductForDetails = null
-            },
-            title = {
-                Text(product.displayName)
-            },
-            text = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-
-                    if (!product.brandName.isNullOrBlank()) {
-                        Text(
-                            "Brand: ${product.brandName}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
-                    if (!product.genericName.isNullOrBlank()) {
-                        Text(
-                            "Generic: ${product.genericName}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
-                    if (!product.productType.isNullOrBlank()) {
-                        Text(
-                            "Type: ${product.productType}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
-                    if (!product.manufacturer.isNullOrBlank()) {
-                        Text(
-                            "Manufacturer: ${product.manufacturer}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
-                    if (!product.description.isNullOrBlank()) {
-                        Text(
-                            "Description: ${product.description}",
-                            style = MaterialTheme.typography.bodyMedium
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    Text(
-                        text = "Quantity Policy",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "Precision: ${product.quantityScale.decimalPlaces} decimal place(s)",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Text(
-                        text = "Minimum transaction increment: ${
-                            product.quantityScale.fromStorageUnits(
-                                product.minimumTransactionIncrementStorageUnits
-                            )
-                        } ${details.units.firstOrNull { it.isBaseUnit }?.name ?: "base units"}",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Configured Commercial Units",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    details.units.forEach { unit ->
-
-                        val priceConfig =
-                            details.priceConfigsByUnitId[unit.id]
-
-                        val priceStr = priceConfig?.sellingPrice?.let {
-                            "KES ${(it.amountMinorUnits / 100)}." +
-                                (it.amountMinorUnits % 100)
-                                    .toString()
-                                    .padStart(2, '0')
-                        } ?: "No price"
-
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceVariant
-                            )
-                        ) {
-
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(8.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-
-                                Column(
-                                    modifier = Modifier.weight(1f)
-                                ) {
-
-                                    Row(
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-
-                                        Text(
-                                            text = unit.name +
-                                                (unit.abbreviation?.let {
-                                                    " ($it)"
-                                                } ?: ""),
-                                            fontWeight = FontWeight.SemiBold,
-                                            style = MaterialTheme.typography.bodyMedium
-                                        )
-
-                                        if (unit.isBaseUnit) {
-                                            Text(
-                                                text = " [BASE]",
-                                                color = MaterialTheme.colorScheme.primary,
-                                                style = MaterialTheme.typography.labelSmall
-                                            )
-                                        }
-                                    }
-
-                                    Text(
-                                        text = if (unit.isBaseUnit) {
-                                            "Canonical conversion: 1/1 base unit"
-                                        } else {
-                                            "Conversion: ${unit.conversionFraction} base units"
-                                        },
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-
-                                    Text(
-                                        text = "Selling Price: $priceStr",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.secondary,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                }
-
-                                IconButton(
-                                    onClick = {
-                                        showEditPriceDialogForUnit =
-                                            Pair(unit, priceConfig)
-                                    }
-                                ) {
-                                    Icon(
-                                        Icons.Default.Edit,
-                                        contentDescription = "Edit Price",
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    OutlinedButton(
-                        onClick = {
-                            showAddUnitDialogForProduct = product
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Icon(
-                            Icons.Default.Add,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-
-                        Spacer(modifier = Modifier.width(4.dp))
-
-                        Text("Add Commercial Unit")
-                    }
-
-                    Spacer(modifier = Modifier.height(4.dp))
-
-                    OutlinedButton(
-                        onClick = {
-                            scope.launch {
-
-                                withContext(Dispatchers.IO) {
-                                    container.productMasterDao.updateProduct(
-                                        product.copy(
-                                            isActive = !product.isActive,
-                                            updatedAt = System.currentTimeMillis()
-                                        )
-                                    )
-                                }
-
-                                selectedProductForDetails = null
-                                refreshProducts()
-
-                                snackbarHostState.showSnackbar(
-                                    "Product status updated"
-                                )
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            if (product.isActive) {
-                                "Retire Product"
-                            } else {
-                                "Reactivate Product"
-                            }
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(
-                    onClick = {
-                        selectedProductForDetails = null
-                    }
-                ) {
-                    Text("Close")
-                }
-            }
-        )
-    }
-
-    if (showCategoryPicker) {
-        ProductCategoryPickerDialog(
-            categories = categories,
-            selectedId = selectedCategoryId,
-            onSelect = { selectedCategoryId = it; showCategoryPicker = false },
-            onDismiss = { showCategoryPicker = false }
-        )
-    }
-
-    if (showAddProductDialog) {
-
-        var brandName by remember { mutableStateOf(initialScanDraft?.brandName ?: "") }
-        var genericName by remember { mutableStateOf(initialScanDraft?.genericName ?: "") }
-        var productType by remember { mutableStateOf(initialScanDraft?.productType ?: "") }
-        var manufacturer by remember { mutableStateOf(initialScanDraft?.manufacturer ?: "") }
-        var description by remember { mutableStateOf(initialScanDraft?.description ?: "") }
-
-        var activeIngredients by remember { mutableStateOf(initialScanDraft?.activeIngredients ?: "") }
-        var strength by remember { mutableStateOf(initialScanDraft?.strength ?: "") }
-        var dosageForm by remember { mutableStateOf(initialScanDraft?.dosageForm ?: "") }
-        var route by remember { mutableStateOf(initialScanDraft?.route ?: "") }
-        var therapeuticCategory by remember { mutableStateOf(initialScanDraft?.therapeuticCategory ?: "") }
-        var prescriptionClassification by remember { mutableStateOf(initialScanDraft?.prescriptionClassification ?: "") }
-        var storageCondition by remember { mutableStateOf(initialScanDraft?.storageCondition ?: "") }
-        var scannedImageUris by remember { mutableStateOf(initialScanDraft?.sourceImageUris ?: emptyList()) }
-        
-        var baseUnitName by remember { mutableStateOf("") }
-        var baseUnitAbbr by remember { mutableStateOf("") }
-
-        var quantityScaleInput by remember { mutableStateOf("0") }
-        var minimumIncrementInput by remember { mutableStateOf("1") }
-
-        var initialPriceMajor by remember { mutableStateOf("") }
-
-        var errorMessage by remember {
-            mutableStateOf<String?>(null)
-        }
-
-        AlertDialog(
-            onDismissRequest = {
-                showAddProductDialog = false
-                onScanDraftConsumed()
-            },
-            title = {
-                Text("Register New Product")
-            },
-            text = {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-
-                    OutlinedTextField(
-                        value = brandName,
-                        onValueChange = {
-                            brandName = it
-                        },
-                        label = {
-                            Text("Brand / Trade Name")
-                        },
-                        placeholder = {
-                            Text("e.g. Panadol, Amoxil")
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = genericName,
-                        onValueChange = {
-                            genericName = it
-                        },
-                        label = {
-                            Text("Generic / INN Name")
-                        },
-                        placeholder = {
-                            Text("e.g. Paracetamol 500mg")
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = productType,
-                        onValueChange = {
-                            productType = it
-                        },
-                        label = {
-                            Text("Product Type")
-                        },
-                        placeholder = {
-                            Text("e.g. Tablet, Capsule, Syrup, Vial")
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = manufacturer,
-                        onValueChange = {
-                            manufacturer = it
-                        },
-                        label = {
-                            Text("Manufacturer")
-                        },
-                        placeholder = {
-                            Text("e.g. GSK, Dawa Ltd")
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(value = activeIngredients, onValueChange = { activeIngredients = it }, label = { Text("Active Ingredient(s) (Optional)") }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = strength, onValueChange = { strength = it }, label = { Text("Strength (Optional)") }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = dosageForm, onValueChange = { dosageForm = it }, label = { Text("Dosage Form (Optional)") }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = route, onValueChange = { route = it }, label = { Text("Route (Optional)") }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = therapeuticCategory, onValueChange = { therapeuticCategory = it }, label = { Text("Therapeutic Category (Optional)") }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = prescriptionClassification, onValueChange = { prescriptionClassification = it }, label = { Text("Prescription Classification (Optional)") }, modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = storageCondition, onValueChange = { storageCondition = it }, label = { Text("Storage Condition (Optional)") }, modifier = Modifier.fillMaxWidth())
-
-                    OutlinedButton(
-                        onClick = { showCategoryPicker = true },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        val selected = categories.firstOrNull { it.id == selectedCategoryId }
-                        Text(
-                            if (selected == null) "Select Primary Product Category"
-                            else "Category: " + selected.name
-                        )
-                    }
-
-                    OutlinedTextField(
-                        value = description,
-                        onValueChange = {
-                            description = it
-                        },
-                        label = {
-                            Text("Description / Notes (Optional)")
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Canonical Base Unit",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    OutlinedTextField(
-                        value = baseUnitName,
-                        onValueChange = {
-                            baseUnitName = it
-                        },
-                        label = {
-                            Text("Base Unit Name *")
-                        },
-                        placeholder = {
-                            Text("e.g. Tablet, Capsule, mL, Piece")
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = baseUnitAbbr,
-                        onValueChange = {
-                            baseUnitAbbr = it
-                        },
-                        label = {
-                            Text("Abbreviation (Optional)")
-                        },
-                        placeholder = {
-                            Text("e.g. tab, cap, mL")
-                        },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = "Quantity Policy",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "Quantity scale controls decimal precision. It is separate from packaging conversions.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    OutlinedTextField(
-                        value = quantityScaleInput,
-                        onValueChange = {
-                            quantityScaleInput = it
-                        },
-                        label = {
-                            Text("Quantity Scale (0–6) *")
-                        },
-                        placeholder = {
-                            Text("0 = whole units, 3 = 0.001 precision")
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = minimumIncrementInput,
-                        onValueChange = {
-                            minimumIncrementInput = it
-                        },
-                        label = {
-                            Text("Minimum Transaction Increment (storage units) *")
-                        },
-                        placeholder = {
-                            Text("e.g. 1 at scale 0, 500 at scale 3 for 0.5")
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number
-                        ),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = initialPriceMajor,
-                        onValueChange = {
-                            initialPriceMajor = it
-                        },
-                        label = {
-                            Text("Selling Price per Base Unit (KES) *")
-                        },
-                        placeholder = {
-                            Text("e.g. 5 or 10.50")
-                        },
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Decimal
-                        ),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    errorMessage?.let {
-                        Text(
-                            text = it,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-
-                Button(
-                    onClick = {
-
-                        if (
-                            brandName.isBlank() &&
-                            genericName.isBlank()
-                        ) {
-                            errorMessage =
-                                "Provide at least a brand name or a generic name."
-                            return@Button
-                        }
-
-                        if (baseUnitName.isBlank()) {
-                            errorMessage =
-                                "Base unit name is required."
-                            return@Button
-                        }
-
-                        val quantityScale = try {
-                            QuantityScale.fromInt(
-                                quantityScaleInput.trim().toInt()
-                            )
-                        } catch (_: Exception) {
-                            errorMessage =
-                                "Quantity scale must be an integer from 0 to 6."
-                            return@Button
-                        }
-
-                        val minimumIncrement =
-                            minimumIncrementInput.trim().toLongOrNull()
-
-                        if (
-                            minimumIncrement == null ||
-                            minimumIncrement <= 0L
-                        ) {
-                            errorMessage =
-                                "Minimum transaction increment must be a positive whole number."
-                            return@Button
-                        }
-
-                        val priceMinor = try {
-                            Money.fromDecimalString(
-                                initialPriceMajor.trim()
-                            ).amountMinorUnits
-                        } catch (_: Exception) {
-                            errorMessage =
-                                "Enter a valid non-negative selling price."
-                            return@Button
-                        }
-
-                        scope.launch {
-
-                            val now =
-                                System.currentTimeMillis()
-
-                            val productId =
-                                UUID.randomUUID().toString()
-
-                            val unitId =
-                                UUID.randomUUID().toString()
-
-                            val priceConfigId =
-                                UUID.randomUUID().toString()
-
-                            val product = ProductMaster(
-                                id = productId,
-                                brandName = brandName
-                                    .trim()
-                                    .ifBlank { null },
-                                genericName = genericName
-                                    .trim()
-                                    .ifBlank { null },
-                                productType = productType
-                                    .trim()
-                                    .ifBlank { null },
-                                manufacturer = manufacturer
-                                    .trim()
-                                    .ifBlank { null },
-                                categoryId = selectedCategoryId,
+        // ==========================================
+        // 5. DIALOGS FOR FULL DATABASE EDITABILITY
+        // ==========================================
+
+        // A. Add Category / Subcategory Dialog
+        if (showAddCategoryDialog) {
+            AddCategoryDialog(
+                parent = currentParent,
+                onDismiss = { showAddCategoryDialog = false },
+                onSave = { name, description ->
+                    scope.launch {
+                        withContext(Dispatchers.IO) {
+                            container.productCategoryRepository.create(
+                                name = name,
+                                parentId = currentParent?.id,
                                 description = description
-                                    .trim()
-                                    .ifBlank { null },
-                                quantityScale = quantityScale,
-                                minimumTransactionIncrementStorageUnits =
-                                    minimumIncrement,
-                                isActive = true,
-                                createdAt = now,
-                                updatedAt = now
-                            )
-
-                            val baseUnit = ProductUnit(
-                                id = unitId,
-                                productId = productId,
-                                name = baseUnitName.trim(),
-                                abbreviation = baseUnitAbbr
-                                    .trim()
-                                    .ifBlank { null },
-                                conversionNumerator = 1L,
-                                conversionDenominator = 1L,
-                                isBaseUnit = true,
-                                isPurchaseUnit = true,
-                                isDispensingUnit = true,
-                                isDisplayUnit = true,
-                                isActive = true,
-                                sortOrder = 0,
-                                createdAt = now,
-                                updatedAt = now
-                            )
-
-                            val priceConfig = UnitPriceConfig(
-                                id = priceConfigId,
-                                productUnitId = unitId,
-                                sellingPrice = Money(priceMinor),
-                                isActive = true,
-                                createdAt = now,
-                                updatedAt = now
-                            )
-
-                            withContext(Dispatchers.IO) {
-                                container.productMasterDao.insertProduct(product)
-
-                                initialScanDraft?.barcodeValue?.trim()?.takeIf { it.isNotBlank() }?.let { barcode ->
-                                    val normalizedBarcode =
-                                        core.domain.recognition.ProductRecognitionService.normalize(barcode)
-                                    val existingIdentifier =
-                                        container.productRecognitionDao.findIdentifier(
-                                            ProductRecognitionIdentifier.TYPE_BARCODE,
-                                            normalizedBarcode
-                                        )
-                                    if (existingIdentifier == null) {
-                                        container.productRecognitionDao.insertIdentifier(
-                                            ProductRecognitionIdentifier(
-                                                id = UUID.randomUUID().toString(),
-                                                productId = productId,
-                                                identifierType = ProductRecognitionIdentifier.TYPE_BARCODE,
-                                                normalizedValue = normalizedBarcode,
-                                                rawValue = barcode,
-                                                format = initialScanDraft.barcodeFormat,
-                                                isVerified = true,
-                                                createdAt = now,
-                                                updatedAt = now
-                                            )
-                                        )
-                                    }
-                                }
-
-                                if (initialScanDraft != null) {
-                                    container.productRecognitionDao.insertObservation(
-                                        ProductRecognitionObservation(
-                                            id = UUID.randomUUID().toString(),
-                                            productId = productId,
-                                            candidateProductId = initialScanDraft.recognizedProductId,
-                                            candidateCategoryId = selectedCategoryId,
-                                            source = ProductRecognitionObservation.SOURCE_SCANNER,
-                                            sourceImageUris = initialScanDraft.sourceImageUris.joinToString("|"),
-                                            ocrText = initialScanDraft.otherDetectedText,
-                                            barcodeValues = initialScanDraft.barcodeValue,
-                                            confidenceScore = initialScanDraft.recognitionConfidence,
-                                            confidenceLevel = initialScanDraft.recognitionConfidenceLevel
-                                                ?: ProductRecognitionObservation.CONFIDENCE_UNKNOWN,
-                                            verificationStatus = ProductRecognitionObservation.STATUS_CONFIRMED,
-                                            corrected = false,
-                                            explanation = initialScanDraft.recognitionExplanation,
-                                            createdAt = now
-                                        )
-                                    )
-                                }
-
-                                container.productMasterDao.insertUnit(baseUnit)
-                                container.productMasterDao.savePriceConfig(priceConfig)
-
-                                if (listOf(activeIngredients, strength, dosageForm, route, therapeuticCategory, prescriptionClassification, storageCondition).any { it.isNotBlank() }) {
-                                    container.productMasterDao.insertPharmaceuticalDetail(
-                                        PharmaceuticalDetail(
-                                            id = UUID.randomUUID().toString(),
-                                            productId = productId,
-                                            activeIngredients = activeIngredients.trim().ifBlank { null },
-                                            strength = strength.trim().ifBlank { null },
-                                            dosageForm = dosageForm.trim().ifBlank { null },
-                                            route = route.trim().ifBlank { null },
-                                            therapeuticCategory = therapeuticCategory.trim().ifBlank { null },
-                                            prescriptionClassification = prescriptionClassification.trim().ifBlank { null },
-                                            storageCondition = storageCondition.trim().ifBlank { null },
-                                            createdAt = now,
-                                            updatedAt = now
-                                        )
-                                    )
-                                }
-
-                                scannedImageUris.forEachIndexed { index, uriString ->
-                                    val source = java.io.File(Uri.parse(uriString).path ?: "")
-                                    if (source.exists()) {
-                                        val imageDir = java.io.File(context.filesDir, "product_images").apply { mkdirs() }
-                                        val destination = java.io.File(imageDir, productId + "_" + index + ".jpg")
-                                        source.copyTo(destination, overwrite = true)
-                                        container.productMasterDao.insertProductImage(
-                                            ProductImage(
-                                                id = UUID.randomUUID().toString(),
-                                                productId = productId,
-                                                imageUri = Uri.fromFile(destination).toString(),
-                                                imageSource = ProductImage.SOURCE_SCANNER_OUTPUT,
-                                                isPrimary = index == 0,
-                                                sortOrder = index,
-                                                createdAt = now
-                                            )
-                                        )
-                                    }
-                                }
-                            }
-
-                            showAddProductDialog = false
-                            onScanDraftConsumed()
-                            refreshProducts()
-
-                            snackbarHostState.showSnackbar(
-                                "Product '${product.displayName}' registered"
                             )
                         }
+                        showAddCategoryDialog = false
+                        refreshCurrentLevel()
                     }
-                ) {
-                    Text("Register")
                 }
-            },
-            dismissButton = {
-                TextButton(
-                    onClick = {
-                        showAddProductDialog = false
-                        onScanDraftConsumed()
+            )
+        }
+
+        // B. Edit Category Dialog
+        categoryToEdit?.let { cat ->
+            EditCategoryDialog(
+                category = cat,
+                onDismiss = { categoryToEdit = null },
+                onSave = { updatedName, updatedDesc ->
+                    scope.launch {
+                        withContext(Dispatchers.IO) {
+                            container.productCategoryRepository.update(
+                                category = cat,
+                                name = updatedName,
+                                parentId = cat.parentCategoryId,
+                                description = updatedDesc
+                            )
+                        }
+                        categoryToEdit = null
+                        refreshCurrentLevel()
                     }
-                ) {
-                    Text("Cancel")
                 }
-            }
-        )
+            )
+        }
+
+        // C. Delete / Archive Category Dialog
+        categoryToDelete?.let { cat ->
+            DeleteCategoryDialog(
+                category = cat,
+                onDismiss = { categoryToDelete = null },
+                onConfirmDelete = {
+                    scope.launch {
+                        withContext(Dispatchers.IO) {
+                            try {
+                                container.productCategoryRepository.deleteIfUnused(cat.id)
+                            } catch (_: Exception) {
+                                container.productCategoryRepository.archive(cat.id)
+                            }
+                        }
+                        categoryToDelete = null
+                        refreshCurrentLevel()
+                    }
+                }
+            )
+        }
+
+        // D. Substance Detail Card Dialog
+        selectedDrugDetail?.let { drug ->
+            SubstanceDetailDialog(
+                substance = drug,
+                onDismiss = { selectedDrugDetail = null },
+                onEdit = {
+                    selectedDrugDetail = null
+                    categoryToEdit = drug
+                }
+            )
+        }
     }
+}
 
-    showAddUnitDialogForProduct?.let { product ->
+/**
+ * Clean Horizontal Bar component representing each category node.
+ * Strictly presents user-friendly clinical and medical names without numbers.
+ */
+@Composable
+private fun CategoryHorizontalBar(
+    category: ProductCategory,
+    childCount: Int,
+    isLeaf: Boolean,
+    onClick: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    var showMenu by remember { mutableStateOf(false) }
 
-        var unitName by remember { mutableStateOf("") }
-        var unitAbbr by remember { mutableStateOf("") }
-        var numeratorStr by remember { mutableStateOf("") }
-        var denominatorStr by remember { mutableStateOf("1") }
-        var priceStr by remember { mutableStateOf("") }
-        var isPurchase by remember { mutableStateOf(true) }
-        var isDispensing by remember { mutableStateOf(true) }
-        var unitError by remember { mutableStateOf<String?>(null) }
-
-        AlertDialog(
-            onDismissRequest = {
-                showAddUnitDialogForProduct = null
-            },
-            title = {
-                Text("Add Commercial Unit")
-            },
-            text = {
-                Column(
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(14.dp),
+        colors = CardDefaults.cardColors(containerColor = BAR_SURFACE),
+        border = BorderStroke(1.dp, BAR_BORDER),
+        elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+            ) {
+                // Category Icon Badge
+                Box(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(
+                            if (isLeaf) ACCENT_TEAL.copy(alpha = 0.12f)
+                            else ACCENT_GREEN.copy(alpha = 0.12f)
+                        ),
+                    contentAlignment = Alignment.Center
                 ) {
+                    Icon(
+                        imageVector = getCategoryIcon(category.id, isLeaf),
+                        contentDescription = null,
+                        tint = if (isLeaf) ACCENT_TEAL else ACCENT_GREEN,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "For: ${product.displayName}",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        text = category.name,
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                            letterSpacing = (-0.1).sp
+                        ),
+                        color = TEXT_PRIMARY
                     )
 
-                    OutlinedTextField(
-                        value = unitName,
-                        onValueChange = { unitName = it },
-                        label = { Text("Unit Name *") },
-                        placeholder = { Text("e.g. Box of 100, Blister of 10") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = unitAbbr,
-                        onValueChange = { unitAbbr = it },
-                        label = { Text("Abbreviation (Optional)") },
-                        placeholder = { Text("e.g. box100, blist") },
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Text(
-                        text = "Exact Commercial Conversion",
-                        style = MaterialTheme.typography.titleSmall,
-                        fontWeight = FontWeight.Bold
-                    )
-
-                    Text(
-                        text = "1 commercial unit = numerator / denominator canonical base units.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-
-                    OutlinedTextField(
-                        value = numeratorStr,
-                        onValueChange = { numeratorStr = it },
-                        label = { Text("Conversion Numerator *") },
-                        placeholder = { Text("100 for a box containing 100 tablets") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = denominatorStr,
-                        onValueChange = { denominatorStr = it },
-                        label = { Text("Conversion Denominator *") },
-                        placeholder = { Text("1 for whole-base-unit packaging") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    OutlinedTextField(
-                        value = priceStr,
-                        onValueChange = { priceStr = it },
-                        label = { Text("Selling Price for this Unit (KES)") },
-                        placeholder = { Text("e.g. 500") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = isPurchase,
-                            onCheckedChange = { isPurchase = it }
-                        )
-                        Text("Available for Goods Receiving (Purchase Unit)")
-                    }
-
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = isDispensing,
-                            onCheckedChange = { isDispensing = it }
-                        )
-                        Text("Available for Dispensing (Sale Unit)")
-                    }
-
-                    unitError?.let {
+                    category.description?.let { desc ->
                         Text(
-                            it,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
+                            text = desc,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = TEXT_MUTED,
+                            maxLines = 1
                         )
                     }
                 }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        if (unitName.isBlank()) {
-                            unitError = "Unit name is required."
-                            return@Button
-                        }
+            }
 
-                        val numerator = numeratorStr.trim().toLongOrNull()
-                        if (numerator == null || numerator <= 0L) {
-                            unitError = "Conversion numerator must be a positive whole number."
-                            return@Button
-                        }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                // Count or Type badge
+                Surface(
+                    shape = RoundedCornerShape(12.dp),
+                    color = Color(0xFFEBE6DC),
+                    modifier = Modifier.padding(horizontal = 6.dp)
+                ) {
+                    Text(
+                        text = when {
+                            childCount > 0 -> "$childCount"
+                            isLeaf -> "Substance"
+                            else -> "Empty"
+                        },
+                        style = MaterialTheme.typography.labelSmall,
+                        color = TEXT_MUTED,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
 
-                        val denominator = denominatorStr.trim().toLongOrNull()
-                        if (denominator == null || denominator <= 0L) {
-                            unitError = "Conversion denominator must be a positive whole number."
-                            return@Button
-                        }
+                // Three-dot options menu
+                Box {
+                    IconButton(onClick = { showMenu = true }) {
+                        Icon(
+                            Icons.Default.MoreVert,
+                            contentDescription = "Options",
+                            tint = TEXT_MUTED,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
 
-                        if (numerator == 1L && denominator != 1L) {
-                            unitError = "A conversion of 1/n must be intentional. Verify that this commercial unit really represents a fractional base quantity."
-                        }
+                    DropdownMenu(
+                        expanded = showMenu,
+                        onDismissRequest = { showMenu = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Edit / Rename") },
+                            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) },
+                            onClick = {
+                                showMenu = false
+                                onEdit()
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Delete / Archive") },
+                            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
+                            onClick = {
+                                showMenu = false
+                                onDelete()
+                            }
+                        )
+                    }
+                }
 
-                        val priceMinor = try {
-                            Money.fromDecimalString(priceStr.trim()).amountMinorUnits
-                        } catch (_: Exception) {
-                            null
-                        }
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                    contentDescription = "Open",
+                    tint = TEXT_MUTED,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
+        }
+    }
+}
 
-                        scope.launch {
-                            val now = System.currentTimeMillis()
-                            val unitId = UUID.randomUUID().toString()
+/**
+ * Terminal Substance Profile view when user drills down to an individual drug leaf.
+ */
+@Composable
+private fun TerminalSubstanceProfileCard(
+    substance: ProductCategory,
+    registeredProducts: List<ProductMaster>,
+    onEdit: () -> Unit,
+    onRegisterFormulation: () -> Unit
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = BAR_SURFACE),
+        border = BorderStroke(1.dp, BAR_BORDER)
+    ) {
+        Column(modifier = Modifier.padding(18.dp)) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        Icons.Default.Medication,
+                        contentDescription = null,
+                        tint = ACCENT_GREEN,
+                        modifier = Modifier.size(28.dp)
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Column {
+                        Text(
+                            text = substance.name,
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = FontWeight.Bold,
+                            color = TEXT_PRIMARY
+                        )
+                        Text(
+                            text = "Canonical Medicinal Substance",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = ACCENT_TEAL
+                        )
+                    }
+                }
 
-                            val unit = ProductUnit(
-                                id = unitId,
-                                productId = product.id,
-                                name = unitName.trim(),
-                                abbreviation = unitAbbr.trim().ifBlank { null },
-                                conversionNumerator = numerator,
-                                conversionDenominator = denominator,
-                                isBaseUnit = false,
-                                isPurchaseUnit = isPurchase,
-                                isDispensingUnit = isDispensing,
-                                isDisplayUnit = false,
-                                isActive = true,
-                                sortOrder = 1,
-                                createdAt = now,
-                                updatedAt = now
-                            )
+                IconButton(onClick = onEdit) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit Substance", tint = TEXT_MUTED)
+                }
+            }
 
-                            withContext(Dispatchers.IO) {
-                                container.productMasterDao.insertUnit(unit)
+            substance.description?.let { desc ->
+                Spacer(modifier = Modifier.height(10.dp))
+                Text(
+                    text = "Clinical Profile / Mechanism:",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = TEXT_MUTED,
+                    fontWeight = FontWeight.Bold
+                )
+                Text(
+                    text = desc,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = TEXT_PRIMARY
+                )
+            }
 
-                                if (priceMinor != null) {
-                                    val priceConfig = UnitPriceConfig(
-                                        id = UUID.randomUUID().toString(),
-                                        productUnitId = unitId,
-                                        sellingPrice = Money(priceMinor),
-                                        isActive = true,
-                                        createdAt = now,
-                                        updatedAt = now
-                                    )
-                                    container.productMasterDao.savePriceConfig(priceConfig)
+            Spacer(modifier = Modifier.height(14.dp))
+            Text(
+                text = "Registered Commercial Formulations (${registeredProducts.size})",
+                style = MaterialTheme.typography.labelSmall,
+                color = TEXT_MUTED,
+                fontWeight = FontWeight.Bold
+            )
+
+            if (registeredProducts.isEmpty()) {
+                Text(
+                    text = "No physical brand formulations registered under this substance yet.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = TEXT_MUTED,
+                    modifier = Modifier.padding(vertical = 4.dp)
+                )
+            } else {
+                registeredProducts.forEach { product ->
+                    Surface(
+                        shape = RoundedCornerShape(8.dp),
+                        color = Color.White.copy(alpha = 0.6f),
+                        border = BorderStroke(1.dp, Color(0xFFEBE6DC)),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 4.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Column {
+                                Text(
+                                    product.displayName,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                product.manufacturer?.let {
+                                    Text("Manufacturer: $it", style = MaterialTheme.typography.bodySmall, color = TEXT_MUTED)
                                 }
                             }
-
-                            showAddUnitDialogForProduct = null
-                            selectedProductForDetails = null
-                            refreshProducts()
-
-                            snackbarHostState.showSnackbar(
-                                "Added unit '${unit.name}' for ${product.displayName}"
-                            )
                         }
                     }
-                ) {
-                    Text("Save Unit")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showAddUnitDialogForProduct = null }) {
-                    Text("Cancel")
                 }
             }
-        )
+        }
     }
+}
 
-    showEditPriceDialogForUnit?.let { (unit, existingConfig) ->
-        val currentPriceMajor = existingConfig?.sellingPrice?.let {
-            "${it.amountMinorUnits / 100}." +
-                (it.amountMinorUnits % 100).toString().padStart(2, '0')
-        } ?: ""
+@Composable
+private fun AddCategoryDialog(
+    parent: ProductCategory?,
+    onDismiss: () -> Unit,
+    onSave: (String, String?) -> Unit
+) {
+    var name by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var errorText by remember { mutableStateOf<String?>(null) }
 
-        var newPriceMajor by remember { mutableStateOf(currentPriceMajor) }
-        var priceError by remember { mutableStateOf<String?>(null) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                if (parent == null) "New Primary Category"
+                else "Add Subcategory to ${parent.name}"
+            )
+        },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Category / Substance Name") },
+                    placeholder = { Text("e.g. Beta-blockers, Atenolol") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-        AlertDialog(
-            onDismissRequest = {
-                showEditPriceDialogForUnit = null
-            },
-            title = { Text("Configure Selling Price") },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("Unit: ${unit.name} (${unit.conversionFraction} base units)")
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Clinical Description / Mechanism (Optional)") },
+                    placeholder = { Text("e.g. Cardioselective beta-1 adrenergic antagonist") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
-                    OutlinedTextField(
-                        value = newPriceMajor,
-                        onValueChange = { newPriceMajor = it },
-                        label = { Text("Selling Price (KES) *") },
-                        placeholder = { Text("e.g. 50.00") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        singleLine = true,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-
-                    priceError?.let {
-                        Text(
-                            it,
-                            color = MaterialTheme.colorScheme.error,
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val minor = try {
-                            Money.fromDecimalString(newPriceMajor.trim()).amountMinorUnits
-                        } catch (_: Exception) {
-                            priceError = "Enter a valid non-negative price."
-                            return@Button
-                        }
-
-                        scope.launch {
-                            val now = System.currentTimeMillis()
-                            val config = UnitPriceConfig(
-                                id = existingConfig?.id ?: UUID.randomUUID().toString(),
-                                productUnitId = unit.id,
-                                sellingPrice = Money(minor),
-                                isActive = true,
-                                createdAt = existingConfig?.createdAt ?: now,
-                                updatedAt = now
-                            )
-
-                            withContext(Dispatchers.IO) {
-                                container.productMasterDao.savePriceConfig(config)
-                            }
-
-                            showEditPriceDialogForUnit = null
-                            selectedProductForDetails = null
-                            refreshProducts()
-
-                            snackbarHostState.showSnackbar(
-                                "Updated price for ${unit.name}"
-                            )
-                        }
-                    }
-                ) {
-                    Text("Save Price")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showEditPriceDialogForUnit = null }) {
-                    Text("Cancel")
+                errorText?.let {
+                    Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
                 }
             }
-        )
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (name.isBlank()) {
+                        errorText = "Name cannot be blank"
+                        return@Button
+                    }
+                    onSave(name.trim(), description.trim().ifBlank { null })
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = ACCENT_GREEN)
+            ) {
+                Text("Save")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        }
+    )
+}
+
+@Composable
+private fun EditCategoryDialog(
+    category: ProductCategory,
+    onDismiss: () -> Unit,
+    onSave: (String, String?) -> Unit
+) {
+    var name by remember { mutableStateOf(category.name) }
+    var description by remember { mutableStateOf(category.description ?: "") }
+    var errorText by remember { mutableStateOf<String?>(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Edit ${category.name}") },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedTextField(
+                    value = name,
+                    onValueChange = { name = it },
+                    label = { Text("Category Name") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Clinical Description / Mechanism") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+
+                errorText?.let {
+                    Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    if (name.isBlank()) {
+                        errorText = "Name cannot be blank"
+                        return@Button
+                    }
+                    onSave(name.trim(), description.trim().ifBlank { null })
+                },
+                colors = ButtonDefaults.buttonColors(containerColor = ACCENT_GREEN)
+            ) {
+                Text("Update")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        }
+    )
+}
+
+@Composable
+private fun DeleteCategoryDialog(
+    category: ProductCategory,
+    onDismiss: () -> Unit,
+    onConfirmDelete: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text("Delete or Archive Category") },
+        text = {
+            Text("Are you sure you want to remove '${category.name}'? Historical links will be safely preserved.")
+        },
+        confirmButton = {
+            Button(
+                onClick = onConfirmDelete,
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+            ) {
+                Text("Confirm")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("Cancel") }
+        }
+    )
+}
+
+@Composable
+private fun SubstanceDetailDialog(
+    substance: ProductCategory,
+    onDismiss: () -> Unit,
+    onEdit: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(substance.name) },
+        text = {
+            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+                Text(
+                    text = "Medicinal Substance",
+                    style = MaterialTheme.typography.labelSmall,
+                    color = ACCENT_TEAL,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                substance.description?.let {
+                    Text(text = "Clinical Profile:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
+                    Text(text = it, style = MaterialTheme.typography.bodyMedium)
+                } ?: run {
+                    Text(text = "Standard WHO / Reference Active Pharmaceutical Substance.", style = MaterialTheme.typography.bodyMedium, color = TEXT_MUTED)
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = onDismiss, colors = ButtonDefaults.buttonColors(containerColor = ACCENT_GREEN)) {
+                Text("Close")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onEdit) {
+                Text("Edit Substance")
+            }
+        }
+    )
+}
+
+private fun getCategoryIcon(id: String, isLeaf: Boolean): ImageVector {
+    if (isLeaf) return Icons.Default.Medication
+    return when {
+        id == "1" || id.startsWith("1.") -> Icons.Default.Medication
+        id == "2" || id.startsWith("2.") -> Icons.Default.MedicalServices
+        id == "3" || id.startsWith("3.") -> Icons.Default.Biotech
+        id == "4" || id.startsWith("4.") -> Icons.Default.LocalHospital
+        id == "5" || id.startsWith("5.") -> Icons.Default.Healing
+        id == "6" || id.startsWith("6.") -> Icons.Default.CleanHands
+        id == "7" || id.startsWith("7.") -> Icons.Default.ChildCare
+        id == "8" || id.startsWith("8.") -> Icons.Default.Spa
+        id == "9" || id.startsWith("9.") -> Icons.Default.Restaurant
+        id == "10" || id.startsWith("10.") -> Icons.Default.Business
+        else -> Icons.Default.Medication
     }
 }

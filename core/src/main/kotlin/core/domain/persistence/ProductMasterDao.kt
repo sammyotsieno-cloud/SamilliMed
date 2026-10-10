@@ -43,6 +43,9 @@ interface ProductMasterDao {
     @Query("SELECT * FROM product_masters ORDER BY is_active DESC, brand_name ASC, generic_name ASC")
     fun getAllProducts(): List<ProductMaster>
 
+    @Query("SELECT * FROM product_masters WHERE category_id = :categoryId AND is_active = 1 ORDER BY brand_name ASC, generic_name ASC")
+    fun getProductsByCategoryId(categoryId: String): List<ProductMaster>
+
     @Query("SELECT * FROM product_units WHERE product_id = :productId AND is_base_unit = 1 LIMIT 1")
     fun getBaseUnitForProduct(productId: String): ProductUnit?
 

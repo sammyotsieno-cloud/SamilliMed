@@ -16,6 +16,9 @@ interface ProductCategoryDao {
     @Query("SELECT * FROM product_categories WHERE is_active = 1 ORDER BY parent_category_id IS NOT NULL, sort_order ASC, name COLLATE NOCASE ASC")
     suspend fun getActive(): List<ProductCategory>
 
+    @Query("SELECT * FROM product_categories WHERE is_active = 1 AND name LIKE '%' || :query || '%' ORDER BY sort_order ASC, name COLLATE NOCASE ASC")
+    suspend fun searchByName(query: String): List<ProductCategory>
+
     @Query("SELECT * FROM product_categories WHERE parent_category_id IS NULL ORDER BY sort_order ASC, name COLLATE NOCASE ASC")
     suspend fun getRoots(): List<ProductCategory>
 

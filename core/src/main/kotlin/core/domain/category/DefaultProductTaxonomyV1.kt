@@ -7,18 +7,18 @@ data class DefaultProductTaxonomyNode(
 )
 
 object DefaultProductTaxonomyV1 {
-    const val VERSION = 1
+    const val VERSION = 2
 
     val roots = listOf(
-        DefaultProductTaxonomyNode("CAT_MEDICINES", "Medicines / Pharmaceuticals"),
-        DefaultProductTaxonomyNode("CAT_MEDICAL_CONSUMABLES", "Medical Consumables"),
-        DefaultProductTaxonomyNode("CAT_DIAGNOSTIC_LAB", "Diagnostic / Laboratory Supplies"),
-        DefaultProductTaxonomyNode("CAT_MEDICAL_DEVICES", "Medical Devices & Equipment"),
-        DefaultProductTaxonomyNode("CAT_WOUND_PROCEDURE", "Wound Care & Procedure Supplies"),
-        DefaultProductTaxonomyNode("CAT_INFECTION_CONTROL", "Infection Prevention & Control"),
-        DefaultProductTaxonomyNode("CAT_MATERNAL_NEWBORN_FP", "Maternal, Newborn & Family Planning"),
-        DefaultProductTaxonomyNode("CAT_PERSONAL_HYGIENE", "Personal Care / Hygiene"),
-        DefaultProductTaxonomyNode("CAT_NUTRITION_SUPPLEMENTS", "Nutrition & Supplements"),
-        DefaultProductTaxonomyNode("CAT_FACILITY_SUPPLIES", "Non-medical / Facility Supplies")
+        DefaultProductTaxonomyNode("1", "Medicines & Pharmaceuticals", "Reference taxonomy of medicinal substances and pharmacological classes."),
+        DefaultProductTaxonomyNode("2", "Medical Consumables", "Single-use disposables, PPE, catheters, administration sets, and clinical consumables."),
+        DefaultProductTaxonomyNode("3", "Diagnostic / Laboratory Supplies", "Reagents, rapid test kits, collection tubes, microscopy supplies, and laboratory consumables."),
+        DefaultProductTaxonomyNode("4", "Medical Devices & Equipment", "Reusable clinical instruments, diagnostic devices, monitoring equipment, and procedural apparatus."),
+        DefaultProductTaxonomyNode("5", "Wound Care & Procedure Supplies", "Gauze, bandages, sterile dressings, surgical sutures, tapes, and procedural packs."),
+        DefaultProductTaxonomyNode("6", "Infection Prevention & Control", "Hospital-grade antiseptics, high-level disinfectants, sterilisation monitors, and barrier supplies."),
+        DefaultProductTaxonomyNode("7", "Maternal, Newborn & Family Planning", "Obstetric delivery kits, contraceptive commodities, neonatal care items, and reproductive health commodities."),
+        DefaultProductTaxonomyNode("8", "Personal Care / Hygiene", "Patient cleansing items, skin care barriers, adult briefs, and institutional hygiene commodities."),
+        DefaultProductTaxonomyNode("9", "Nutrition & Supplements", "Therapeutic nutrition, enteral feeds, dietary formulations, oral rehydration salts, and clinical macronutrients."),
+        DefaultProductTaxonomyNode("10", "Non-medical / Facility Supplies", "Administrative forms, facility stationery, biohazard management bags, and operational utility supplies.")
     )
 }
