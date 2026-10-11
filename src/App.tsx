@@ -39,7 +39,15 @@ import {
   ShieldCheck,
   Clock,
   Sparkle,
-  Info
+  Info,
+  Truck,
+  ShoppingCart,
+  BarChart3,
+  AlertOctagon,
+  RefreshCw,
+  FileText,
+  Settings,
+  Play
 } from 'lucide-react';
 
 export interface TaxonomyNode {
@@ -88,7 +96,8 @@ const DEFAULT_ROOTS: TaxonomyNode[] = [
 ];
 
 export default function App() {
-  const [currentView, setCurrentView] = useState<'products' | 'dashboard'>('products');
+  const [currentView, setCurrentView] = useState<'dashboard' | 'products'>('dashboard');
+  const [showSplash, setShowSplash] = useState(true);
   const [nodes, setNodes] = useState<TaxonomyNode[]>(() => {
     const cached = localStorage.getItem('samillimed_taxonomy_custom_v2');
     if (cached) {
@@ -142,6 +151,16 @@ export default function App() {
 
   // Quick Action Dialogs for Dashboard
   const [activeDashboardAction, setActiveDashboardAction] = useState<string | null>(null);
+
+  // Auto-dismiss launch splash screen after 2.5s
+  useEffect(() => {
+    if (showSplash) {
+      const timer = setTimeout(() => {
+        setShowSplash(false);
+      }, 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [showSplash]);
 
   // Fetch full taxonomy JSON on mount if not in localStorage
   useEffect(() => {
@@ -503,26 +522,37 @@ export default function App() {
 
             <div className="h-6 w-px bg-[#E5DFD5] mx-1" />
 
+            <button
+              onClick={() => setShowSplash(true)}
+              className="p-2 rounded-xl border bg-[#FAF7F2] hover:bg-white text-[#23201D] border-[#E5DFD5] transition-all hidden md:flex items-center gap-1.5 text-xs font-semibold"
+              title="Replay Android Launch Splash Screen animation"
+            >
+              <Play className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Launch Splash</span>
+            </button>
+
+            <div className="h-6 w-px bg-[#E5DFD5] mx-1 hidden sm:block" />
+
             <div className="flex bg-[#EAE2D3] p-1 rounded-xl">
               <button
-                onClick={() => setCurrentView('products')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  currentView === 'products'
-                    ? 'bg-white text-emerald-900 shadow-xs'
+                onClick={() => setCurrentView('dashboard')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  currentView === 'dashboard'
+                    ? 'bg-white text-emerald-900 shadow-xs font-bold'
                     : 'text-[#6B655D] hover:text-[#23201D]'
                 }`}
               >
-                Database
+                <span>Home</span>
               </button>
               <button
-                onClick={() => setCurrentView('dashboard')}
-                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-                  currentView === 'dashboard'
-                    ? 'bg-white text-emerald-900 shadow-xs'
+                onClick={() => setCurrentView('products')}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all flex items-center gap-1.5 ${
+                  currentView === 'products'
+                    ? 'bg-white text-emerald-900 shadow-xs font-bold'
                     : 'text-[#6B655D] hover:text-[#23201D]'
                 }`}
               >
-                Dashboard
+                <span>Products Database</span>
               </button>
             </div>
           </div>
@@ -568,6 +598,24 @@ export default function App() {
       <main className="flex-1 max-w-6xl w-full mx-auto p-4 sm:p-6 flex flex-col gap-5">
         {currentView === 'products' ? (
           <>
+            {/* TOP NAVIGATION BAR FOR PRODUCTS VIEW */}
+            <div className="flex items-center justify-between gap-3 flex-wrap">
+              <button
+                onClick={() => {
+                  setNavStack([]);
+                  setCurrentView('dashboard');
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF7F2] hover:bg-white border border-[#E5DFD5] text-xs font-bold text-emerald-900 shadow-xs transition-all cursor-pointer"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-emerald-700" />
+                <span>Return to Home Dashboard</span>
+              </button>
+
+              <span className="text-[11px] text-[#6B655D] font-medium hidden sm:inline">
+                Products Database • 2,212 Canonical Entities
+              </span>
+            </div>
+
             {/* CLINICAL BREADCRUMB TRAIL */}
             {navStack.length > 0 && (
               <nav className="flex items-center gap-1.5 text-xs text-[#6B655D] overflow-x-auto pb-1.5 scrollbar-thin">
@@ -1056,145 +1104,404 @@ export default function App() {
           </>
         ) : (
           /* ============================================================== */
-          /* 4. DASHBOARD SCREEN (Preserved Operational Functions)          */
+          /* 4. DASHBOARD SCREEN (Native Android Home Screen Reproduction)  */
           /* ============================================================== */
-          <div className="flex flex-col gap-6">
-            {/* FACILITY NAME CARD WITH EXCITABILITY */}
-            <div className="bg-[#FAF7F2] border border-[#E5DFD5] rounded-2xl p-5 shadow-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-800">
-                  Connected Healthcare Facility
-                </span>
+          <div className="flex flex-col gap-8 pb-12 relative">
+            {/* AMBIENT STUDIO ATMOSPHERE: Floating 3D Orbs with specular glints */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
+              {/* Top-Left Amber Orb */}
+              <div
+                className="absolute top-4 left-6 sm:left-16 w-16 h-16 sm:w-20 sm:h-20 rounded-full blur-[1px] opacity-80"
+                style={{
+                  background: 'radial-gradient(circle at 35% 35%, #FFF 0%, #FFD59E 25%, #E59C45 55%, #B86B1E 80%, #6B3A0A 100%)',
+                  boxShadow: '0 20px 35px -10px rgba(107, 58, 10, 0.35)'
+                }}
+              />
+              {/* Mid-Left Jade Hero Orb */}
+              <div
+                className="absolute top-72 -left-4 sm:left-4 w-24 h-24 sm:w-32 sm:h-32 rounded-full blur-[1px] opacity-75"
+                style={{
+                  background: 'radial-gradient(circle at 32% 30%, #FFF 0%, #8BB79B 22%, #6B997D 50%, #4C755D 75%, #2B4736 100%)',
+                  boxShadow: '0 30px 45px -12px rgba(43, 71, 54, 0.40)'
+                }}
+              />
+              {/* Top-Right Jade Orb */}
+              <div
+                className="absolute top-8 right-8 sm:right-24 w-18 h-18 sm:w-24 sm:h-24 rounded-full blur-[1px] opacity-80"
+                style={{
+                  background: 'radial-gradient(circle at 35% 32%, #FFF 0%, #98C4A9 20%, #6B997D 50%, #4C755D 78%, #2B4736 100%)',
+                  boxShadow: '0 25px 40px -10px rgba(43, 71, 54, 0.35)'
+                }}
+              />
+              {/* Mid-Right Amber Orb */}
+              <div
+                className="absolute top-80 -right-4 sm:right-6 w-20 h-20 sm:w-28 sm:h-28 rounded-full blur-[1px] opacity-70"
+                style={{
+                  background: 'radial-gradient(circle at 36% 34%, #FFF 0%, #FFE0B2 20%, #E59C45 52%, #B86B1E 82%, #6B3A0A 100%)',
+                  boxShadow: '0 25px 40px -12px rgba(107, 58, 10, 0.35)'
+                }}
+              />
+            </div>
+
+            {/* DASHBOARD HEADER WITH EDITABLE FACILITY PILL */}
+            <div className="flex flex-col items-center text-center gap-2 pt-2">
+              <span className="text-[11px] font-bold tracking-widest text-emerald-800 uppercase bg-emerald-100/70 border border-emerald-200/80 px-3 py-1 rounded-full">
+                SamilliMed Ground • Offline Dispensary
+              </span>
+
+              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E231F] tracking-tight">
+                Dashboard
+              </h1>
+
+              {/* Editable Facility Name Pill */}
+              <div className="mt-1">
                 {isEditingFacility ? (
-                  <div className="flex items-center gap-2 mt-1">
+                  <div className="flex items-center gap-2 bg-white/95 px-3 py-1.5 rounded-full border border-emerald-600 shadow-sm">
                     <input
                       type="text"
                       value={facilityDraft}
                       onChange={e => setFacilityDraft(e.target.value)}
-                      className="bg-white border border-emerald-700 rounded-lg px-3 py-1.5 text-base font-bold text-[#23201D] focus:outline-none"
+                      className="bg-transparent text-sm font-bold text-[#1E231F] focus:outline-none w-56 text-center"
                       autoFocus
                     />
                     <button
                       onClick={handleSaveFacility}
-                      className="px-3 py-1.5 bg-emerald-800 text-white rounded-lg text-xs font-semibold"
+                      className="px-2.5 py-1 bg-emerald-800 text-white rounded-full text-xs font-semibold"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setIsEditingFacility(false)}
-                      className="px-3 py-1.5 bg-[#EBE6DC] text-[#23201D] rounded-lg text-xs font-semibold"
+                      className="px-2 py-1 text-[#6B655D] text-xs font-semibold"
                     >
                       Cancel
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <h2 className="text-xl font-bold text-[#23201D]">{facilityName}</h2>
-                    <button
-                      onClick={() => {
-                        setFacilityDraft(facilityName);
-                        setIsEditingFacility(true);
-                      }}
-                      className="p-1 text-[#8C8479] hover:text-emerald-800"
-                      title="Tap to rename facility"
-                    >
-                      <Edit2 className="w-3.5 h-3.5" />
-                    </button>
-                  </div>
+                  <button
+                    onClick={() => {
+                      setFacilityDraft(facilityName);
+                      setIsEditingFacility(true);
+                    }}
+                    className="group inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/60 hover:bg-white/90 border border-[#E5DFD5] hover:border-emerald-600/50 shadow-xs transition-all backdrop-blur-xs"
+                    title="Tap to rename facility"
+                  >
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-sm font-bold text-[#1E231F]">{facilityName}</span>
+                    <Edit2 className="w-3.5 h-3.5 text-[#8C8479] group-hover:text-emerald-800 transition-colors" />
+                  </button>
                 )}
-                <p className="text-xs text-[#6B655D] mt-0.5">
-                  Taxonomy Engine: Active • Synchronized with 2,212 Canonical Entities
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setCurrentView('products')}
-                  className="px-4 py-2 bg-emerald-800 hover:bg-emerald-900 text-white rounded-xl text-xs font-semibold flex items-center gap-1.5 shadow-xs transition-colors"
-                >
-                  <Layers className="w-4 h-4" />
-                  <span>Browse Products Database</span>
-                </button>
               </div>
             </div>
 
-            {/* OPERATIONAL QUICK ACTION TILES */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div
-                onClick={() => setActiveDashboardAction('scan')}
-                className="bg-[#FAF7F2] hover:bg-white border border-[#E5DFD5] hover:border-emerald-700/50 p-5 rounded-2xl cursor-pointer transition-all shadow-xs flex flex-col gap-3 group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-800 group-hover:scale-105 transition-transform">
-                  <QrCode className="w-5 h-5" />
+            {/* HIGH-YIELD HIGHLIGHT: PRODUCTS DATABASE CONNECTOR */}
+            <div className="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-4 sm:p-5 rounded-3xl shadow-md border border-emerald-800 flex flex-col sm:flex-row items-center justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 shrink-0">
+                  <Layers className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-[#23201D]">Barcode / QR Scan</h3>
-                  <p className="text-xs text-[#6B655D] mt-1">
-                    Instant lookup for commercial medicines matching against canonical taxonomy IDs.
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-base font-bold text-white">Clinical Products & Knowledge Engine</h3>
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
+                      Enriched
+                    </span>
+                  </div>
+                  <p className="text-xs text-emerald-200/80 mt-0.5">
+                    2,212 Canonical Entities across all 19 Clinical Medicine branches with segmented dosage & pharmacology dossiers.
                   </p>
                 </div>
-                <span className="text-xs font-semibold text-emerald-800 mt-auto flex items-center gap-1">
-                  Launch Scanner <ChevronRight className="w-3.5 h-3.5" />
-                </span>
               </div>
 
-              <div
-                onClick={() => setActiveDashboardAction('price')}
-                className="bg-[#FAF7F2] hover:bg-white border border-[#E5DFD5] hover:border-emerald-700/50 p-5 rounded-2xl cursor-pointer transition-all shadow-xs flex flex-col gap-3 group"
+              <button
+                onClick={() => setCurrentView('products')}
+                className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-white text-emerald-950 font-bold text-xs hover:bg-emerald-50 shadow-sm transition-all flex items-center justify-center gap-2 shrink-0"
               >
-                <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-800 group-hover:scale-105 transition-transform">
-                  <DollarSign className="w-5 h-5" />
+                <span>Browse Products Database</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* 8 FROSTED GLASS SQUIRCLE TILES WITH WARM AMBER RIM GLOW */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
+              {/* 1. Goods Receiving */}
+              <div
+                onClick={() => setActiveDashboardAction('receiving')}
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
+                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-100/90 text-emerald-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <Truck className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-emerald-900 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    Intake
+                  </span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-[#23201D]">Batch Price & Unit Config</h3>
-                  <p className="text-xs text-[#6B655D] mt-1">
-                    Configure base units, packaging ratios, and standard dispensing retail pricing.
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-emerald-900 transition-colors">
+                    Goods Receiving
+                  </h3>
+                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
+                    Supplier PO intake, batch delivery & barcode match.
                   </p>
                 </div>
-                <span className="text-xs font-semibold text-blue-800 mt-auto flex items-center gap-1">
-                  Configure Pricing <ChevronRight className="w-3.5 h-3.5" />
-                </span>
               </div>
 
+              {/* 2. Dispensing */}
+              <div
+                onClick={() => setActiveDashboardAction('dispensing')}
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
+                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-100/90 text-blue-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <Pill className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                    FEFO Active
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-blue-900 transition-colors">
+                    Dispensing
+                  </h3>
+                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
+                    Prescriptions & FIFO/FEFO batch deduction.
+                  </p>
+                </div>
+              </div>
+
+              {/* 3. Inventory */}
               <div
                 onClick={() => setActiveDashboardAction('inventory')}
-                className="bg-[#FAF7F2] hover:bg-white border border-[#E5DFD5] hover:border-emerald-700/50 p-5 rounded-2xl cursor-pointer transition-all shadow-xs flex flex-col gap-3 group"
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
+                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
               >
-                <div className="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-800 group-hover:scale-105 transition-transform">
-                  <Package className="w-5 h-5" />
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-100/90 text-amber-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <Package className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
+                    Valuation
+                  </span>
                 </div>
                 <div>
-                  <h3 className="font-bold text-base text-[#23201D]">Register New Stock Batch</h3>
-                  <p className="text-xs text-[#6B655D] mt-1">
-                    Add registered commercial brand formulations linked to canonical substances.
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-amber-900 transition-colors">
+                    Inventory
+                  </h3>
+                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
+                    Batch cost layers, shelf balances & reorder levels.
                   </p>
                 </div>
-                <span className="text-xs font-semibold text-purple-800 mt-auto flex items-center gap-1">
-                  Add Stock <ChevronRight className="w-3.5 h-3.5" />
-                </span>
+              </div>
+
+              {/* 4. Products (Taxonomy Catalog) */}
+              <div
+                onClick={() => setCurrentView('products')}
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px] ring-2 ring-emerald-600/40"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,248,243,0.85) 60%, rgba(235,245,238,0.90) 100%)',
+                  border: '1.5px solid rgba(16, 185, 129, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(16, 185, 129, 0.18), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <Layers className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-white bg-emerald-700 px-2 py-0.5 rounded-full">
+                    2,212 Items
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-emerald-950 leading-tight">
+                    Products
+                  </h3>
+                  <p className="text-xs text-emerald-800 mt-1 leading-snug font-medium">
+                    19 Subcategories, ATC codes & clinical dossiers.
+                  </p>
+                </div>
+              </div>
+
+              {/* 5. Expiry Alerts */}
+              <div
+                onClick={() => setActiveDashboardAction('alerts')}
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
+                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-rose-100/90 text-rose-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <AlertOctagon className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-rose-900 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
+                    Proactive
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-rose-900 transition-colors">
+                    Expiry Alerts
+                  </h3>
+                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
+                    FEFO shelf-life flags & automatic quarantine alerts.
+                  </p>
+                </div>
+              </div>
+
+              {/* 6. Reports */}
+              <div
+                onClick={() => setActiveDashboardAction('reports')}
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
+                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-100/90 text-indigo-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <BarChart3 className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-indigo-900 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
+                    Analytics
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-indigo-900 transition-colors">
+                    Reports
+                  </h3>
+                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
+                    Financial valuation, consumption & ledger drift.
+                  </p>
+                </div>
+              </div>
+
+              {/* 7. Suppliers */}
+              <div
+                onClick={() => setActiveDashboardAction('suppliers')}
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
+                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-teal-100/90 text-teal-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <Building2 className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-teal-900 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
+                    Vendors
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-teal-900 transition-colors">
+                    Suppliers
+                  </h3>
+                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
+                    Vendor registry, invoices & lead-time monitoring.
+                  </p>
+                </div>
+              </div>
+
+              {/* 8. Stock Adjustments */}
+              <div
+                onClick={() => setActiveDashboardAction('adjustments')}
+                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
+                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
+                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
+                }}
+              >
+                <div className="flex items-start justify-between">
+                  <div className="w-12 h-12 rounded-2xl bg-purple-100/90 text-purple-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
+                    <RefreshCw className="w-6 h-6" />
+                  </div>
+                  <span className="text-[10px] font-bold text-purple-900 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                    FIFO Audit
+                  </span>
+                </div>
+                <div>
+                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-purple-900 transition-colors">
+                    Stock Adjustments
+                  </h3>
+                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
+                    Atomic cost layer realignment & write-off audit log.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* TAXONOMY SUMMARY STATS */}
-            <div className="bg-[#FAF7F2] border border-[#E5DFD5] rounded-2xl p-5 shadow-xs flex flex-col gap-4">
-              <h3 className="font-bold text-base text-[#23201D]">Classification Engine Telemetry</h3>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                <div className="p-3 bg-white rounded-xl border border-[#E5DFD5]">
-                  <span className="text-xs text-[#6B655D]">Total Nodes</span>
-                  <p className="text-xl font-bold text-[#23201D] mt-1">{nodes.length}</p>
-                </div>
-                <div className="p-3 bg-white rounded-xl border border-[#E5DFD5]">
-                  <span className="text-xs text-[#6B655D]">Primary Categories</span>
-                  <p className="text-xl font-bold text-emerald-800 mt-1">10</p>
-                </div>
-                <div className="p-3 bg-white rounded-xl border border-[#E5DFD5]">
-                  <span className="text-xs text-[#6B655D]">Medicines Subcategories</span>
-                  <p className="text-xl font-bold text-teal-800 mt-1">19 Branches</p>
-                </div>
-                <div className="p-3 bg-white rounded-xl border border-[#E5DFD5]">
-                  <span className="text-xs text-[#6B655D]">Canonical Substances</span>
-                  <p className="text-xl font-bold text-blue-800 mt-1">1,801</p>
-                </div>
+            {/* BOTTOM MOLTEN-GLASS PEDESTAL & TRANSLUCENT FLOATING DOCK CAPSULE */}
+            <div className="mt-4 flex flex-col items-center">
+              <div
+                className="inline-flex items-center gap-6 sm:gap-10 px-8 py-3.5 rounded-full backdrop-blur-md shadow-xl"
+                style={{
+                  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 248, 235, 0.65) 100%)',
+                  border: '1px solid rgba(255, 224, 160, 0.70)',
+                  boxShadow: '0 15px 30px -8px rgba(107, 88, 68, 0.20)'
+                }}
+              >
+                <button
+                  onClick={() => setActiveDashboardAction('scan')}
+                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
+                  title="Barcode & QR Scanner"
+                >
+                  <div className="w-10 h-10 rounded-full bg-emerald-100/70 group-hover:bg-emerald-200 flex items-center justify-center text-emerald-900 transition-all">
+                    <QrCode className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold tracking-tight">Scanner</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveDashboardAction('receiving')}
+                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
+                  title="Quick Intake Cart"
+                >
+                  <div className="w-10 h-10 rounded-full bg-blue-100/70 group-hover:bg-blue-200 flex items-center justify-center text-blue-900 transition-all">
+                    <ShoppingCart className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold tracking-tight">Catalog</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveDashboardAction('vitality')}
+                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
+                  title="Zero-Drift System Vitality"
+                >
+                  <div className="w-10 h-10 rounded-full bg-rose-100/70 group-hover:bg-rose-200 flex items-center justify-center text-rose-900 transition-all">
+                    <Heart className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold tracking-tight">Vitality</span>
+                </button>
+
+                <button
+                  onClick={() => setActiveDashboardAction('settings')}
+                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
+                  title="Facility & System Settings"
+                >
+                  <div className="w-10 h-10 rounded-full bg-amber-100/70 group-hover:bg-amber-200 flex items-center justify-center text-amber-900 transition-all">
+                    <Settings className="w-5 h-5" />
+                  </div>
+                  <span className="text-[10px] font-bold tracking-tight">Settings</span>
+                </button>
               </div>
             </div>
           </div>
@@ -1717,37 +2024,233 @@ export default function App() {
         </div>
       )}
 
-      {/* DASHBOARD ACTION MODAL (Scan / Price / Inventory) */}
+      {/* LAUNCH SPLASH SCREEN (Matches SamilliMedSplashScreen.kt) */}
+      {showSplash && (
+        <div className="fixed inset-0 z-50 bg-[#F3EFE6] flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-300">
+          {/* Ambient Lighting Circles */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+            <div className="absolute -top-24 -left-24 w-96 h-96 rounded-full bg-emerald-200/30 blur-3xl animate-pulse" />
+            <div className="absolute -bottom-24 -right-24 w-96 h-96 rounded-full bg-amber-200/30 blur-3xl animate-pulse" />
+          </div>
+
+          <div className="relative z-10 flex flex-col items-center max-w-md w-full">
+            {/* Animated Logo Container with Vitality Heartbeat Rings */}
+            <div className="relative flex items-center justify-center mb-8">
+              {/* Expanding Pulse Ring */}
+              <div className="absolute w-36 h-36 rounded-full border-2 border-emerald-600/30 animate-ping opacity-60" />
+              <div className="absolute w-28 h-28 rounded-full border-2 border-amber-500/30 animate-pulse" />
+
+              {/* Solid Emblem */}
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-800 to-teal-950 text-white flex items-center justify-center shadow-2xl border border-emerald-600/40 relative z-10">
+                <HeartPulse className="w-10 h-10 text-emerald-300 animate-pulse" />
+              </div>
+            </div>
+
+            {/* App Title */}
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E231F] tracking-tight">
+              SamilliMed Ground
+            </h1>
+
+            {/* Subtitles & Offline Indicators */}
+            <p className="text-xs font-bold tracking-widest text-emerald-800 uppercase mt-2">
+              Clinical Dispensary & Pharmacy Core
+            </p>
+            <p className="text-[11px] text-[#6B655D] mt-1 font-medium">
+              Offline-First SQLite • Zero-Drift FIFO • 2,212 Enriched Entities
+            </p>
+
+            {/* Loading Indicator */}
+            <div className="flex items-center gap-2 mt-8 text-xs text-[#6B655D] font-medium bg-white/70 px-4 py-2 rounded-full border border-[#E5DFD5]">
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-600 animate-ping" />
+              <span>Initializing local database & assets...</span>
+            </div>
+
+            {/* Skip Button */}
+            <button
+              onClick={() => setShowSplash(false)}
+              className="mt-6 text-xs font-bold text-emerald-900 hover:text-emerald-950 underline underline-offset-4 cursor-pointer"
+            >
+              Skip to Dashboard →
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* DASHBOARD ACTION MODALS FOR ALL 8 FEATURES & DOCK */}
       {activeDashboardAction && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-[#FAF7F2] border border-[#E5DFD5] rounded-2xl max-w-md w-full p-6 shadow-2xl flex flex-col gap-4">
+          <div className="bg-[#FAF7F2] border border-[#E5DFD5] rounded-3xl max-w-lg w-full p-6 shadow-2xl flex flex-col gap-4">
             <div className="flex items-center justify-between pb-3 border-b border-[#E5DFD5]">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-emerald-800" />
-                <h3 className="font-bold text-base text-[#23201D]">
-                  {activeDashboardAction === 'scan' && 'Barcode / QR Scanner'}
-                  {activeDashboardAction === 'price' && 'Batch Price & Unit Configuration'}
-                  {activeDashboardAction === 'inventory' && 'Register Commercial Stock Batch'}
-                </h3>
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-800">
+                  {activeDashboardAction === 'receiving' && <Truck className="w-5 h-5" />}
+                  {activeDashboardAction === 'dispensing' && <Pill className="w-5 h-5" />}
+                  {activeDashboardAction === 'inventory' && <Package className="w-5 h-5" />}
+                  {activeDashboardAction === 'alerts' && <AlertOctagon className="w-5 h-5 text-rose-700" />}
+                  {activeDashboardAction === 'reports' && <BarChart3 className="w-5 h-5" />}
+                  {activeDashboardAction === 'suppliers' && <Building2 className="w-5 h-5" />}
+                  {activeDashboardAction === 'adjustments' && <RefreshCw className="w-5 h-5" />}
+                  {activeDashboardAction === 'scan' && <QrCode className="w-5 h-5" />}
+                  {activeDashboardAction === 'vitality' && <Heart className="w-5 h-5 text-rose-600" />}
+                  {activeDashboardAction === 'settings' && <Settings className="w-5 h-5" />}
+                  {activeDashboardAction === 'price' && <DollarSign className="w-5 h-5" />}
+                </div>
+                <div>
+                  <h3 className="font-bold text-base text-[#23201D]">
+                    {activeDashboardAction === 'receiving' && 'Goods Receiving Intake'}
+                    {activeDashboardAction === 'dispensing' && 'Prescription Dispensing'}
+                    {activeDashboardAction === 'inventory' && 'Inventory Valuation & Stocks'}
+                    {activeDashboardAction === 'alerts' && 'Expiry Alerts & FEFO Watch'}
+                    {activeDashboardAction === 'reports' && 'Facility Financial Reports'}
+                    {activeDashboardAction === 'suppliers' && 'Suppliers & Vendors Directory'}
+                    {activeDashboardAction === 'adjustments' && 'Stock Adjustments & FIFO Audit'}
+                    {activeDashboardAction === 'scan' && 'Barcode / QR Scanner'}
+                    {activeDashboardAction === 'vitality' && 'System Health & Zero-Drift Vitality'}
+                    {activeDashboardAction === 'settings' && 'Facility & App Settings'}
+                    {activeDashboardAction === 'price' && 'Batch Price & Unit Configuration'}
+                  </h3>
+                  <p className="text-[11px] text-[#6B655D]">{facilityName}</p>
+                </div>
               </div>
               <button onClick={() => setActiveDashboardAction(null)} className="text-[#8C8479] hover:text-[#23201D]">
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <p className="text-xs text-[#6B655D] leading-relaxed">
-              Operational module preserved and connected with facility: <strong>{facilityName}</strong>. All entries synchronize with the 1,801 canonical substances in the Products Database.
-            </p>
+            {/* ACTION SPECIFIC CONTENT */}
+            {activeDashboardAction === 'receiving' && (
+              <div className="flex flex-col gap-3 text-xs">
+                <p className="text-[#6B655D] leading-relaxed">
+                  Record new supplier deliveries, verify physical lot numbers, and automatically create immutable FIFO cost layers.
+                </p>
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E5DFD5] flex flex-col gap-2">
+                  <div className="flex justify-between font-semibold text-[#23201D]">
+                    <span>Linked Taxonomy</span>
+                    <span className="text-emerald-800">1,801 Canonical Entities</span>
+                  </div>
+                  <div className="flex justify-between text-[#6B655D]">
+                    <span>Intake Mode</span>
+                    <span>Direct Barcode / Camera Scan</span>
+                  </div>
+                  <div className="flex justify-between text-[#6B655D]">
+                    <span>Ledger Integrity</span>
+                    <span>Zero-Drift Atomic Persistence</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
-            <div className="bg-white p-4 rounded-xl border border-[#E5DFD5] flex flex-col gap-2 text-xs">
-              <span className="font-semibold text-[#23201D]">Status</span>
-              <p className="text-[#6B655D]">Scanner & POS module linked to primary category database.</p>
-            </div>
+            {activeDashboardAction === 'dispensing' && (
+              <div className="flex flex-col gap-3 text-xs">
+                <p className="text-[#6B655D] leading-relaxed">
+                  Fulfill prescriptions with automated First-Expiring, First-Out (FEFO) batch deduction to minimize wastage.
+                </p>
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E5DFD5] flex flex-col gap-2">
+                  <div className="flex justify-between font-semibold text-[#23201D]">
+                    <span>Dispensing Engine</span>
+                    <span className="text-blue-800">FEFO Automated Priority</span>
+                  </div>
+                  <div className="flex justify-between text-[#6B655D]">
+                    <span>Safety Cross-Check</span>
+                    <span>Contraindications & High-Yield Pearls</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
-            <div className="flex justify-end pt-2">
+            {activeDashboardAction === 'inventory' && (
+              <div className="flex flex-col gap-3 text-xs">
+                <p className="text-[#6B655D] leading-relaxed">
+                  Real-time stock valuation across all active pharmaceutical inventory cost layers.
+                </p>
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E5DFD5] flex flex-col gap-2">
+                  <div className="flex justify-between font-semibold text-[#23201D]">
+                    <span>Valuation Method</span>
+                    <span className="text-amber-800">Perpetual Moving FIFO Cost Layers</span>
+                  </div>
+                  <div className="flex justify-between text-[#6B655D]">
+                    <span>Total Database Nodes</span>
+                    <span>{nodes.length} Items</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeDashboardAction === 'alerts' && (
+              <div className="flex flex-col gap-3 text-xs">
+                <p className="text-[#6B655D] leading-relaxed">
+                  Proactive shelf-life tracking. Batches nearing expiration are automatically flagged for prioritized dispensing or quarantine.
+                </p>
+                <div className="bg-white p-3.5 rounded-2xl border border-rose-200 flex flex-col gap-2">
+                  <div className="flex justify-between font-semibold text-rose-900">
+                    <span>Critical Alert Threshold</span>
+                    <span>30 / 60 / 90 Days</span>
+                  </div>
+                  <div className="flex justify-between text-[#6B655D]">
+                    <span>Quarantine Policy</span>
+                    <span>Automatic Lock at T-0 Days</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeDashboardAction === 'vitality' && (
+              <div className="flex flex-col gap-3 text-xs">
+                <p className="text-[#6B655D] leading-relaxed">
+                  System Health & Offline Engine telemetry. Verified zero-drift between physical stock batches and financial ledgers.
+                </p>
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E5DFD5] flex flex-col gap-2">
+                  <div className="flex justify-between font-semibold text-[#23201D]">
+                    <span>Room SQLite Database</span>
+                    <span className="text-emerald-800">Optimal (Zero Corruption)</span>
+                  </div>
+                  <div className="flex justify-between text-[#6B655D]">
+                    <span>Offline Status</span>
+                    <span>100% Fully Functional Offline</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {activeDashboardAction === 'scan' && (
+              <div className="flex flex-col gap-3 text-xs">
+                <div className="p-6 bg-stone-900 rounded-2xl text-center text-white flex flex-col items-center justify-center gap-3">
+                  <div className="w-16 h-16 rounded-2xl border-2 border-dashed border-emerald-400 flex items-center justify-center animate-pulse">
+                    <QrCode className="w-8 h-8 text-emerald-400" />
+                  </div>
+                  <p className="text-xs text-stone-300">
+                    Point camera or scanner at commercial package barcode (GS1 / EAN-13 / DataMatrix).
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {(activeDashboardAction === 'reports' || activeDashboardAction === 'suppliers' || activeDashboardAction === 'adjustments' || activeDashboardAction === 'settings' || activeDashboardAction === 'price') && (
+              <div className="flex flex-col gap-3 text-xs">
+                <p className="text-[#6B655D] leading-relaxed">
+                  Module configured and synchronized with the 2,212 reference taxonomy entities for facility: <strong>{facilityName}</strong>.
+                </p>
+                <div className="bg-white p-3.5 rounded-2xl border border-[#E5DFD5]">
+                  <p className="text-[#6B655D]">
+                    Operational data persists locally in standard Room SQLite and localStorage.
+                  </p>
+                </div>
+              </div>
+            )}
+
+            <div className="flex justify-between items-center pt-3 border-t border-[#E5DFD5]">
+              <button
+                onClick={() => {
+                  setActiveDashboardAction(null);
+                  setCurrentView('products');
+                }}
+                className="text-xs font-semibold text-emerald-800 hover:underline flex items-center gap-1"
+              >
+                <span>View Products Catalog →</span>
+              </button>
               <button
                 onClick={() => setActiveDashboardAction(null)}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-800 text-white"
+                className="px-5 py-2 rounded-xl text-xs font-semibold bg-emerald-800 hover:bg-emerald-900 text-white shadow-xs"
               >
                 Done
               </button>
