@@ -11,17 +11,20 @@ import core.domain.model.KnowledgeRelation
 
 @Dao
 interface KnowledgeDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertNodes(rows: List<KnowledgeNode>)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertRelations(rows: List<KnowledgeRelation>)
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertEvidence(rows: List<KnowledgeEvidence>)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAliases(rows: List<KnowledgeAlias>)
+
+    @Query("DELETE FROM knowledge_nodes WHERE id = :id")
+    fun deleteNodeById(id: String)
 
     @Query("SELECT * FROM knowledge_nodes WHERE id = :id LIMIT 1")
     fun findNode(id: String): KnowledgeNode?
