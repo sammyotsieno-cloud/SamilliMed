@@ -16,7 +16,6 @@ import java.util.Locale
  */
 object KnowledgeSeeder {
     private const val SEED_ASSET = "knowledge/knowledge_seed.tsv"
-    private const val LEGACY_MANIFEST_ID = "manifest.samillimed.knowledge"
 
     fun seed(context: Context, database: CoreDatabase) {
         synchronized(database) {
@@ -71,7 +70,10 @@ object KnowledgeSeeder {
             }
 
             database.runInTransaction {
-                dao.deleteNodeById(LEGACY_MANIFEST_ID)
+                dao.clearAliases()
+                dao.clearRelations()
+                dao.clearEvidence()
+                dao.clearNodes()
                 dao.insertEvidence(evidence)
                 dao.insertNodes(nodes)
                 dao.insertRelations(relations)
