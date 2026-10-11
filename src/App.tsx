@@ -78,9 +78,9 @@ export default function App() {
 
   // Derive the product-category view from the single canonical TSV source.
   useEffect(() => {
-    const data: TaxonomyNode[] = KNOWLEDGE_SEED_TSV.split(/\\r?\\n/).flatMap((line) => {
+    const data: TaxonomyNode[] = KNOWLEDGE_SEED_TSV.split(/\r?\n/).flatMap((line) => {
       if (!line.trim() || line.startsWith('#')) return [];
-      const columns = line.split('\\t');
+      const columns = line.split('\t');
       if (columns[0] !== 'N' || columns[2] !== 'product_category' || columns.length < 7) return [];
       try {
         const attributes = JSON.parse(columns[6]);
