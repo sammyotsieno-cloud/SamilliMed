@@ -179,14 +179,12 @@ fun AddProductDialog(
 
     var baseUnitName by remember { mutableStateOf("Piece") }
     var baseUnitAbbreviation by remember { mutableStateOf("pcs") }
-    var baseUnitCostPrice by remember { mutableStateOf("") }
     var baseUnitSellingPrice by remember { mutableStateOf("") }
 
     var addSecondaryUnit by remember { mutableStateOf(false) }
     var secondaryUnitName by remember { mutableStateOf("Box") }
     var secondaryUnitAbbreviation by remember { mutableStateOf("box") }
     var secondaryConversionMultiplier by remember { mutableStateOf("10") }
-    var secondaryCostPrice by remember { mutableStateOf("") }
     var secondarySellingPrice by remember { mutableStateOf("") }
 
     var isSaving by remember { mutableStateOf(false) }
@@ -291,23 +289,8 @@ fun AddProductDialog(
                     )
                 }
 
-                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(
-                        value = baseUnitCostPrice,
-                        onValueChange = { baseUnitCostPrice = it },
-                        label = { Text("Cost Price (KES)") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.weight(1f)
-                    )
-                    OutlinedTextField(
-                        value = baseUnitSellingPrice,
-                        onValueChange = { baseUnitSellingPrice = it },
-                        label = { Text("Selling Price (KES)") },
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                        modifier = Modifier.weight(1f)
-                    )
-                }
-
+                OutlinedTextField(value = baseUnitSellingPrice, onValueChange = { baseUnitSellingPrice = it }, label = { Text("Selling Price (KES)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
+                Text("Acquisition cost is recorded during Goods Receiving.", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = addSecondaryUnit, onCheckedChange = { addSecondaryUnit = it })
@@ -326,10 +309,7 @@ fun AddProductDialog(
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        OutlinedTextField(value = secondaryCostPrice, onValueChange = { secondaryCostPrice = it }, label = { Text("Pack Cost (KES)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.weight(1f))
-                        OutlinedTextField(value = secondarySellingPrice, onValueChange = { secondarySellingPrice = it }, label = { Text("Pack Price (KES)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.weight(1f))
-                    }
+                    OutlinedTextField(value = secondarySellingPrice, onValueChange = { secondarySellingPrice = it }, label = { Text("Pack Selling Price (KES)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
                 }
 
                 errorMessage?.let {
@@ -382,22 +362,20 @@ fun AddProductDialog(
                                     name = baseUnitName.trim(),
                                     abbreviation = baseUnitAbbreviation.trim(),
                                     isBaseUnit = true,
-                                    conversionMultiplier = 1L,
-                                    conversionDivisor = 1L,
+                                    conversionNumerator = 1L,
+                                    conversionDenominator = 1L,
                                     createdAt = now,
                                     updatedAt = now
                                 )
                                 container.productMasterDao.insertUnit(baseUnit)
 
-                                val baseCostKsh = baseUnitCostPrice.toDoubleOrNull()
                                 val baseSellKsh = baseUnitSellingPrice.toDoubleOrNull()
-                                if (baseCostKsh != null || baseSellKsh != null) {
+                                if (baseSellKsh != null) {
                                     container.productMasterDao.savePriceConfig(
                                         UnitPriceConfig(
                                             id = UUID.randomUUID().toString(),
                                             productUnitId = baseUnitId,
-                                            buyingPrice = baseCostKsh?.let { Money.kes((it * 100).toLong()) },
-                                            sellingPrice = baseSellKsh?.let { Money.kes((it * 100).toLong()) },
+                                            sellingPrice = Money.ofMinor((baseSellKsh * 100).toLong()),
                                             isActive = true,
                                             createdAt = now,
                                             updatedAt = now
@@ -414,22 +392,20 @@ fun AddProductDialog(
                                         name = secondaryUnitName.trim(),
                                         abbreviation = secondaryUnitAbbreviation.trim(),
                                         isBaseUnit = false,
-                                        conversionMultiplier = mult,
-                                        conversionDivisor = 1L,
+                                        conversionNumerator = mult,
+                                        conversionDenominator = 1L,
                                         createdAt = now,
                                         updatedAt = now
                                     )
                                     container.productMasterDao.insertUnit(secUnit)
 
-                                    val secCostKsh = secondaryCostPrice.toDoubleOrNull()
                                     val secSellKsh = secondarySellingPrice.toDoubleOrNull()
-                                    if (secCostKsh != null || secSellKsh != null) {
+                                    if (secSellKsh != null) {
                                         container.productMasterDao.savePriceConfig(
                                             UnitPriceConfig(
                                                 id = UUID.randomUUID().toString(),
                                                 productUnitId = secUnitId,
-                                                buyingPrice = secCostKsh?.let { Money.kes((it * 100).toLong()) },
-                                                sellingPrice = secSellKsh?.let { Money.kes((it * 100).toLong()) },
+                                                sellingPrice = Money.ofMinor((secSellKsh * 100).toLong()),
                                                 isActive = true,
                                                 createdAt = now,
                                                 updatedAt = now
@@ -550,12 +526,11 @@ fun ProductDetailsDialog(
                                 }
                                 Text(
                                     if (unit.isBaseUnit) "1 base unit"
-                                    else "1 ${unit.name} = ${unit.conversionMultiplier} ${details.units.firstOrNull { it.isBaseUnit }?.name ?: "base units"}",
+                                    else "1 ${unit.name} = ${unit.conversionNumerator} ${details.units.firstOrNull { it.isBaseUnit }?.name ?: "base units"}",
                                     style = MaterialTheme.typography.bodySmall
                                 )
                                 Spacer(modifier = Modifier.height(4.dp))
-                                Text("Cost: ${priceConfig?.buyingPrice?.let { "KES " + (it.minorUnits.toDouble() / 100.0) } ?: "Not set"}", style = MaterialTheme.typography.bodySmall)
-                                Text("Selling: ${priceConfig?.sellingPrice?.let { "KES " + (it.minorUnits.toDouble() / 100.0) } ?: "Not set"}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold)
+                                Text("Selling: ${priceConfig?.sellingPrice?.let { "KES " + (it.amountMinorUnits.toDouble() / 100.0) } ?: "Not set"}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold)
                             }
 
                             IconButton(onClick = { onEditPriceClick(unit, priceConfig) }) {
@@ -585,12 +560,11 @@ fun ProductDetailsDialog(
 fun AddUnitDialog(
     product: ProductMaster,
     onDismiss: () -> Unit,
-    onSaveUnit: (String, String, Long, Double?, Double?) -> Unit
+    onSaveUnit: (String, String, Long, Double?) -> Unit
 ) {
     var unitName by remember { mutableStateOf("") }
     var abbreviation by remember { mutableStateOf("") }
     var multiplier by remember { mutableStateOf("10") }
-    var costPrice by remember { mutableStateOf("") }
     var sellingPrice by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -608,7 +582,6 @@ fun AddUnitDialog(
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedTextField(value = costPrice, onValueChange = { costPrice = it }, label = { Text("Cost Price (KES) (Optional)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
                 OutlinedTextField(value = sellingPrice, onValueChange = { sellingPrice = it }, label = { Text("Selling Price (KES) (Optional)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal), modifier = Modifier.fillMaxWidth())
                 errorMessage?.let { Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall) }
             }
@@ -624,7 +597,7 @@ fun AddUnitDialog(
                     errorMessage = "Multiplier must be greater than 0."
                     return@Button
                 }
-                onSaveUnit(unitName.trim(), abbreviation.trim(), m, costPrice.toDoubleOrNull(), sellingPrice.toDoubleOrNull())
+                onSaveUnit(unitName.trim(), abbreviation.trim(), m, sellingPrice.toDoubleOrNull())
             }) {
                 Text("Add Unit")
             }
@@ -640,13 +613,10 @@ fun EditPriceDialog(
     unit: ProductUnit,
     currentPriceConfig: UnitPriceConfig?,
     onDismiss: () -> Unit,
-    onSavePrice: (Double?, Double?) -> Unit
+    onSavePrice: (Double?) -> Unit
 ) {
-    var costPrice by remember {
-        mutableStateOf(currentPriceConfig?.buyingPrice?.let { (it.minorUnits.toDouble() / 100.0).toString() } ?: "")
-    }
     var sellingPrice by remember {
-        mutableStateOf(currentPriceConfig?.sellingPrice?.let { (it.minorUnits.toDouble() / 100.0).toString() } ?: "")
+        mutableStateOf(currentPriceConfig?.sellingPrice?.let { (it.amountMinorUnits.toDouble() / 100.0).toString() } ?: "")
     }
 
     AlertDialog(
@@ -654,13 +624,6 @@ fun EditPriceDialog(
         title = { Text("Set Prices for ${unit.name}") },
         text = {
             Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = costPrice,
-                    onValueChange = { costPrice = it },
-                    label = { Text("Cost / Buying Price (KES)") },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
-                    modifier = Modifier.fillMaxWidth()
-                )
                 OutlinedTextField(
                     value = sellingPrice,
                     onValueChange = { sellingPrice = it },
@@ -672,7 +635,7 @@ fun EditPriceDialog(
         },
         confirmButton = {
             Button(onClick = {
-                onSavePrice(costPrice.toDoubleOrNull(), sellingPrice.toDoubleOrNull())
+                onSavePrice(sellingPrice.toDoubleOrNull())
             }) {
                 Text("Save Prices")
             }
@@ -843,7 +806,7 @@ fun ProductCatalogManagementDialog(
                                         Text("${item.units.size} unit(s) configured", style = MaterialTheme.typography.bodySmall)
                                         val basePrice = item.units.firstOrNull { it.isBaseUnit }?.let { item.priceConfigsByUnitId[it.id] }
                                         basePrice?.sellingPrice?.let {
-                                            Text("Base: KES ${it.minorUnits.toDouble() / 100.0}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
+                                            Text("Base: KES ${it.amountMinorUnits.toDouble() / 100.0}", style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary)
                                         }
                                     }
                                 }
@@ -887,7 +850,7 @@ fun ProductCatalogManagementDialog(
         AddUnitDialog(
             product = product,
             onDismiss = { showAddUnitDialogForProduct = null },
-            onSaveUnit = { name, abbr, multiplier, cost, sell ->
+            onSaveUnit = { name, abbr, multiplier, sell ->
                 scope.launch {
                     withContext(Dispatchers.IO) {
                         val unitId = UUID.randomUUID().toString()
@@ -899,19 +862,18 @@ fun ProductCatalogManagementDialog(
                                 name = name,
                                 abbreviation = abbr,
                                 isBaseUnit = false,
-                                conversionMultiplier = multiplier,
-                                conversionDivisor = 1L,
+                                conversionNumerator = multiplier,
+                                conversionDenominator = 1L,
                                 createdAt = now,
                                 updatedAt = now
                             )
                         )
-                        if (cost != null || sell != null) {
+                        if (sell != null) {
                             container.productMasterDao.savePriceConfig(
                                 UnitPriceConfig(
                                     id = UUID.randomUUID().toString(),
                                     productUnitId = unitId,
-                                    buyingPrice = cost?.let { Money.kes((it * 100).toLong()) },
-                                    sellingPrice = sell?.let { Money.kes((it * 100).toLong()) },
+                                    sellingPrice = Money.ofMinor((sell * 100).toLong()),
                                     isActive = true,
                                     createdAt = now,
                                     updatedAt = now
@@ -931,21 +893,22 @@ fun ProductCatalogManagementDialog(
             unit = unit,
             currentPriceConfig = currentConfig,
             onDismiss = { showEditPriceDialogForUnit = null },
-            onSavePrice = { cost, sell ->
+            onSavePrice = { sell ->
                 scope.launch {
                     withContext(Dispatchers.IO) {
                         val now = System.currentTimeMillis()
-                        container.productMasterDao.savePriceConfig(
-                            UnitPriceConfig(
-                                id = currentConfig?.id ?: UUID.randomUUID().toString(),
-                                productUnitId = unit.id,
-                                buyingPrice = cost?.let { Money.kes((it * 100).toLong()) },
-                                sellingPrice = sell?.let { Money.kes((it * 100).toLong()) },
-                                isActive = true,
-                                createdAt = currentConfig?.createdAt ?: now,
-                                updatedAt = now
+                        if (sell != null) {
+                            container.productMasterDao.savePriceConfig(
+                                UnitPriceConfig(
+                                    id = currentConfig?.id ?: UUID.randomUUID().toString(),
+                                    productUnitId = unit.id,
+                                    sellingPrice = Money.ofMinor((sell * 100).toLong()),
+                                    isActive = true,
+                                    createdAt = currentConfig?.createdAt ?: now,
+                                    updatedAt = now
+                                )
                             )
-                        )
+                        }
                     }
                     showEditPriceDialogForUnit = null
                     refreshProducts()
