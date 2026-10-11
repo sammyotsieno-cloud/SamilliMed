@@ -3,70 +3,51 @@ package core.domain.category
 import android.content.Context
 import core.domain.model.ProductCategory
 import core.domain.persistence.ProductCategoryDao
-import org.json.JSONArray
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 object ProductCategorySeeder {
+    private const val SEED_ASSET = "knowledge/knowledge_seed.tsv"
+
     suspend fun ensureDefaultTaxonomy(dao: ProductCategoryDao, context: Context? = null): Int {
-        val existing = dao.getAll()
-        val hasCategoryOne = existing.any { it.id == "1" }
-        if (hasCategoryOne && existing.size > 20) return 0
-
+        requireNotNull(context) { "Context is required to load knowledge_seed.tsv" }
         val now = System.currentTimeMillis()
+        val items = mutableListOf<ProductCategory>()
 
-        if (context != null) {
-            try {
-                val items = mutableListOf<ProductCategory>()
-                context.assets.open("taxonomy_v2.json").use { input ->
-                    val text = BufferedReader(InputStreamReader(input, Charsets.UTF_8)).readText()
-                    val jsonArray = JSONArray(text)
-                    for (i in 0 until jsonArray.length()) {
-                        val obj = jsonArray.getJSONObject(i)
-                        val id = obj.getString("id")
-                        val parentId = if (obj.isNull("parentId")) null else obj.getString("parentId")
-                        val name = obj.getString("name")
-                        val description = if (obj.isNull("description")) null else obj.getString("description")
-                        items.add(
-                            ProductCategory(
-                                id = id,
-                                parentCategoryId = parentId,
-                                name = name,
-                                description = description,
-                                isActive = true,
-                                sortOrder = i,
-                                isSystemDefault = true,
-                                createdAt = now,
-                                updatedAt = now
-                            )
+        context.assets.open(SEED_ASSET).use { input ->
+            BufferedReader(InputStreamReader(input, Charsets.UTF_8)).useLines { lines ->
+                lines.filter { it.isNotBlank() && !it.startsWith("#") }.forEach { line ->
+                    val c = line.split("\\t".toRegex(), limit = 9)
+                    if (c.size >= 9 && c[0] == "N" && c[2] == "product_category") {
+                        val attrs = JSONObject(c[6])
+                        val id = attrs.optString("productCategoryId").trim()
+                        require(id.isNotBlank()) { "Missing productCategoryId on ${c[1]}" }
+                        val parentValue = attrs.opt("parentProductCategoryId")
+                        val parent = if (parentValue == null || parentValue == JSONObject.NULL) null else parentValue.toString().takeIf { it.isNotBlank() }
+                        items += ProductCategory(
+                            id = id,
+                            parentCategoryId = parent,
+                            name = c[4],
+                            description = c[5].ifBlank { null },
+                            isActive = true,
+                            sortOrder = attrs.optInt("sortOrder", items.size),
+                            isSystemDefault = true,
+                            createdAt = now,
+                            updatedAt = now
                         )
                     }
                 }
-                if (items.isNotEmpty()) {
-                    dao.insertAll(items)
-                    return items.size
-                }
-            } catch (_: Exception) {
-                // Fallback to in-code default roots
             }
         }
 
-        if (existing.isNotEmpty()) return 0
-
-        val categories = DefaultProductTaxonomyV1.roots.mapIndexed { index, node ->
-            ProductCategory(
-                id = node.id,
-                parentCategoryId = null,
-                name = node.name,
-                description = node.description,
-                isActive = true,
-                sortOrder = index,
-                isSystemDefault = true,
-                createdAt = now,
-                updatedAt = now
-            )
+        require(items.isNotEmpty()) { "No product_category records in knowledge_seed.tsv" }
+        val ids = items.map { it.id }.toSet()
+        require(ids.size == items.size) { "Duplicate product category IDs in knowledge_seed.tsv" }
+        items.filter { it.parentCategoryId != null }.forEach { item ->
+            require(item.parentCategoryId in ids) { "Missing category parent ${item.parentCategoryId} for ${item.id}" }
         }
-        dao.insertAll(categories)
-        return categories.size
+        dao.upsertAll(items)
+        return items.size
     }
 }
