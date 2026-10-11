@@ -283,7 +283,7 @@ private fun CategoryEditorDialog(
 }
 
 @Composable
-fun ProductCategoryPickerDialog(
+fun ProductCategoryTreePickerDialog(
     categories: List<ProductCategory>,
     selectedId: String?,
     onSelect: (String) -> Unit,
