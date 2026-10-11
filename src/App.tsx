@@ -40,22 +40,11 @@ export interface TaxonomyNode {
   description: string | null;
 }
 
-const DEFAULT_ROOTS: TaxonomyNode[] = [
-  { id: "1", parentId: null, name: "Medicines & Pharmaceuticals", description: "Reference clinical taxonomy of medicinal substances and pharmacological classes." },
-  { id: "2", parentId: null, name: "Medical Consumables", description: "Single-use disposables, personal protective gear, catheters, and clinical consumables." },
-  { id: "3", parentId: null, name: "Diagnostic / Laboratory Supplies", description: "Reagents, rapid test kits, collection tubes, microscopy supplies, and laboratory consumables." },
-  { id: "4", parentId: null, name: "Medical Devices & Equipment", description: "Reusable clinical instruments, diagnostic devices, monitoring equipment, and procedural apparatus." },
-  { id: "5", parentId: null, name: "Wound Care & Procedure Supplies", description: "Gauze, bandages, sterile dressings, surgical sutures, tapes, and procedural packs." },
-  { id: "6", parentId: null, name: "Infection Prevention & Control", description: "Hospital-grade antiseptics, high-level disinfectants, sterilisation monitors, and barrier supplies." },
-  { id: "7", parentId: null, name: "Maternal, Newborn & Family Planning", description: "Obstetric delivery kits, contraceptive commodities, neonatal care items, and reproductive health commodities." },
-  { id: "8", parentId: null, name: "Personal Care / Hygiene", description: "Patient cleansing items, skin care barriers, adult briefs, and institutional hygiene commodities." },
-  { id: "9", parentId: null, name: "Nutrition & Supplements", description: "Therapeutic nutrition, enteral feeds, dietary formulations, oral rehydration salts, and macronutrients." },
-  { id: "10", parentId: null, name: "Non-medical / Facility Supplies", description: "Administrative forms, facility stationery, biohazard management bags, and operational utility supplies." }
-];
+
 
 export default function App() {
   const [currentView, setCurrentView] = useState<'products' | 'dashboard'>('products');
-  const [nodes, setNodes] = useState<TaxonomyNode[]>(DEFAULT_ROOTS);
+  const [nodes, setNodes] = useState<TaxonomyNode[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
   // Products Database Navigation Stack
