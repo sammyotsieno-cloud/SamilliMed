@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import core.domain.model.ProductCategory
 
 @Dao
@@ -58,6 +59,9 @@ interface ProductCategoryDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertAll(categories: List<ProductCategory>)
+
+    @Upsert
+    suspend fun upsertAll(categories: List<ProductCategory>)
 
     @Update
     suspend fun update(category: ProductCategory)
