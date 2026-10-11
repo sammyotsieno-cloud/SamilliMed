@@ -58,6 +58,9 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
+import org.json.JSONObject
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -677,6 +680,36 @@ private fun CategoryHorizontalBar(
     }
 }
 
+data class ParsedClinicalProfile(
+    val atc: String? = null,
+    val indications: String? = null,
+    val mechanism: String? = null,
+    val pharmacokinetics: String? = null,
+    val pearls: String? = null,
+    val contraindications: String? = null,
+    val dosageForms: String? = null,
+    val monitoring: String? = null
+)
+
+fun parseClinicalJson(raw: String?): ParsedClinicalProfile {
+    if (raw.isNullOrBlank()) return ParsedClinicalProfile()
+    return try {
+        val json = JSONObject(raw)
+        ParsedClinicalProfile(
+            atc = json.optString("atc").takeIf { it.isNotBlank() },
+            indications = json.optString("indications").takeIf { it.isNotBlank() },
+            mechanism = json.optString("mechanism").takeIf { it.isNotBlank() },
+            pharmacokinetics = json.optString("pharmacokinetics").takeIf { it.isNotBlank() },
+            pearls = json.optString("pearls").takeIf { it.isNotBlank() },
+            contraindications = json.optString("contraindications").takeIf { it.isNotBlank() },
+            dosageForms = json.optString("dosageForms").takeIf { it.isNotBlank() },
+            monitoring = json.optString("monitoring").takeIf { it.isNotBlank() }
+        )
+    } catch (_: Exception) {
+        ParsedClinicalProfile(indications = raw)
+    }
+}
+
 /**
  * Terminal Substance Profile view when user drills down to an individual drug leaf.
  */
@@ -687,6 +720,10 @@ private fun TerminalSubstanceProfileCard(
     onEdit: () -> Unit,
     onRegisterFormulation: () -> Unit
 ) {
+    val profile = remember(substance.description) { parseClinicalJson(substance.description) }
+    var activeTab by remember { mutableStateOf(0) }
+    val tabs = listOf("Indications", "Mechanism & PK", "Pearls & Safety", "Formulations")
+
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -708,12 +745,30 @@ private fun TerminalSubstanceProfileCard(
                     )
                     Spacer(modifier = Modifier.width(10.dp))
                     Column {
-                        Text(
-                            text = substance.name,
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            color = TEXT_PRIMARY
-                        )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = substance.name,
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold,
+                                color = TEXT_PRIMARY
+                            )
+                            profile.atc?.let { atc ->
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Surface(
+                                    shape = RoundedCornerShape(6.dp),
+                                    color = Color(0xFFD1FAE5),
+                                    border = BorderStroke(1.dp, Color(0xFFA7F3D0))
+                                ) {
+                                    Text(
+                                        text = "ATC: $atc",
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = FontWeight.Bold,
+                                        color = Color(0xFF065F46),
+                                        modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                                    )
+                                }
+                            }
+                        }
                         Text(
                             text = "Canonical Medicinal Substance",
                             style = MaterialTheme.typography.labelMedium,
@@ -727,19 +782,172 @@ private fun TerminalSubstanceProfileCard(
                 }
             }
 
-            substance.description?.let { desc ->
-                Spacer(modifier = Modifier.height(10.dp))
-                Text(
-                    text = "Clinical Profile / Mechanism:",
-                    style = MaterialTheme.typography.labelSmall,
-                    color = TEXT_MUTED,
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = desc,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = TEXT_PRIMARY
-                )
+            Spacer(modifier = Modifier.height(12.dp))
+
+            // Segmented Tab Row
+            Surface(
+                shape = RoundedCornerShape(10.dp),
+                color = Color(0xFFEAE2D3),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                TabRow(
+                    selectedTabIndex = activeTab,
+                    containerColor = Color.Transparent,
+                    contentColor = Color(0xFF23201D)
+                ) {
+                    tabs.forEachIndexed { index, title ->
+                        Tab(
+                            selected = activeTab == index,
+                            onClick = { activeTab = index },
+                            text = {
+                                Text(
+                                    text = title,
+                                    style = MaterialTheme.typography.labelSmall,
+                                    fontWeight = if (activeTab == index) FontWeight.Bold else FontWeight.Normal,
+                                    color = if (activeTab == index) Color(0xFF064E3B) else Color(0xFF6B655D)
+                                )
+                            }
+                        )
+                    }
+                }
+            }
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            // Active Tab Content
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = Color.White,
+                border = BorderStroke(1.dp, BAR_BORDER),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Column(modifier = Modifier.padding(14.dp)) {
+                    when (activeTab) {
+                        0 -> {
+                            Text(
+                                text = "Clinical Indications & Role",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = ACCENT_GREEN,
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = profile.indications ?: "Standard WHO therapeutic indications apply.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TEXT_PRIMARY
+                            )
+                        }
+                        1 -> {
+                            Text(
+                                text = "Mechanism of Action & Molecular Targets",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = Color(0xFF1E40AF),
+                                fontWeight = FontWeight.Bold
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = profile.mechanism ?: "Modulates targeted physiological receptors.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = TEXT_PRIMARY
+                            )
+                            profile.pharmacokinetics?.let { pk ->
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = "Pharmacokinetics & Elimination",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = Color(0xFF4338CA),
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = pk,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = TEXT_PRIMARY
+                                )
+                            }
+                        }
+                        2 -> {
+                            profile.pearls?.let { pearls ->
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = Color(0xFFFEF3C7),
+                                    border = BorderStroke(1.dp, Color(0xFFFDE68A)),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(modifier = Modifier.padding(10.dp)) {
+                                        Text(
+                                            text = "Clinical Pearls (Medical Student Notes)",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color(0xFF92400E),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = pearls,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color(0xFF78350F)
+                                        )
+                                    }
+                                }
+                                Spacer(modifier = Modifier.height(8.dp))
+                            }
+                            profile.contraindications?.let { contra ->
+                                Surface(
+                                    shape = RoundedCornerShape(8.dp),
+                                    color = Color(0xFFFFE4E6),
+                                    border = BorderStroke(1.dp, Color(0xFFFECDD3)),
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Column(modifier = Modifier.padding(10.dp)) {
+                                        Text(
+                                            text = "Contraindications & Red Flags",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = Color(0xFF9F1239),
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = contra,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = Color(0xFF881337)
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        3 -> {
+                            profile.dosageForms?.let { dosage ->
+                                Text(
+                                    text = "Approved Dosage Forms & Formulations",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = ACCENT_TEAL,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = dosage,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = TEXT_PRIMARY
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+                            profile.monitoring?.let { mon ->
+                                Text(
+                                    text = "Clinical & Lab Monitoring",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = ACCENT_GREEN,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(4.dp))
+                                Text(
+                                    text = mon,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = TEXT_PRIMARY
+                                )
+                            }
+                        }
+                    }
+                }
             }
 
             Spacer(modifier = Modifier.height(14.dp))
@@ -861,28 +1069,106 @@ private fun EditCategoryDialog(
     onSave: (String, String?) -> Unit
 ) {
     var name by remember { mutableStateOf(category.name) }
-    var description by remember { mutableStateOf(category.description ?: "") }
+    val initialProfile = remember(category.description) { parseClinicalJson(category.description) }
+    var atc by remember { mutableStateOf(initialProfile.atc ?: "") }
+    var indications by remember { mutableStateOf(initialProfile.indications ?: (category.description ?: "")) }
+    var mechanism by remember { mutableStateOf(initialProfile.mechanism ?: "") }
+    var pearls by remember { mutableStateOf(initialProfile.pearls ?: "") }
+    var dosageForms by remember { mutableStateOf(initialProfile.dosageForms ?: "") }
     var errorText by remember { mutableStateOf<String?>(null) }
+    var activeEditTab by remember { mutableStateOf(0) }
+    val editTabs = listOf("General & ATC", "Indications", "Mechanism", "Pearls & Safety")
 
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text("Edit ${category.name}") },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = { Text("Category Name") },
-                    singleLine = true,
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0xFFEAE2D3),
                     modifier = Modifier.fillMaxWidth()
-                )
+                ) {
+                    TabRow(
+                        selectedTabIndex = activeEditTab,
+                        containerColor = Color.Transparent,
+                        contentColor = Color(0xFF23201D)
+                    ) {
+                        editTabs.forEachIndexed { idx, title ->
+                            Tab(
+                                selected = activeEditTab == idx,
+                                onClick = { activeEditTab = idx },
+                                text = {
+                                    Text(
+                                        text = title,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = if (activeEditTab == idx) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
 
-                OutlinedTextField(
-                    value = description,
-                    onValueChange = { description = it },
-                    label = { Text("Clinical Description / Mechanism") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Spacer(modifier = Modifier.height(6.dp))
+
+                when (activeEditTab) {
+                    0 -> {
+                        OutlinedTextField(
+                            value = name,
+                            onValueChange = { name = it },
+                            label = { Text("Substance / Category Name *") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = atc,
+                            onValueChange = { atc = it },
+                            label = { Text("ATC Code (Optional)") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    1 -> {
+                        OutlinedTextField(
+                            value = indications,
+                            onValueChange = { indications = it },
+                            label = { Text("Primary Indications & Clinical Role") },
+                            minLines = 3,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    2 -> {
+                        OutlinedTextField(
+                            value = mechanism,
+                            onValueChange = { mechanism = it },
+                            label = { Text("Mechanism of Action & Molecular Targets") },
+                            minLines = 3,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                    3 -> {
+                        OutlinedTextField(
+                            value = pearls,
+                            onValueChange = { pearls = it },
+                            label = { Text("Clinical Pearls & High-Yield Notes") },
+                            minLines = 3,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        OutlinedTextField(
+                            value = dosageForms,
+                            onValueChange = { dosageForms = it },
+                            label = { Text("Dosage Forms & Formulations") },
+                            singleLine = true,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
+                }
 
                 errorText?.let {
                     Text(it, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
@@ -896,7 +1182,15 @@ private fun EditCategoryDialog(
                         errorText = "Name cannot be blank"
                         return@Button
                     }
-                    onSave(name.trim(), description.trim().ifBlank { null })
+                    val json = JSONObject().apply {
+                        if (atc.isNotBlank()) put("atc", atc.trim())
+                        if (indications.isNotBlank()) put("indications", indications.trim())
+                        if (mechanism.isNotBlank()) put("mechanism", mechanism.trim())
+                        if (pearls.isNotBlank()) put("pearls", pearls.trim())
+                        if (dosageForms.isNotBlank()) put("dosageForms", dosageForms.trim())
+                    }
+                    val resultDesc = if (json.length() > 0) json.toString() else null
+                    onSave(name.trim(), resultDesc)
                 },
                 colors = ButtonDefaults.buttonColors(containerColor = ACCENT_GREEN)
             ) {
@@ -941,23 +1235,138 @@ private fun SubstanceDetailDialog(
     onDismiss: () -> Unit,
     onEdit: () -> Unit
 ) {
+    val profile = remember(substance.description) { parseClinicalJson(substance.description) }
+    var activeTab by remember { mutableStateOf(0) }
+    val tabs = listOf("Indications", "Mechanism", "Pearls & Safety", "Formulations")
+
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(substance.name) },
+        title = {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(substance.name)
+                profile.atc?.let { atc ->
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Surface(
+                        shape = RoundedCornerShape(4.dp),
+                        color = Color(0xFFD1FAE5)
+                    ) {
+                        Text(
+                            text = atc,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = Color(0xFF065F46),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                        )
+                    }
+                }
+            }
+        },
         text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxWidth()
+            ) {
                 Text(
-                    text = "Medicinal Substance",
+                    text = "Canonical Active Pharmaceutical Substance",
                     style = MaterialTheme.typography.labelSmall,
                     color = ACCENT_TEAL,
                     fontWeight = FontWeight.Bold
                 )
-                Spacer(modifier = Modifier.height(8.dp))
-                substance.description?.let {
-                    Text(text = "Clinical Profile:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.bodyMedium)
-                    Text(text = it, style = MaterialTheme.typography.bodyMedium)
-                } ?: run {
-                    Text(text = "Standard WHO / Reference Active Pharmaceutical Substance.", style = MaterialTheme.typography.bodyMedium, color = TEXT_MUTED)
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = Color(0xFFEAE2D3),
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    TabRow(
+                        selectedTabIndex = activeTab,
+                        containerColor = Color.Transparent,
+                        contentColor = Color(0xFF23201D)
+                    ) {
+                        tabs.forEachIndexed { idx, title ->
+                            Tab(
+                                selected = activeTab == idx,
+                                onClick = { activeTab = idx },
+                                text = {
+                                    Text(
+                                        text = title,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        fontWeight = if (activeTab == idx) FontWeight.Bold else FontWeight.Normal
+                                    )
+                                }
+                            )
+                        }
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                when (activeTab) {
+                    0 -> {
+                        Text(text = "Clinical Indications & Role:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = ACCENT_GREEN)
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = profile.indications ?: substance.description ?: "Standard WHO therapeutic indications apply.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    1 -> {
+                        Text(text = "Mechanism of Action:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = Color(0xFF1E40AF))
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = profile.mechanism ?: "Modulates targeted physiological receptors.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        profile.pharmacokinetics?.let { pk ->
+                            Spacer(modifier = Modifier.height(8.dp))
+                            Text(text = "Pharmacokinetics:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = Color(0xFF4338CA))
+                            Spacer(modifier = Modifier.height(2.dp))
+                            Text(text = pk, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
+                    2 -> {
+                        profile.pearls?.let { pearls ->
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = Color(0xFFFEF3C7),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Text(text = "High-Yield Clinical Pearls", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = Color(0xFF92400E))
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(text = pearls, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF78350F))
+                                }
+                            }
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        profile.contraindications?.let { contra ->
+                            Surface(
+                                shape = RoundedCornerShape(8.dp),
+                                color = Color(0xFFFFE4E6),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Column(modifier = Modifier.padding(10.dp)) {
+                                    Text(text = "Contraindications & Warnings", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = Color(0xFF9F1239))
+                                    Spacer(modifier = Modifier.height(2.dp))
+                                    Text(text = contra, style = MaterialTheme.typography.bodyMedium, color = Color(0xFF881337))
+                                }
+                            }
+                        }
+                    }
+                    3 -> {
+                        profile.dosageForms?.let { dosage ->
+                            Text(text = "Approved Formulations:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = ACCENT_TEAL)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(text = dosage, style = MaterialTheme.typography.bodyMedium)
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                        profile.monitoring?.let { mon ->
+                            Text(text = "Clinical Monitoring:", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall, color = ACCENT_GREEN)
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(text = mon, style = MaterialTheme.typography.bodyMedium)
+                        }
+                    }
                 }
             }
         },
