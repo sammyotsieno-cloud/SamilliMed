@@ -1104,75 +1104,79 @@ export default function App() {
           </>
         ) : (
           /* ============================================================== */
-          /* 4. DASHBOARD SCREEN (Native Android Home Screen Reproduction)  */
+          /* 4. DASHBOARD SCREEN (Authoritative Visual Reference)           */
           /* ============================================================== */
-          <div className="flex flex-col gap-8 pb-12 relative">
-            {/* AMBIENT STUDIO ATMOSPHERE: Floating 3D Orbs with specular glints */}
-            <div className="absolute inset-0 pointer-events-none overflow-hidden -z-10">
-              {/* Top-Left Amber Orb */}
-              <div
-                className="absolute top-4 left-6 sm:left-16 w-16 h-16 sm:w-20 sm:h-20 rounded-full blur-[1px] opacity-80"
-                style={{
-                  background: 'radial-gradient(circle at 35% 35%, #FFF 0%, #FFD59E 25%, #E59C45 55%, #B86B1E 80%, #6B3A0A 100%)',
-                  boxShadow: '0 20px 35px -10px rgba(107, 58, 10, 0.35)'
-                }}
-              />
-              {/* Mid-Left Jade Hero Orb */}
-              <div
-                className="absolute top-72 -left-4 sm:left-4 w-24 h-24 sm:w-32 sm:h-32 rounded-full blur-[1px] opacity-75"
-                style={{
-                  background: 'radial-gradient(circle at 32% 30%, #FFF 0%, #8BB79B 22%, #6B997D 50%, #4C755D 75%, #2B4736 100%)',
-                  boxShadow: '0 30px 45px -12px rgba(43, 71, 54, 0.40)'
-                }}
-              />
-              {/* Top-Right Jade Orb */}
-              <div
-                className="absolute top-8 right-8 sm:right-24 w-18 h-18 sm:w-24 sm:h-24 rounded-full blur-[1px] opacity-80"
-                style={{
-                  background: 'radial-gradient(circle at 35% 32%, #FFF 0%, #98C4A9 20%, #6B997D 50%, #4C755D 78%, #2B4736 100%)',
-                  boxShadow: '0 25px 40px -10px rgba(43, 71, 54, 0.35)'
-                }}
-              />
-              {/* Mid-Right Amber Orb */}
-              <div
-                className="absolute top-80 -right-4 sm:right-6 w-20 h-20 sm:w-28 sm:h-28 rounded-full blur-[1px] opacity-70"
-                style={{
-                  background: 'radial-gradient(circle at 36% 34%, #FFF 0%, #FFE0B2 20%, #E59C45 52%, #B86B1E 82%, #6B3A0A 100%)',
-                  boxShadow: '0 25px 40px -12px rgba(107, 58, 10, 0.35)'
-                }}
-              />
-            </div>
+          <div className="flex flex-col gap-6 pb-24 relative max-w-4xl mx-auto w-full">
+            {/* 1. AUTHORITATIVE HEADER CARD */}
+            <div className="bg-[#FAF7EF] border border-[#EBE6DC] rounded-3xl p-4 sm:p-5 shadow-sm relative overflow-hidden flex items-center justify-between">
+              {/* Decorative 3D Spheres peeking behind facility selector */}
+              <div className="absolute right-2 sm:right-6 top-1/2 -translate-y-1/2 flex items-center pointer-events-none -z-0 opacity-90">
+                <div
+                  className="w-12 h-12 rounded-full -mr-3"
+                  style={{
+                    background: 'radial-gradient(circle at 35% 35%, #FFF 0%, #FFD59E 30%, #D4A05B 70%, #9E6520 100%)',
+                    boxShadow: '0 8px 16px rgba(158, 101, 32, 0.25)'
+                  }}
+                />
+                <div
+                  className="w-16 h-16 rounded-full"
+                  style={{
+                    background: 'radial-gradient(circle at 32% 30%, #FFF 0%, #8BB79B 25%, #4A6B53 65%, #244A38 100%)',
+                    boxShadow: '0 10px 20px rgba(36, 74, 56, 0.30)'
+                  }}
+                />
+                <div
+                  className="w-8 h-8 rounded-full -ml-3 mt-4"
+                  style={{
+                    background: 'radial-gradient(circle at 40% 35%, #FFF 0%, #F5F5F5 50%, #C0C0C0 100%)',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.15)'
+                  }}
+                />
+              </div>
 
-            {/* DASHBOARD HEADER WITH EDITABLE FACILITY PILL */}
-            <div className="flex flex-col items-center text-center gap-2 pt-2">
-              <span className="text-[11px] font-bold tracking-widest text-emerald-800 uppercase bg-emerald-100/70 border border-emerald-200/80 px-3 py-1 rounded-full">
-                SamilliMed Ground • Offline Dispensary
-              </span>
+              {/* Left Brand Area */}
+              <div className="flex items-center gap-3.5 relative z-10">
+                {/* Cross Emblem with Leaf Motif */}
+                <div className="relative w-12 h-12 flex items-center justify-center shrink-0">
+                  <div className="w-11 h-11 bg-[#244A38] rounded-xl flex items-center justify-center shadow-xs">
+                    <div className="relative w-7 h-7 flex items-center justify-center">
+                      <div className="absolute w-2.5 h-7 bg-white/90 rounded-xs" />
+                      <div className="absolute w-7 h-2.5 bg-white/90 rounded-xs" />
+                      <div className="absolute w-4 h-4 bg-[#244A38] rounded-tl-full rounded-br-full transform rotate-45" />
+                    </div>
+                  </div>
+                </div>
 
-              <h1 className="text-3xl sm:text-4xl font-extrabold text-[#1E231F] tracking-tight">
-                Dashboard
-              </h1>
+                <div>
+                  <h1 className="text-2xl sm:text-3xl font-extrabold text-[#1A2C23] tracking-tight leading-tight">
+                    SamilliMed
+                  </h1>
+                  <p className="text-xs italic text-[#5C7A65] font-medium tracking-wide">
+                    Better Health • Brighter Tomorrow
+                  </p>
+                </div>
+              </div>
 
-              {/* Editable Facility Name Pill */}
-              <div className="mt-1">
+              {/* Right Facility Selector Pill */}
+              <div className="relative z-10">
                 {isEditingFacility ? (
-                  <div className="flex items-center gap-2 bg-white/95 px-3 py-1.5 rounded-full border border-emerald-600 shadow-sm">
+                  <div className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-2xl border border-emerald-700 shadow-sm">
                     <input
                       type="text"
                       value={facilityDraft}
                       onChange={e => setFacilityDraft(e.target.value)}
-                      className="bg-transparent text-sm font-bold text-[#1E231F] focus:outline-none w-56 text-center"
+                      className="text-xs font-bold text-[#1A2C23] bg-transparent focus:outline-none w-36"
                       autoFocus
                     />
                     <button
                       onClick={handleSaveFacility}
-                      className="px-2.5 py-1 bg-emerald-800 text-white rounded-full text-xs font-semibold"
+                      className="px-2 py-0.5 bg-[#244A38] text-white rounded-lg text-[10px] font-bold"
                     >
                       Save
                     </button>
                     <button
                       onClick={() => setIsEditingFacility(false)}
-                      className="px-2 py-1 text-[#6B655D] text-xs font-semibold"
+                      className="text-[10px] text-[#6B655D]"
                     >
                       Cancel
                     </button>
@@ -1183,324 +1187,306 @@ export default function App() {
                       setFacilityDraft(facilityName);
                       setIsEditingFacility(true);
                     }}
-                    className="group inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/60 hover:bg-white/90 border border-[#E5DFD5] hover:border-emerald-600/50 shadow-xs transition-all backdrop-blur-xs"
+                    className="flex items-center gap-2.5 bg-white/95 hover:bg-white px-3.5 py-1.5 rounded-2xl border border-[#E0DDD5] shadow-xs transition-all cursor-pointer backdrop-blur-xs"
                     title="Tap to rename facility"
                   >
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    <span className="text-sm font-bold text-[#1E231F]">{facilityName}</span>
-                    <Edit2 className="w-3.5 h-3.5 text-[#8C8479] group-hover:text-emerald-800 transition-colors" />
+                    <Building2 className="w-4 h-4 text-[#244A38] shrink-0" />
+                    <div className="text-left">
+                      <span className="block text-[9px] font-medium text-stone-500 uppercase leading-none">
+                        Facility
+                      </span>
+                      <span className="text-xs font-bold text-[#1A2C23] leading-tight truncate block max-w-[130px] sm:max-w-[180px]">
+                        {facilityName}
+                      </span>
+                    </div>
+                    <ChevronRight className="w-3.5 h-3.5 text-stone-700 transform rotate-90 shrink-0" />
                   </button>
                 )}
               </div>
             </div>
 
-            {/* HIGH-YIELD HIGHLIGHT: PRODUCTS DATABASE CONNECTOR */}
-            <div className="bg-gradient-to-r from-emerald-900 to-teal-950 text-white p-4 sm:p-5 rounded-3xl shadow-md border border-emerald-800 flex flex-col sm:flex-row items-center justify-between gap-4">
-              <div className="flex items-center gap-3.5">
-                <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-400/30 flex items-center justify-center text-emerald-300 shrink-0">
-                  <Layers className="w-6 h-6" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-base font-bold text-white">Clinical Products & Knowledge Engine</h3>
-                    <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-emerald-400/20 text-emerald-300 border border-emerald-400/30">
-                      Enriched
-                    </span>
-                  </div>
-                  <p className="text-xs text-emerald-200/80 mt-0.5">
-                    2,212 Canonical Entities across all 19 Clinical Medicine branches with segmented dosage & pharmacology dossiers.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                onClick={() => setCurrentView('products')}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-2xl bg-white text-emerald-950 font-bold text-xs hover:bg-emerald-50 shadow-sm transition-all flex items-center justify-center gap-2 shrink-0"
-              >
-                <span>Browse Products Database</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* 8 FROSTED GLASS SQUIRCLE TILES WITH WARM AMBER RIM GLOW */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-5">
-              {/* 1. Goods Receiving */}
-              <div
-                onClick={() => setActiveDashboardAction('receiving')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
-                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-100/90 text-emerald-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <Truck className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-emerald-900 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    Intake
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-emerald-900 transition-colors">
-                    Goods Receiving
-                  </h3>
-                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
-                    Supplier PO intake, batch delivery & barcode match.
-                  </p>
-                </div>
-              </div>
-
-              {/* 2. Dispensing */}
-              <div
-                onClick={() => setActiveDashboardAction('dispensing')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
-                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-blue-100/90 text-blue-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <Pill className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-blue-900 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
-                    FEFO Active
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-blue-900 transition-colors">
-                    Dispensing
-                  </h3>
-                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
-                    Prescriptions & FIFO/FEFO batch deduction.
-                  </p>
-                </div>
-              </div>
-
-              {/* 3. Inventory */}
-              <div
-                onClick={() => setActiveDashboardAction('inventory')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
-                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-100/90 text-amber-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <Package className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded-full border border-amber-200">
-                    Valuation
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-amber-900 transition-colors">
-                    Inventory
-                  </h3>
-                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
-                    Batch cost layers, shelf balances & reorder levels.
-                  </p>
-                </div>
-              </div>
-
-              {/* 4. Products (Taxonomy Catalog) */}
-              <div
-                onClick={() => setCurrentView('products')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px] ring-2 ring-emerald-600/40"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(240,248,243,0.85) 60%, rgba(235,245,238,0.90) 100%)',
-                  border: '1.5px solid rgba(16, 185, 129, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(16, 185, 129, 0.18), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <Layers className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-white bg-emerald-700 px-2 py-0.5 rounded-full">
-                    2,212 Items
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-emerald-950 leading-tight">
-                    Products
-                  </h3>
-                  <p className="text-xs text-emerald-800 mt-1 leading-snug font-medium">
-                    19 Subcategories, ATC codes & clinical dossiers.
-                  </p>
-                </div>
-              </div>
-
-              {/* 5. Expiry Alerts */}
-              <div
-                onClick={() => setActiveDashboardAction('alerts')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
-                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-rose-100/90 text-rose-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <AlertOctagon className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-rose-900 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-200">
-                    Proactive
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-rose-900 transition-colors">
-                    Expiry Alerts
-                  </h3>
-                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
-                    FEFO shelf-life flags & automatic quarantine alerts.
-                  </p>
-                </div>
-              </div>
-
-              {/* 6. Reports */}
-              <div
-                onClick={() => setActiveDashboardAction('reports')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
-                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-indigo-100/90 text-indigo-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <BarChart3 className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-indigo-900 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
-                    Analytics
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-indigo-900 transition-colors">
-                    Reports
-                  </h3>
-                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
-                    Financial valuation, consumption & ledger drift.
-                  </p>
-                </div>
-              </div>
-
-              {/* 7. Suppliers */}
-              <div
-                onClick={() => setActiveDashboardAction('suppliers')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
-                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
-              >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-teal-100/90 text-teal-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <Building2 className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-teal-900 bg-teal-50 px-2 py-0.5 rounded-full border border-teal-200">
-                    Vendors
-                  </span>
-                </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-teal-900 transition-colors">
-                    Suppliers
-                  </h3>
-                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
-                    Vendor registry, invoices & lead-time monitoring.
-                  </p>
-                </div>
-              </div>
-
-              {/* 8. Stock Adjustments */}
+            {/* 2. THREE-COLUMN GRID: 9 TILES IN EXACT REQUIRED ORDER */}
+            <div className="grid grid-cols-3 gap-3 sm:gap-4">
+              {/* Row 1, Col 1: Stock Adjustments */}
               <div
                 onClick={() => setActiveDashboardAction('adjustments')}
-                className="group relative cursor-pointer rounded-3xl p-5 sm:p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl flex flex-col justify-between min-h-[170px] sm:min-h-[190px]"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(247,242,232,0.85) 60%, rgba(239,232,219,0.90) 100%)',
-                  border: '1.5px solid rgba(255, 213, 136, 0.75)',
-                  boxShadow: '0 12px 24px -6px rgba(107, 88, 68, 0.12), inset 0 1px 0 rgba(255,255,255,0.9)'
-                }}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
               >
-                <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-2xl bg-purple-100/90 text-purple-800 flex items-center justify-center group-hover:scale-110 transition-transform shadow-xs">
-                    <RefreshCw className="w-6 h-6" />
-                  </div>
-                  <span className="text-[10px] font-bold text-purple-900 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
-                    FIFO Audit
-                  </span>
+                <div className="w-11 h-11 rounded-full bg-[#244A38] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <RefreshCw className="w-5 h-5" />
                 </div>
-                <div>
-                  <h3 className="font-extrabold text-base sm:text-lg text-[#1E231F] leading-tight group-hover:text-purple-900 transition-colors">
-                    Stock Adjustments
-                  </h3>
-                  <p className="text-xs text-[#6B655D] mt-1 leading-snug">
-                    Atomic cost layer realignment & write-off audit log.
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Stock<br />Adjustments
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+
+              {/* Row 1, Col 2: Goods Receiving */}
+              <div
+                onClick={() => setActiveDashboardAction('receiving')}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#D4A05B] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <Package className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Goods<br />Receiving
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+
+              {/* Row 1, Col 3: Dispensing */}
+              <div
+                onClick={() => setActiveDashboardAction('dispensing')}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#244A38] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <Pill className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Dispensing
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+
+              {/* Row 2, Col 1: Inventory */}
+              <div
+                onClick={() => setActiveDashboardAction('inventory')}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#244A38] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <Layers className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Inventory
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+
+              {/* Row 2, Col 2: Drug Index */}
+              <div
+                onClick={() => setCurrentView('products')}
+                className="bg-[#FAF7EF] hover:bg-white border-2 border-emerald-700/40 hover:border-emerald-700 rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#D4A05B] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <Syringe className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-emerald-950 leading-snug">
+                  Drug Index
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-emerald-800" />
+              </div>
+
+              {/* Row 2, Col 3: Goods Registration */}
+              <div
+                onClick={() => setShowAddDialog(true)}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#244A38] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <FileText className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Goods<br />Registration
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+
+              {/* Row 3, Col 1: Reports */}
+              <div
+                onClick={() => setActiveDashboardAction('reports')}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#D4A05B] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <BarChart3 className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Reports
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+
+              {/* Row 3, Col 2: Suppliers */}
+              <div
+                onClick={() => setActiveDashboardAction('suppliers')}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-full bg-[#244A38] text-white flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Suppliers
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+
+              {/* Row 3, Col 3: Services Index */}
+              <div
+                onClick={() => setActiveDashboardAction('services')}
+                className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-[#D4A05B] rounded-3xl p-3 sm:p-4 transition-all duration-200 shadow-xs hover:shadow-md cursor-pointer flex flex-col items-center justify-between min-h-[115px] sm:min-h-[135px] text-center group"
+              >
+                <div className="w-11 h-11 rounded-2xl bg-[#244A38] text-[#FFD59E] flex items-center justify-center group-hover:scale-105 transition-transform shadow-xs">
+                  <Stethoscope className="w-5 h-5" />
+                </div>
+                <span className="text-xs font-bold text-[#1A2C23] leading-snug">
+                  Services Index
+                </span>
+                <ChevronRight className="w-3.5 h-3.5 text-[#A39E93]" />
+              </div>
+            </div>
+
+            {/* 3. INFORMATION CARDS BENEATH THE TILES IN EXACT ORDER */}
+
+            {/* CARD 1: TODAY'S SALES (Dark Forest Green with Area Sparkline) */}
+            <div className="bg-gradient-to-b from-[#1E4332] to-[#143324] text-white rounded-3xl p-5 shadow-md flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-1.5 flex-1">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#335C47] flex items-center justify-center text-white">
+                    <Activity className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-sm text-white">Today's Sales</h3>
+                    <p className="text-[11px] text-[#9ABCA6]">Mon, 13 Oct 2026</p>
+                  </div>
+                </div>
+
+                <div className="mt-1">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+                    KSh 48,750
+                  </span>
+                  <p className="text-xs text-[#86EFAC] font-medium mt-0.5">
+                    ↑ 12% vs. yesterday
                   </p>
+                </div>
+              </div>
+
+              {/* Glowing Green Area Sparkline with Timestamps */}
+              <div className="flex flex-col items-end w-44 sm:w-56 shrink-0">
+                <svg viewBox="0 0 200 60" className="w-full h-14 overflow-visible">
+                  <defs>
+                    <linearGradient id="salesGrad" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor="#4ADE80" stopOpacity="0.4" />
+                      <stop offset="100%" stopColor="#4ADE80" stopOpacity="0.0" />
+                    </linearGradient>
+                  </defs>
+                  <path
+                    d="M 0 45 Q 30 42 50 36 T 100 28 T 150 24 T 200 12 L 200 60 L 0 60 Z"
+                    fill="url(#salesGrad)"
+                  />
+                  <path
+                    d="M 0 45 Q 30 42 50 36 T 100 28 T 150 24 T 200 12"
+                    fill="none"
+                    stroke="#4ADE80"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
+                  />
+                  <circle cx="200" cy="12" r="4" fill="#86EFAC" />
+                  <circle cx="200" cy="12" r="2" fill="#FFFFFF" />
+                </svg>
+                <div className="flex justify-between w-full text-[9px] text-[#9ABCA6] font-medium mt-1">
+                  <span>8am</span>
+                  <span>10am</span>
+                  <span>12pm</span>
+                  <span>2pm</span>
+                  <span>4pm</span>
                 </div>
               </div>
             </div>
 
-            {/* BOTTOM MOLTEN-GLASS PEDESTAL & TRANSLUCENT FLOATING DOCK CAPSULE */}
-            <div className="mt-4 flex flex-col items-center">
-              <div
-                className="inline-flex items-center gap-6 sm:gap-10 px-8 py-3.5 rounded-full backdrop-blur-md shadow-xl"
-                style={{
-                  background: 'linear-gradient(180deg, rgba(255, 255, 255, 0.75) 0%, rgba(255, 248, 235, 0.65) 100%)',
-                  border: '1px solid rgba(255, 224, 160, 0.70)',
-                  boxShadow: '0 15px 30px -8px rgba(107, 88, 68, 0.20)'
-                }}
-              >
-                <button
-                  onClick={() => setActiveDashboardAction('scan')}
-                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
-                  title="Barcode & QR Scanner"
-                >
-                  <div className="w-10 h-10 rounded-full bg-emerald-100/70 group-hover:bg-emerald-200 flex items-center justify-center text-emerald-900 transition-all">
-                    <QrCode className="w-5 h-5" />
+            {/* CARD 2: TODAY'S EXPENSES (Pale Cream with Amber Bar Chart) */}
+            <div className="bg-[#FAF7EF] border border-[#EBE6DC] rounded-3xl p-5 shadow-xs flex items-center justify-between gap-4">
+              <div className="flex flex-col gap-1.5 flex-1">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-[#D4A05B] flex items-center justify-center text-white">
+                    <DollarSign className="w-4 h-4" />
                   </div>
-                  <span className="text-[10px] font-bold tracking-tight">Scanner</span>
-                </button>
-
-                <button
-                  onClick={() => setActiveDashboardAction('receiving')}
-                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
-                  title="Quick Intake Cart"
-                >
-                  <div className="w-10 h-10 rounded-full bg-blue-100/70 group-hover:bg-blue-200 flex items-center justify-center text-blue-900 transition-all">
-                    <ShoppingCart className="w-5 h-5" />
+                  <div>
+                    <h3 className="font-bold text-sm text-[#1A2C23]">Today's Expenses</h3>
+                    <p className="text-[11px] text-stone-500">Mon, 13 Oct 2026</p>
                   </div>
-                  <span className="text-[10px] font-bold tracking-tight">Catalog</span>
-                </button>
+                </div>
 
-                <button
-                  onClick={() => setActiveDashboardAction('vitality')}
-                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
-                  title="Zero-Drift System Vitality"
-                >
-                  <div className="w-10 h-10 rounded-full bg-rose-100/70 group-hover:bg-rose-200 flex items-center justify-center text-rose-900 transition-all">
-                    <Heart className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-bold tracking-tight">Vitality</span>
-                </button>
+                <div className="mt-1">
+                  <span className="text-2xl sm:text-3xl font-extrabold text-[#1A2C23] tracking-tight">
+                    KSh 12,430
+                  </span>
+                  <p className="text-xs text-[#5C7A65] font-medium mt-0.5">
+                    ↓ 8% vs. yesterday
+                  </p>
+                </div>
+              </div>
 
+              {/* Amber Vertical Bars with Timestamps */}
+              <div className="flex flex-col items-end w-44 sm:w-56 shrink-0">
+                <div className="flex items-end justify-between w-full h-14 px-1 gap-2">
+                  <div className="w-2.5 bg-[#D4A05B]/50 rounded-t-sm h-[30%]" />
+                  <div className="w-2.5 bg-[#D4A05B]/70 rounded-t-sm h-[50%]" />
+                  <div className="w-2.5 bg-[#D4A05B] rounded-t-sm h-[70%]" />
+                  <div className="w-2.5 bg-[#D4A05B]/60 rounded-t-sm h-[55%]" />
+                  <div className="w-2.5 bg-[#D4A05B] rounded-t-sm h-[80%]" />
+                  <div className="w-2.5 bg-[#D4A05B]/60 rounded-t-sm h-[60%]" />
+                  <div className="w-2.5 bg-[#D4A05B] rounded-t-sm h-[95%]" />
+                </div>
+                <div className="flex justify-between w-full text-[9px] text-stone-500 font-medium mt-1">
+                  <span>8am</span>
+                  <span>10am</span>
+                  <span>12pm</span>
+                  <span>2pm</span>
+                  <span>4pm</span>
+                </div>
+              </div>
+            </div>
+
+            {/* CARD 3: EXPIRY ALERTS (Pale Warm with Red Alert Badge) */}
+            <div
+              onClick={() => setActiveDashboardAction('alerts')}
+              className="bg-[#FAF7EF] hover:bg-white border border-[#EBE6DC] hover:border-red-300 rounded-3xl p-5 shadow-xs transition-all cursor-pointer flex items-center justify-between"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-[#D34538] flex items-center justify-center text-white shrink-0">
+                  <AlertTriangle className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-sm text-[#1A2C23]">Expiry Alerts</h3>
+                  <p className="text-[11px] text-stone-500">Mon, 13 Oct 2026</p>
+                  <p className="text-sm font-bold text-[#1A2C23] mt-0.5">
+                    3 items expiring soon
+                  </p>
+                </div>
+              </div>
+
+              <ChevronRight className="w-5 h-5 text-[#A39E93]" />
+            </div>
+
+            {/* 4. FIXED BOTTOM NAVIGATION BAR */}
+            <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 w-[92%] max-w-md">
+              <div className="bg-[#244A38] text-white rounded-full px-6 py-2.5 shadow-2xl border border-emerald-900/60 flex items-center justify-between">
+                {/* Settings */}
                 <button
                   onClick={() => setActiveDashboardAction('settings')}
-                  className="flex flex-col items-center gap-1 text-[#6B655D] hover:text-emerald-800 transition-colors group"
-                  title="Facility & System Settings"
+                  className="flex flex-col items-center gap-1 text-[#C5D6CC] hover:text-white transition-colors"
                 >
-                  <div className="w-10 h-10 rounded-full bg-amber-100/70 group-hover:bg-amber-200 flex items-center justify-center text-amber-900 transition-all">
-                    <Settings className="w-5 h-5" />
-                  </div>
-                  <span className="text-[10px] font-bold tracking-tight">Settings</span>
+                  <Settings className="w-5 h-5" />
+                  <span className="text-[11px] font-medium">Settings</span>
+                </button>
+
+                {/* Dashboard (Raised prominent green badge) */}
+                <div className="flex flex-col items-center -mt-6">
+                  <button
+                    onClick={() => setCurrentView('dashboard')}
+                    className="w-14 h-14 rounded-full bg-[#3B6647] border-2 border-[#528562] shadow-lg flex items-center justify-center text-white hover:scale-105 transition-transform"
+                  >
+                    <BookOpen className="w-6 h-6" />
+                  </button>
+                  <span className="text-[11px] font-bold text-white mt-1">Dashboard</span>
+                </div>
+
+                {/* Receiving */}
+                <button
+                  onClick={() => setActiveDashboardAction('receiving')}
+                  className="flex flex-col items-center gap-1 text-[#C5D6CC] hover:text-white transition-colors"
+                >
+                  <Package className="w-5 h-5" />
+                  <span className="text-[11px] font-medium">Receiving</span>
                 </button>
               </div>
             </div>

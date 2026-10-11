@@ -258,9 +258,20 @@ fun AppNavigation(
                 currentFeature == "reports" -> ReportsScreen(container = appContainer, onBack = { currentFeature = null })
                 currentFeature == "suppliers" -> PlaceholderScreen(title = "Suppliers", explanation = "Supplier entity identity is defined in database schema, but automated supplier account ledger and procurement orchestration services are pending future architectural reconciliation. Use Goods Receiving for supplier invoice & batch tracking.", onBack = { currentFeature = null })
                 currentFeature == "adjustments" -> PlaceholderScreen(title = "Stock Adjustments", explanation = "Direct stock adjustments require atomic inventory cost layer reallocation and write-off ledger reconciliation to maintain zero-drift FIFO integrity. Currently, intake is recorded via Goods Receiving and reversals via Dispensing Void.", onBack = { currentFeature = null })
+                currentFeature == "services" -> PlaceholderScreen(title = "Services Index", explanation = "Clinical outpatient consultations, diagnostic laboratory panels, and medical procedure fee schedules are configured here. Pharmaceutical stock and medical consumables are managed via Drug Index and Inventory.", onBack = { currentFeature = null })
                 currentFeature != null -> PlaceholderScreen(title = "Feature", onBack = { currentFeature = null })
                 currentBottomTab is BottomNavItem.Dashboard -> DashboardScreen(
-                    onFeatureClick = { route -> currentFeature = route },
+                    onFeatureClick = { route ->
+                        if (route == "settings") {
+                            currentFeature = null
+                            currentBottomTab = BottomNavItem.Settings
+                        } else if (route == "dashboard") {
+                            currentFeature = null
+                            currentBottomTab = BottomNavItem.Dashboard
+                        } else {
+                            currentFeature = route
+                        }
+                    },
                     container = appContainer,
                     onScanProduct = {
                         scanReturnFeature = "dashboard"
