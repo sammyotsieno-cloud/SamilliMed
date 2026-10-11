@@ -86,24 +86,42 @@ export default function App() {
   // Quick Action Dialogs for Dashboard
   const [activeDashboardAction, setActiveDashboardAction] = useState<string | null>(null);
 
-  // Fetch full taxonomy JSON on mount
+  // Load product categories from the single canonical TSV dataset.
   useEffect(() => {
     let isMounted = true;
-    fetch('/taxonomy_v2.json')
+    fetch('/knowledge_seed.tsv')
       .then(res => {
-        if (!res.ok) throw new Error('Network error');
-        return res.json();
+        if (!res.ok) throw new Error('Knowledge seed could not be loaded');
+        return res.text();
       })
-      .then((data: TaxonomyNode[]) => {
-        if (isMounted && Array.isArray(data) && data.length > 0) {
+      .then((text) => {
+        const data: TaxonomyNode[] = text.split(/\\r?\\n/).flatMap((line) => {
+          if (!line.trim() || line.startsWith('#')) return [];
+          const columns = line.split('\\t');
+          if (columns[0] !== 'N' || columns[2] !== 'product_category' || columns.length < 7) return [];
+          try {
+            const attributes = JSON.parse(columns[6]);
+            const id = String(attributes.productCategoryId ?? '');
+            if (!id) return [];
+            return [{
+              id,
+              parentId: attributes.parentProductCategoryId ? String(attributes.parentProductCategoryId) : null,
+              name: columns[4],
+              description: columns[5] || null
+            }];
+          } catch {
+            return [];
+          }
+        });
+        if (isMounted && data.length > 0) {
           setNodes(data);
+          setIsLoading(false);
+        } else if (isMounted) {
           setIsLoading(false);
         }
       })
       .catch(() => {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        if (isMounted) setIsLoading(false);
       });
     return () => { isMounted = false; };
   }, []);
