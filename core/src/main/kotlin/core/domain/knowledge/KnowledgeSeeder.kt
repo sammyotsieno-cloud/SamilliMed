@@ -10,66 +10,57 @@ import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.Locale
 
+/**
+ * Loads the single authoritative knowledge dataset from knowledge/knowledge_seed.tsv.
+ * The file is read on each application startup; no manifest or seed-version gate is used.
+ */
 object KnowledgeSeeder {
-    const val VERSION = "2026.10"
-    private const val MANIFEST_ID = "manifest.samillimed.knowledge"
+    private const val SEED_ASSET = "knowledge/knowledge_seed.tsv"
+    private const val LEGACY_MANIFEST_ID = "manifest.samillimed.knowledge"
 
     fun seed(context: Context, database: CoreDatabase) {
         synchronized(database) {
             val dao = database.knowledgeDao()
-            if (dao.findNode(MANIFEST_ID) != null) return@synchronized
-
             val now = System.currentTimeMillis()
             val nodes = mutableListOf<KnowledgeNode>()
             val relations = mutableListOf<KnowledgeRelation>()
             val evidence = mutableListOf<KnowledgeEvidence>()
             val aliases = mutableListOf<KnowledgeAlias>()
 
-            fun readSeed(assetName: String) {
-                context.assets.open(assetName).use { input ->
-                    BufferedReader(InputStreamReader(input, Charsets.UTF_8)).useLines { lines ->
-                        lines.filter { it.isNotBlank() && !it.startsWith("#") }.forEach { line ->
-                            val c = line.split("\t".toRegex(), limit = 9)
-                            when (c[0]) {
-                                "N" -> if (c.size >= 9) nodes += KnowledgeNode(
-                                    id=c[1], nodeType=c[2], parentId=c[3].ifBlank { null },
-                                    canonicalName=c[4], description=c[5].ifBlank { null },
-                                    attributesJson=c[6].ifBlank { "{}" }, scope=c[7], version=c[8],
-                                    createdAt=now, updatedAt=now
-                                )
-                                "R" -> if (c.size >= 9) relations += KnowledgeRelation(
-                                    id=c[1], subjectId=c[2], predicate=c[3], objectId=c[4],
-                                    qualifiersJson=c[5].ifBlank { "{}" }, evidenceId=c[6].ifBlank { null },
-                                    scope=c[7], version=c[8], createdAt=now
-                                )
-                                "E" -> if (c.size >= 8) evidence += KnowledgeEvidence(
-                                    id=c[1], source=c[2], title=c[3], url=c[4].ifBlank { null },
-                                    publicationDate=c[5].ifBlank { null }, jurisdiction=c[6],
-                                    version=c[7], retrievedAt=now
-                                )
-                                "A" -> if (c.size >= 8) {
-                                    aliases += KnowledgeAlias(
-                                        id=c[1], entityId=c[2], alias=c[3],
-                                        normalizedAlias=c[3].trim().lowercase(Locale.ROOT),
-                                        aliasType=c[4], source=c[5]
-                                    )
-                                }
-                            }
+            context.assets.open(SEED_ASSET).use { input ->
+                BufferedReader(InputStreamReader(input, Charsets.UTF_8)).useLines { lines ->
+                    lines.filter { it.isNotBlank() && !it.startsWith("#") }.forEach { line ->
+                        val c = line.split("\\t".toRegex(), limit = 9)
+                        when (c[0]) {
+                            "N" -> if (c.size >= 9) nodes += KnowledgeNode(
+                                id = c[1], nodeType = c[2], parentId = c[3].ifBlank { null },
+                                canonicalName = c[4], description = c[5].ifBlank { null },
+                                attributesJson = c[6].ifBlank { "{}" }, scope = c[7].ifBlank { "GLOBAL" },
+                                version = "unversioned", createdAt = now, updatedAt = now
+                            )
+                            "R" -> if (c.size >= 9) relations += KnowledgeRelation(
+                                id = c[1], subjectId = c[2], predicate = c[3], objectId = c[4],
+                                qualifiersJson = c[5].ifBlank { "{}" }, evidenceId = c[6].ifBlank { null },
+                                scope = c[7].ifBlank { "GLOBAL" }, version = "unversioned",
+                                createdAt = now
+                            )
+                            "E" -> if (c.size >= 8) evidence += KnowledgeEvidence(
+                                id = c[1], source = c[2], title = c[3], url = c[4].ifBlank { null },
+                                publicationDate = c[5].ifBlank { null }, jurisdiction = c[6].ifBlank { "GLOBAL" },
+                                version = "unversioned", retrievedAt = now
+                            )
+                            "A" -> if (c.size >= 8) aliases += KnowledgeAlias(
+                                id = c[1], entityId = c[2], alias = c[3],
+                                normalizedAlias = c[3].trim().lowercase(Locale.ROOT),
+                                aliasType = c[4], source = c[5]
+                            )
                         }
                     }
                 }
             }
 
-            readSeed("knowledge/knowledge_seed.tsv")
-            readSeed("knowledge/atc_2026.tsv")
-            readSeed("knowledge/atc_combinations_2026.tsv")
-            readSeed("knowledge/product_domains.tsv")
-            readSeed("knowledge/device_taxonomy.tsv")
-            readSeed("knowledge/diagnostic_taxonomy.tsv")
-            readSeed("knowledge/nonmedicine_taxonomy.tsv")
-
             val nodeIds = nodes.map { it.id }
-            require(nodeIds.size == nodeIds.toSet().size) { "Duplicate knowledge node IDs in seed assets" }
+            require(nodeIds.size == nodeIds.toSet().size) { "Duplicate knowledge node IDs in knowledge_seed.tsv" }
             val nodeIdSet = nodeIds.toSet()
             nodes.filter { it.parentId != null }.forEach { node ->
                 require(node.parentId in nodeIdSet) { "Missing parent ${node.parentId} for ${node.id}" }
@@ -79,14 +70,8 @@ object KnowledgeSeeder {
                 require(relation.objectId in nodeIdSet) { "Missing relation object ${relation.objectId}" }
             }
 
-            nodes += KnowledgeNode(
-                id=MANIFEST_ID, nodeType="manifest", canonicalName="SamilliMed Knowledge",
-                description="Versioned master health-product knowledge graph.",
-                attributesJson="""{"schemaVersion":"1.0","seedVersion":"$VERSION","atcDataset":"WHO-2026-04-25","scope":"GLOBAL"}""",
-                version=VERSION, createdAt=now, updatedAt=now
-            )
-
             database.runInTransaction {
+                dao.deleteNodeById(LEGACY_MANIFEST_ID)
                 dao.insertEvidence(evidence)
                 dao.insertNodes(nodes)
                 dao.insertRelations(relations)
