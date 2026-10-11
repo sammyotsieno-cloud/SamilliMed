@@ -23,6 +23,18 @@ interface KnowledgeDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertAliases(rows: List<KnowledgeAlias>)
 
+    @Query("DELETE FROM knowledge_aliases")
+    fun clearAliases()
+
+    @Query("DELETE FROM knowledge_relations")
+    fun clearRelations()
+
+    @Query("DELETE FROM knowledge_evidence")
+    fun clearEvidence()
+
+    @Query("DELETE FROM knowledge_nodes")
+    fun clearNodes()
+
     @Query("DELETE FROM knowledge_nodes WHERE id = :id")
     fun deleteNodeById(id: String)
 
