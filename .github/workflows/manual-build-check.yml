@@ -53,7 +53,7 @@ jobs:
 
       - name: Prepare debug APK artifact
         id: prepare
-        if: inputs.target == 'build' || inputs.target == 'full'
+        if: github.event_name == 'push' || inputs.target == 'build' || inputs.target == 'full'
         shell: bash
         run: |
           set -euo pipefail
@@ -129,7 +129,7 @@ jobs:
           cat "$artifact_dir/SHA256SUMS.txt"
 
       - name: Upload debug APK artifact
-        if: inputs.target == 'build' || inputs.target == 'full'
+        if: github.event_name == 'push' || inputs.target == 'build' || inputs.target == 'full'
         uses: actions/upload-artifact@v4
         with:
           name: SamilliMed-debug
