@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
@@ -89,7 +90,7 @@ private val DASHBOARD_TILES = listOf(
     // Row 2
     DashboardTileSpec("inventory", "Inventory", TileIconType.GreenCircle, Icons.Default.Layers, "inventory"),
     DashboardTileSpec("drug_index", "Drug Index", TileIconType.AmberCircle, Icons.Default.Vaccines, "products"),
-    DashboardTileSpec("goods_reg", "Goods\nRegistration", TileIconType.GreenCircle, Icons.Default.AssignmentAdd, "goods-registration"),
+    DashboardTileSpec("goods_reg", "Goods\nRegistration", TileIconType.GreenCircle, Icons.Default.Assignment, "goods-registration"),
     // Row 3
     DashboardTileSpec("reports", "Reports", TileIconType.AmberCircle, Icons.Default.BarChart, "reports"),
     DashboardTileSpec("suppliers", "Suppliers", TileIconType.GreenCircle, Icons.Default.Groups, "suppliers"),
@@ -220,7 +221,7 @@ fun DashboardScreen(
 
                     for (batch in batches) {
                         val batchMovements = movementsByBatch[batch.id] ?: emptyList()
-                        val physicalUnits = batchMovements.sumOf { it.quantityDeltaStorageUnits }
+                        val physicalUnits = batchMovements.sumOf { it.quantity.storageUnits }
                         if (physicalUnits > 0L && batch.expiryDateInt != null) {
                             if (batch.expiryDateInt < todayInt) {
                                 expiredCount++
