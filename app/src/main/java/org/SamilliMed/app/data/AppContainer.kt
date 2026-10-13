@@ -11,7 +11,6 @@ import core.domain.persistence.ProductCategoryDao
 import core.domain.persistence.ProductRecognitionDao
 import core.domain.recognition.ProductRecognitionService
 import core.domain.research.ProductResearchExportService
-import core.domain.knowledge.KnowledgeSeeder
 import kotlinx.coroutines.launch
 import core.domain.persistence.SaleDao
 import core.domain.persistence.StockAllocationDao
@@ -49,7 +48,6 @@ class AppContainer(context: Context) {
         kotlinx.coroutines.CoroutineScope(
             kotlinx.coroutines.SupervisorJob() + kotlinx.coroutines.Dispatchers.IO
         ).launch {
-            KnowledgeSeeder.seed(context.applicationContext, database)
             productCategoryRepository.ensureDefaultTaxonomy()
         }
     }
