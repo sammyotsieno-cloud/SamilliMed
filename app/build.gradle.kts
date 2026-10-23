@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "org.samillimed.app"
         minSdk = 26
-        targetSdk = 37
+        targetSdk = 36
         versionCode = 1
         versionName = "0.1.0"
     }
