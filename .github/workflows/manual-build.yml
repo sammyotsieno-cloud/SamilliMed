@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - gradlew
+      - gradlew.bat
+      - gradle/wrapper/gradle-wrapper.jar
   workflow_dispatch:
 
 concurrency:
@@ -11,7 +15,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -38,8 +42,25 @@ jobs:
       - name: Install stable Android SDK packages
         run: sdkmanager "platforms;android-36" "build-tools;36.0.0"
 
-      - name: Generate Gradle Wrapper
-        run: gradle wrapper --gradle-version 9.8.2 --distribution-type bin
+      - name: Generate Gradle Wrapper without configuring the app
+        run: |
+          mkdir -p "$RUNNER_TEMP/gradle-wrapper"
+          cd "$RUNNER_TEMP/gradle-wrapper"
+          gradle wrapper --gradle-version 9.8.2 --distribution-type bin
+          cp gradlew "$GITHUB_WORKSPACE/gradlew"
+          cp gradlew.bat "$GITHUB_WORKSPACE/gradlew.bat"
+          cp gradle/wrapper/gradle-wrapper.jar "$GITHUB_WORKSPACE/gradle/wrapper/gradle-wrapper.jar"
 
       - name: Build debug APK with all warnings visible
         run: ./gradlew --no-daemon --warning-mode=all assembleDebug
+
+      - name: Commit Gradle Wrapper scripts after a successful build
+        if: success()
+        run: |
+          if [ -n "$(git status --porcelain -- gradlew gradlew.bat gradle/wrapper/gradle-wrapper.jar)" ]; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add gradlew gradlew.bat gradle/wrapper/gradle-wrapper.jar
+            git commit -m "build: add Gradle Wrapper scripts"
+            git push
+          fi
