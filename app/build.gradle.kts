@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "org.samillimed.app"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "org.samillimed.app"

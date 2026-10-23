@@ -21,6 +21,7 @@ jobs:
   build:
     name: Build and inspect warnings
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out repository
         uses: actions/checkout@v7.0.1
@@ -36,13 +37,14 @@ jobs:
         with:
           packages: |
             platform-tools
-            platforms/android-36
-            build-tools/36.0.0
+            platforms/android-37
+            build-tools/37.0.0
 
       - name: Set up Gradle 9.8.2
         uses: gradle/actions/setup-gradle@v6.4.0
         with:
           gradle-version: '9.8.2'
+          cache-provider: basic
 
       - name: Generate Gradle Wrapper without configuring the app
         run: |
@@ -55,7 +57,7 @@ jobs:
           cp gradle/wrapper/gradle-wrapper.jar "$GITHUB_WORKSPACE/gradle/wrapper/gradle-wrapper.jar"
 
       - name: Build debug APK with all warnings visible
-        run: ./gradlew --no-daemon --warning-mode=all assembleDebug
+        run: ./gradlew --no-daemon --warning-mode=all --stacktrace assembleDebug
 
       - name: Commit Gradle Wrapper scripts after a successful build
         if: success()
