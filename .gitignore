@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+build/
+**/build/
+
+# Android
+local.properties
+.externalNativeBuild/
+.cxx/
+*.apk
+*.aab
+
+# Android Studio and IntelliJ
+.idea/
+*.iml
+
+# Kotlin
+.kotlin/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+secrets.properties
+
+# Operating system
+.DS_Store
+Thumbs.db
