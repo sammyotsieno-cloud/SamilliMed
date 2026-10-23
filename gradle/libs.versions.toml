@@ -1,6 +1,6 @@
 [versions]
-agp = "9.4.0"
-composeBom = "2026.08.00"
+agp = "9.4.1"
+composeBom = "2026.09.00"
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
