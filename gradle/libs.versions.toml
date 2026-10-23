@@ -1,0 +1,9 @@
+[versions]
+agp = "9.4.0"
+composeBom = "2026.08.00"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+
+[libraries]
+androidx-compose-bom = { module = "androidx.compose:compose-bom", version.ref = "composeBom" }
