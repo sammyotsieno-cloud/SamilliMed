@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   build:
-    name: Build and inspect warnings
+    name: Build, verify and package SamilliMed
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -38,14 +38,28 @@ jobs:
         with:
           cache-provider: basic
 
-      - name: Build debug APK with all warnings visible
+      - name: Build debug APK
         run: ./gradlew --no-daemon --warning-mode=all --stacktrace assembleDebug
 
-      - name: Upload debug APK
+      - name: Verify APK and prepare single-file package
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose "$APK"
+          BADGING="$("$ANDROID_HOME/build-tools/37.0.0/aapt" dump badging "$APK")"
+          printf '%s\n' "$BADGING" | head -n 1
+          printf '%s\n' "$BADGING" | grep -F "package: name='org.samillimed.app'"
+          mkdir -p dist
+          cp "$APK" dist/SamilliMed.apk
+          test "$(find dist -maxdepth 1 -type f | wc -l)" -eq 1
+          test -s dist/SamilliMed.apk
+
+      - name: Upload SamilliMed ZIP containing only SamilliMed.apk
         uses: actions/upload-artifact@v7.0.2
         with:
-          name: samillimed-debug-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: SamilliMed
+          path: dist/SamilliMed.apk
           if-no-files-found: error
           retention-days: 14
-          archive: false
