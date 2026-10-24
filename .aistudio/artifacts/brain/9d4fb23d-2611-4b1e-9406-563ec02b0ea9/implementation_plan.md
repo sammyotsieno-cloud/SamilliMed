@@ -1,89 +1,51 @@
-# Restore Repository to Original GitHub Android (Kotlin/Compose) Version
+# Full-Bleed SamilliMed Launcher Icon Implementation Plan
 
-Plan to revert all recent React SPA modifications and restore the codebase to its original native Android Jetpack Compose state imported from `sammyotsieno-cloud/SamilliMed`.
+Plan to configure `app/src/main/res/drawable/samillimed_icon.png` as a full-bleed launcher icon that scales to occupy the complete available icon space without insets, padding, surrounding background rings, or nested frames.
 
 ## User Review & Critical Decisions
 
 > [!IMPORTANT]
-> The restoration will completely remove the React web application (`src/`, `package.json`, Vite configuration, node_modules) and reinstate the original Gradle and Android structure.
-
-- **Target Platform**: Original Android Kotlin + Jetpack Compose application.
-- **Gradle & AGP Versions**: Restore exact raw versions from the GitHub repository (`sammyotsieno-cloud/SamilliMed`).
-- **Web Artifacts**: Completely delete all React files, `dist/`, `node_modules/`, and web configuration.
-
----
-
-## 1. Overview & Core Concept
-
-- **What It Does**: Reverts the repository to the authentic Android project structure, recreating all Gradle build configuration files, Kotlin source code (`MainActivity.kt`), XML resources, manifests, and wrapper files exactly as tracked on GitHub.
-- **Target Audience**: Android developers and maintainers working on native Jetpack Compose for the SamilliMed healthcare application.
-- **Key Value**: Returns the workspace to a pristine, unmodified state matching upstream GitHub commits without residual web artifacts.
+> - **Full-Bleed Foreground**: All `18dp` insets and margins are removed. `samillimed_icon.png` will directly serve as the foreground layer (`108dp x 108dp` full-bleed) across adaptive icon configurations (`res/mipmap-anydpi-v26/ic_launcher.xml` and `ic_launcher_round.xml`).
+> - **Elimination of Nested Frames**: The artwork is not shrunk or placed inside a secondary frame. It scales to fill the entire icon space. The launcher's adaptive mask (circle, squircle, or rounded rectangle) will shape the artwork directly, producing the appearance of an integrated icon rather than a picture inside a frame.
+> - **Trade-Off / Masking Behavior**: Because `samillimed_icon.png` fills the entire canvas edge-to-edge, the outer subtle curved border naturally aligns with the launcher's OEM mask. The central medical emblem (gold roof, cross, and 'S' caduceus) occupies the middle ~60% of the image, so it remains safely within the central visible area on all launcher masks while the dark green field fills the entire icon.
+> - **Legacy Alignment**: Legacy mipmap resources (`res/mipmap/ic_launcher.xml` and `ic_launcher_round.xml`) continue to point directly to `@drawable/samillimed_icon` without insets or modification.
 
 ---
 
-## 2. Restoration Architecture & Steps
+## 1. Technical Changes
 
-### System Architecture Diagram
+### Architecture Flow
 
 ```
-[ Current Workspace (Web React SPA) ]
-                  │
-                  ▼
-  Step 1: Clean Up React & Web Files
-    ├── Remove /src, /dist, /node_modules
-    ├── Remove package.json, vite.config.ts, tsconfig*.json
-    └── Remove index.html
-                  │
-                  ▼
-  Step 2: Fetch Original Files from GitHub
-    └── Clone / checkout https://github.com/sammyotsieno-cloud/SamilliMed.git
-                  │
-                  ▼
-  Step 3: Reinstate Original Android Tree
-    ├── /.github/workflows/manual-build.yml
-    ├── /app/build.gradle.kts
-    ├── /app/src/main/AndroidManifest.xml
-    ├── /app/src/main/java/org/samillimed/app/MainActivity.kt
-    ├── /app/src/main/res/ (drawables, mipmaps, colors)
-    ├── /build.gradle.kts
-    ├── /gradle.properties
-    ├── /gradle/libs.versions.toml
-    ├── /gradle/wrapper/ (jar & properties)
-    ├── /gradlew & /gradlew.bat
-    └── /settings.gradle.kts
-                  │
-                  ▼
-  Step 4: Restore Original README.md & Verification
+app/src/main/AndroidManifest.xml
+   ├── android:icon="@mipmap/ic_launcher"
+   └── android:roundIcon="@mipmap/ic_launcher_round"
+             │
+             ├──► API 26+ (Adaptive Icons)
+             │      res/mipmap-anydpi-v26/ic_launcher.xml & ic_launcher_round.xml
+             │         ├── <background> -> @color/launcher_icon_background (#012312)
+             │         └── <foreground> -> @drawable/samillimed_icon (Full-bleed, 0dp inset)
+             │
+             └──► Legacy / Fallback
+                    res/mipmap/ic_launcher.xml & ic_launcher_round.xml
+                       └── <bitmap android:src="@drawable/samillimed_icon" /> (Full-bleed)
 ```
 
+### File Modifications
+
+1. **`app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml` & `ic_launcher_round.xml`**:
+   - Point `<foreground>` directly to `@drawable/samillimed_icon` (no inset wrapper), allowing the bitmap to scale across the full icon bounds.
+2. **`app/src/main/res/drawable/ic_launcher_foreground.xml`**:
+   - Update to a direct bitmap referencing `@drawable/samillimed_icon` (or point directly to `@drawable/samillimed_icon` in the adaptive icon XML).
+3. **`app/src/main/res/values/launcher_icon_colors.xml`**:
+   - Maintain `launcher_icon_background` as `#012312`, matching the dark green field of `samillimed_icon.png`.
+4. **`app/src/main/res/mipmap/ic_launcher.xml` & `ic_launcher_round.xml`**:
+   - Ensure clean direct bitmap references to `@drawable/samillimed_icon`.
+
 ---
 
-## 3. Key Product Decisions & Trade-Offs
+## 2. Verification Steps
 
-- **Exact Upstream Fetch vs. Manual Recreation**:
-  - *Chosen Approach*: Clone the upstream `sammyotsieno-cloud/SamilliMed` repository into a temporary folder to cleanly extract binary resources (such as `gradle-wrapper.jar`, `samillimed_icon.png`, and launcher drawables) and exact commit files, then copy them into root.
-  - *Why*: Ensures bit-for-bit fidelity with the GitHub repository, avoiding any missing binary gradle wrappers or modified versions.
-- **Removal of Web Runtime Files**:
-  - *Chosen Approach*: Remove `package.json`, `node_modules`, `src/`, `dist/`, and web configuration files completely.
-  - *Why*: Prevents dual-framework conflicts and leaves the root directory as a pure Android project.
-
----
-
-## 4. Technical Execution Plan
-
-1. **Clean Web Artifacts**:
-   - Delete `/src` directory.
-   - Delete `/public` directory.
-   - Delete `/dist` directory.
-   - Delete `package.json`, `package-lock.json`, `tsconfig.json`, `vite.config.ts`, `index.html`.
-2. **Fetch and Restore from GitHub Repository**:
-   - Fetch the original commit tree from `https://github.com/sammyotsieno-cloud/SamilliMed.git`.
-   - Restore all files to the workspace root:
-     - Root Gradle files (`build.gradle.kts`, `settings.gradle.kts`, `gradle.properties`).
-     - Gradle wrapper (`gradlew`, `gradlew.bat`, `gradle/wrapper/*`, `gradle/libs.versions.toml`).
-     - App module (`app/build.gradle.kts`, `app/src/main/AndroidManifest.xml`, `app/src/main/java/org/samillimed/app/MainActivity.kt`).
-     - Resources (`app/src/main/res/*`).
-     - GitHub workflow (`.github/workflows/manual-build.yml`).
-     - Original `README.md` and `.gitignore`.
-3. **Verification**:
-   - Verify all restored files are present and match original GitHub contents.
+1. Verify that `app/src/main/res/drawable/samillimed_icon.png` is preserved completely untouched.
+2. Build the project using `./gradlew assembleDebug` to verify clean compilation.
+3. Inspect the packaged APK to verify resource resolution and ensure no insets or duplicate frames remain.
