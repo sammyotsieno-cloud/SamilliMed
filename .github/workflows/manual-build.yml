@@ -25,13 +25,11 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK with Android CLI
-        uses: premex-ab/setup-android-cli@35c853708c8a6981651bb0060a17e01fac0143b1
-        with:
-          packages: |
-            platform-tools
-            platforms/android-37
-            build-tools/37.0.0
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install required Android SDK packages
+        run: sdkmanager "platform-tools" "platforms;android-37" "build-tools;37.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.4.0
@@ -39,7 +37,7 @@ jobs:
           cache-provider: basic
 
       - name: Build debug APK
-        run: ./gradlew --no-daemon --warning-mode=all --stacktrace assembleDebug
+        run: bash ./gradlew --no-daemon --warning-mode=all --stacktrace assembleDebug
 
       - name: Verify APK and prepare single-file package
         shell: bash
