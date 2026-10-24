@@ -40,7 +40,7 @@ jobs:
           SDKMANAGER="$(find "$SDK_ROOT/cmdline-tools" -type f -name sdkmanager | sort -V | tail -n 1)"
           test -n "$SDKMANAGER" && test -x "$SDKMANAGER"
           # CI cannot answer sdkmanager's interactive license prompt; supply approvals through stdin.
-          yes | "$SDKMANAGER" --licenses
+          yes | "$SDKMANAGER" --licenses || true
           "$SDKMANAGER" "platform-tools" "platforms;android-37" "build-tools;37.0.0"
 
       - name: Set up Gradle
