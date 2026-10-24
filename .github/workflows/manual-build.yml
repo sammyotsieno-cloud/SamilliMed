@@ -41,7 +41,7 @@ jobs:
           test -n "$SDKMANAGER" && test -x "$SDKMANAGER"
           # CI cannot answer sdkmanager's interactive license prompt; supply approvals through stdin.
           yes | "$SDKMANAGER" --licenses || true
-          "$SDKMANAGER" "platform-tools" --channel=3 "platforms;android-37" "build-tools;37.0.0"
+          "$SDKMANAGER" "platform-tools" "platforms;android-36" "build-tools;36.0.0"
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v6.4.0
@@ -57,8 +57,8 @@ jobs:
           set -euo pipefail
           APK="app/build/outputs/apk/debug/app-debug.apk"
           test -s "$APK"
-          "$ANDROID_HOME/build-tools/37.0.0/apksigner" verify --verbose "$APK"
-          BADGING="$("$ANDROID_HOME/build-tools/37.0.0/aapt" dump badging "$APK")"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$APK"
+          BADGING="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK")"
           printf '%s\n' "$BADGING" | head -n 1
           printf '%s\n' "$BADGING" | grep -F "package: name='org.samillimed.app'"
           mkdir -p dist
