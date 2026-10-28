@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Same deep green the animated splash paints, so the hand-off from the system splash is seamless -->
+    <color name="splash_green">#053A26</color>
+</resources>
