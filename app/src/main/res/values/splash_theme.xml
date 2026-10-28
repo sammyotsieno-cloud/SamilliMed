@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Shown by the system while the app starts: plain deep green with no icon.
+      When the splash library hands over, the app switches to postSplashScreenTheme,
+      which is the theme your app uses today.
+    -->
+    <style name="Theme.SamilliMed.Starting" parent="Theme.SplashScreen">
+        <item name="windowSplashScreenBackground">@color/splash_green</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/splash_empty</item>
+        <item name="postSplashScreenTheme">@android:style/Theme.Material.Light.NoActionBar</item>
+    </style>
+</resources>
