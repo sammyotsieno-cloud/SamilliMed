@@ -9,11 +9,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Density
 import org.samillimed.app.R
 
 /** The three choices shown in Settings > Appearance. */
@@ -26,6 +29,23 @@ val Poppins = FontFamily(
     Font(R.font.poppins_bold, FontWeight.SemiBold),
     Font(R.font.poppins_bold, FontWeight.Bold),
 )
+
+/** Font choices shown in Settings > Font type. */
+enum class FontChoice { Brand, Device, Serif }
+
+fun FontChoice.family(): FontFamily = when (this) {
+    FontChoice.Brand -> Poppins
+    FontChoice.Device -> FontFamily.Default
+    FontChoice.Serif -> FontFamily.Serif
+}
+
+/** Text size choices shown in Settings > Font size. scale multiplies every text size in the app. */
+enum class TextSize(val label: String, val scale: Float) {
+    Small("Small", 0.9f),
+    Default("Default", 1.0f),
+    Large("Large", 1.15f),
+    ExtraLarge("Extra large", 1.3f),
+}
 
 /** Brand colours that Material's own scheme has no slot for. Read them with SamilliTheme.colors. */
 @Immutable
@@ -146,12 +166,17 @@ private fun Typography.withFont(f: FontFamily) = copy(
     labelSmall = labelSmall.copy(fontFamily = f),
 )
 
-private val SamilliTypography = Typography().withFont(Poppins)
-
-/** Wrap the whole app in this. mode = System follows the phone's light/dark setting. */
+/**
+ * Wrap the whole app in this.
+ * mode     = System follows the phone's light/dark setting.
+ * font     = typeface used everywhere.
+ * textSize = multiplies every text size in the app, live.
+ */
 @Composable
 fun SamilliMedTheme(
     mode: ThemeMode = ThemeMode.System,
+    font: FontChoice = FontChoice.Brand,
+    textSize: TextSize = TextSize.Default,
     content: @Composable () -> Unit,
 ) {
     val dark = when (mode) {
@@ -175,7 +200,15 @@ fun SamilliMedTheme(
             error = c.urgent, onError = c.onUrgent,
         )
     }
-    CompositionLocalProvider(LocalSamilliColors provides c) {
-        MaterialTheme(colorScheme = scheme, typography = SamilliTypography, content = content)
+    val typography = remember(font) { Typography().withFont(font.family()) }
+    val baseDensity = LocalDensity.current
+    val scaledDensity = remember(baseDensity, textSize) {
+        Density(baseDensity.density, baseDensity.fontScale * textSize.scale)
+    }
+    CompositionLocalProvider(
+        LocalSamilliColors provides c,
+        LocalDensity provides scaledDensity,
+    ) {
+        MaterialTheme(colorScheme = scheme, typography = typography, content = content)
     }
 }
