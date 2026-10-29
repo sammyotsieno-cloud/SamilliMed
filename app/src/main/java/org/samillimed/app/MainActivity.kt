@@ -1,36 +1,32 @@
 package org.samillimed.app
 
+import android.graphics.Color
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import org.samillimed.app.ui.home.HomeScreen
 import org.samillimed.app.ui.splash.SamilliSplashHost
+import org.samillimed.app.ui.theme.SamilliMedTheme
+import org.samillimed.app.ui.theme.ThemeMode
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()   // system splash (plain green) hands over to the animation
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()      // splash must cover the status bar and camera cut-out
+        // The header and bottom bar are dark green in both themes, so system icons stay light.
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+            navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
+        )
         setContent {
-            MaterialTheme {
-                // Plays only on a fresh launch (savedInstanceState is null), not after rotation
+            // ThemeMode.System follows the phone's light/dark setting.
+            SamilliMedTheme(mode = ThemeMode.System) {
+                // Splash plays on a fresh launch only, then reveals the home screen underneath.
                 SamilliSplashHost(playSplash = savedInstanceState == null) {
-                    Surface(modifier = Modifier.fillMaxSize()) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(text = "SamilliMed")
-                        }
-                    }
+                    HomeScreen()
                 }
             }
         }
