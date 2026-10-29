@@ -12,6 +12,12 @@ enum class Route(val title: String) {
     Dispense("Dispense"),
     ReceiveStock("Receive Stock"),
     Register("Register"),
+    Inventory("Inventory"),
+    Sales("Sales"),
+    Expenses("Expenses"),
+    Reports("Reports"),
+    Alerts("Alerts"),
+    Settings("Settings"),
 }
 
 /**
