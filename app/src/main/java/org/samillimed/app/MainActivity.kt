@@ -8,21 +8,26 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import kotlinx.coroutines.launch
 import org.samillimed.app.ui.home.HomeScreen
-import org.samillimed.app.ui.icons.SamilliIcons
+import org.samillimed.app.ui.navigation.AppDrawer
 import org.samillimed.app.ui.navigation.Route
+import org.samillimed.app.ui.navigation.icon
 import org.samillimed.app.ui.navigation.rememberBackStack
 import org.samillimed.app.ui.placeholder.ComingSoonScreen
-import org.samillimed.app.ui.settings.AppearanceDialog
-import org.samillimed.app.ui.settings.rememberThemeController
+import org.samillimed.app.ui.settings.SettingsScreen
+import org.samillimed.app.ui.settings.rememberAppSettings
 import org.samillimed.app.ui.splash.SamilliSplashHost
 import org.samillimed.app.ui.theme.SamilliMedTheme
 
@@ -36,17 +41,18 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
         )
         setContent {
-            // The saved choice: System default (follows the phone), Light or Dark.
-            val theme = rememberThemeController()
+            // Saved settings: theme (System default / Light / Dark), font type, font size.
+            val settings = rememberAppSettings()
             // History of opened screens, used by the back buttons.
             val nav = rememberBackStack()
-            var showAppearance by rememberSaveable { mutableStateOf(false) }
+            val drawerState = rememberDrawerState(DrawerValue.Closed)
+            val scope = rememberCoroutineScope()
             var showExit by rememberSaveable { mutableStateOf(false) }
             // The splash only plays on a fresh launch; after rotation it counts as done.
             var splashDone by rememberSaveable { mutableStateOf(savedInstanceState != null) }
 
-            // System back button: ignore during the splash, otherwise go to the previous
-            // screen, and on Home ask whether to exit.
+            // System back: ignore during the splash, otherwise go to the previous screen,
+            // and on Home ask whether to exit.
             BackHandler {
                 when {
                     !splashDone -> Unit
@@ -54,47 +60,50 @@ class MainActivity : ComponentActivity() {
                     else -> showExit = true
                 }
             }
+            // Registered later, so it wins while the side menu is open: back closes the menu first.
+            BackHandler(enabled = drawerState.isOpen) {
+                scope.launch { drawerState.close() }
+            }
 
-            SamilliMedTheme(mode = theme.mode) {
+            SamilliMedTheme(
+                mode = settings.mode,
+                font = settings.font,
+                textSize = settings.textSize,
+            ) {
                 SamilliSplashHost(
                     playSplash = savedInstanceState == null,
                     onSplashFinished = { splashDone = true },
                 ) {
-                    when (nav.current) {
-                        Route.Home -> HomeScreen(
-                            onMenuClick = { showAppearance = true },
-                            onTabSelected = { index ->
-                                when (index) {
-                                    1 -> nav.navigate(Route.Dispense)
-                                    2 -> nav.navigate(Route.ReceiveStock)
-                                    3 -> nav.navigate(Route.Register)
-                                    else -> Unit
-                                }
-                            },
-                        )
-                        Route.Dispense -> ComingSoonScreen(
-                            title = Route.Dispense.title,
-                            icon = SamilliIcons.Pill,
-                            onBack = { nav.back() },
-                        )
-                        Route.ReceiveStock -> ComingSoonScreen(
-                            title = Route.ReceiveStock.title,
-                            icon = SamilliIcons.BoxPlus,
-                            onBack = { nav.back() },
-                        )
-                        Route.Register -> ComingSoonScreen(
-                            title = Route.Register.title,
-                            icon = SamilliIcons.ClipboardPlus,
-                            onBack = { nav.back() },
-                        )
-                    }
-
-                    if (showAppearance) {
-                        AppearanceDialog(
-                            current = theme.mode,
-                            onSelect = theme.setMode,
-                            onDismiss = { showAppearance = false },
-                        )
+                    AppDrawer(
+                        drawerState = drawerState,
+                        current = nav.current,
+                        onNavigate = { route ->
+                            scope.launch { drawerState.close() }
+                            nav.navigate(route)
+                        },
+                    ) {
+                        when (nav.current) {
+                            Route.Home -> HomeScreen(
+                                onMenuClick = { scope.launch { drawerState.open() } },
+                                onTabSelected = { index ->
+                                    when (index) {
+                                        1 -> nav.navigate(Route.Dispense)
+                                        2 -> nav.navigate(Route.ReceiveStock)
+                                        3 -> nav.navigate(Route.Register)
+                                        else -> Unit
+                                    }
+                                },
+                            )
+                            Route.Settings -> SettingsScreen(
+                                settings = settings,
+                                onBack = { nav.back() },
+                            )
+                            else -> ComingSoonScreen(
+                                title = nav.current.title,
+                                icon = nav.current.icon(),
+                                onBack = { nav.back() },
+                            )
+                        }
                     }
 
                     if (showExit) {
