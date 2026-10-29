@@ -39,8 +39,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.LineHeightStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -229,18 +232,27 @@ private fun BellButton(count: Int) {
             Box(
                 Modifier
                     .align(Alignment.TopEnd)
-                    .offset(x = 2.dp, y = (-2).dp)
-                    .size(17.dp)
+                    .offset(x = 3.dp, y = (-3).dp)
+                    .size(18.dp)
                     .background(c.headerEnd, CircleShape)
                     .padding(2.dp)
                     .background(c.gold, CircleShape),
                 contentAlignment = Alignment.Center,
             ) {
                 Text(
-                    text = count.toString(),
+                    text = if (count > 9) "9+" else count.toString(),
                     color = c.onReorder,
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    // Trim the font's extra top/bottom space so the number sits in the exact middle of the dot.
+                    style = TextStyle(
+                        fontSize = 9.sp,
+                        lineHeight = 9.sp,
+                        fontWeight = FontWeight.Bold,
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.Both,
+                        ),
+                    ),
                 )
             }
         }
