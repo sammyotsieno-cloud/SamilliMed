@@ -29,11 +29,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -60,15 +56,16 @@ import java.time.format.DateTimeFormatter
  * Home screen. All numbers and items below are SAMPLE DATA from the design mockup;
  * they get replaced when the real data layer exists.
  *
- * onMenuClick is called when the menu (three lines) button in the header is tapped.
+ * onMenuClick:    the menu (three lines) button in the header was tapped.
+ * onTabSelected:  a bottom bar tab was tapped (0 Home, 1 Dispense, 2 Receive Stock, 3 Register).
  */
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     onMenuClick: () -> Unit = {},
+    onTabSelected: (Int) -> Unit = {},
 ) {
     val c = SamilliTheme.colors
-    var tab by rememberSaveable { mutableStateOf(0) }
 
     Column(modifier.fillMaxSize().background(c.background)) {
         HomeHeader(
@@ -157,7 +154,7 @@ fun HomeScreen(
             Spacer(Modifier.height(16.dp))
         }
 
-        HomeBottomBar(selected = tab, onSelect = { tab = it })
+        HomeBottomBar(selected = 0, onSelect = onTabSelected)
     }
 }
 
