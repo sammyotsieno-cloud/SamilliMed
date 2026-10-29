@@ -6,11 +6,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import org.samillimed.app.ui.home.HomeScreen
+import org.samillimed.app.ui.settings.AppearanceDialog
+import org.samillimed.app.ui.settings.rememberThemeController
 import org.samillimed.app.ui.splash.SamilliSplashHost
 import org.samillimed.app.ui.theme.SamilliMedTheme
-import org.samillimed.app.ui.theme.ThemeMode
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,11 +27,21 @@ class MainActivity : ComponentActivity() {
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
         )
         setContent {
-            // ThemeMode.System follows the phone's light/dark setting.
-            SamilliMedTheme(mode = ThemeMode.System) {
+            // The saved choice: System default (follows the phone), Light or Dark.
+            val theme = rememberThemeController()
+            var showAppearance by rememberSaveable { mutableStateOf(false) }
+
+            SamilliMedTheme(mode = theme.mode) {
                 // Splash plays on a fresh launch only, then reveals the home screen underneath.
                 SamilliSplashHost(playSplash = savedInstanceState == null) {
-                    HomeScreen()
+                    HomeScreen(onMenuClick = { showAppearance = true })
+                    if (showAppearance) {
+                        AppearanceDialog(
+                            current = theme.mode,
+                            onSelect = theme.setMode,
+                            onDismiss = { showAppearance = false },
+                        )
+                    }
                 }
             }
         }
