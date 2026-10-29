@@ -59,14 +59,23 @@ import java.time.format.DateTimeFormatter
 /**
  * Home screen. All numbers and items below are SAMPLE DATA from the design mockup;
  * they get replaced when the real data layer exists.
+ *
+ * onMenuClick is called when the menu (three lines) button in the header is tapped.
  */
 @Composable
-fun HomeScreen(modifier: Modifier = Modifier) {
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    onMenuClick: () -> Unit = {},
+) {
     val c = SamilliTheme.colors
     var tab by rememberSaveable { mutableStateOf(0) }
 
     Column(modifier.fillMaxSize().background(c.background)) {
-        HomeHeader(notificationCount = 3, modifier = Modifier.zIndex(1f))
+        HomeHeader(
+            notificationCount = 3,
+            onMenuClick = onMenuClick,
+            modifier = Modifier.zIndex(1f),
+        )
 
         Column(
             Modifier
@@ -196,20 +205,21 @@ private fun Wordmark() {
 }
 
 @Composable
-private fun HeaderButton(icon: ImageVector, description: String, badge: Int = 0) {
+private fun HeaderButton(
+    icon: ImageVector,
+    description: String,
+    onClick: () -> Unit = {},
+) {
     val c = SamilliTheme.colors
     Box(
         Modifier
             .size(40.dp)
             .clip(CircleShape)
             .background(Color(0x17F3ECD8))
-            .clickable { /* TODO */ },
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(icon, contentDescription = description, modifier = Modifier.size(22.dp), tint = c.onHeader)
-    }
-    if (badge > 0) {
-        // drawn by the caller on top of the button
     }
 }
 
@@ -241,7 +251,11 @@ private fun BellButton(count: Int) {
 }
 
 @Composable
-private fun HomeHeader(notificationCount: Int, modifier: Modifier = Modifier) {
+private fun HomeHeader(
+    notificationCount: Int,
+    onMenuClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     val c = SamilliTheme.colors
     val shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
     Row(
@@ -257,7 +271,7 @@ private fun HomeHeader(notificationCount: Int, modifier: Modifier = Modifier) {
         Wordmark()
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             BellButton(notificationCount)
-            HeaderButton(SamilliIcons.Menu, "Menu")
+            HeaderButton(SamilliIcons.Menu, "Menu", onMenuClick)
         }
     }
 }
