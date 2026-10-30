@@ -55,4 +55,27 @@ object MoreIcons {
         "FontSize",
         "M3 19l5-13 5 13M5 14h6M15 19l3.5-9 3.5 9M16.3 16h4.4",
     )
+
+    /** Drug Index */
+    val BookOpen = outline(
+        "BookOpen",
+        "M12 6.5C10.5 5.3 8.2 4.8 4.5 5v13.5c3.7-.2 6 .3 7.5 1.5 1.5-1.2 3.8-1.7 7.5-1.5V5c-3.7-.2-6 .3-7.5 1.5z",
+        "M12 6.5V20",
+    )
+
+    /** Registered Services */
+    val Stethoscope = outline(
+        "Stethoscope",
+        "M11 2v2M5 2v2",
+        "M5 3H4a2 2 0 0 0-2 2v4a6 6 0 0 0 12 0V5a2 2 0 0 0-2-2h-1",
+        "M8 15a6 6 0 0 0 12 0v-3",
+        "M22 10A2 2 0 1 1 18 10A2 2 0 1 1 22 10Z",
+    )
+
+    /** Registered Products */
+    val ProductTag = outline(
+        "ProductTag",
+        "M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z",
+        "M8.5 7.5A1 1 0 1 1 6.5 7.5A1 1 0 1 1 8.5 7.5Z",
+    )
 }
