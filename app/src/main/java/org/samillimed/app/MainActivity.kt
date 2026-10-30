@@ -20,6 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.launch
+import org.samillimed.app.data.auth.rememberAuthController
+import org.samillimed.app.ui.auth.LoginScreen
 import org.samillimed.app.ui.home.HomeScreen
 import org.samillimed.app.ui.navigation.AppDrawer
 import org.samillimed.app.ui.navigation.Route
@@ -43,20 +45,23 @@ class MainActivity : ComponentActivity() {
         setContent {
             // Saved settings: theme (System default / Light / Dark), font type, font size.
             val settings = rememberAppSettings()
+            // Who is signed in. Staff stay signed in until they choose Sign out.
+            val auth = rememberAuthController()
             // History of opened screens, used by the back buttons.
             val nav = rememberBackStack()
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scope = rememberCoroutineScope()
             var showExit by rememberSaveable { mutableStateOf(false) }
+            var showSignOut by rememberSaveable { mutableStateOf(false) }
             // The splash only plays on a fresh launch; after rotation it counts as done.
             var splashDone by rememberSaveable { mutableStateOf(savedInstanceState != null) }
 
             // System back: ignore during the splash, otherwise go to the previous screen,
-            // and on Home ask whether to exit.
+            // and on Home (or the login screen) ask whether to exit.
             BackHandler {
                 when {
                     !splashDone -> Unit
-                    nav.back() -> Unit
+                    auth.isSignedIn && nav.back() -> Unit
                     else -> showExit = true
                 }
             }
@@ -74,36 +79,67 @@ class MainActivity : ComponentActivity() {
                     playSplash = savedInstanceState == null,
                     onSplashFinished = { splashDone = true },
                 ) {
-                    AppDrawer(
-                        drawerState = drawerState,
-                        current = nav.current,
-                        onNavigate = { route ->
-                            scope.launch { drawerState.close() }
-                            nav.navigate(route)
-                        },
-                    ) {
-                        when (nav.current) {
-                            Route.Home -> HomeScreen(
-                                onMenuClick = { scope.launch { drawerState.open() } },
-                                onTabSelected = { index ->
-                                    when (index) {
-                                        1 -> nav.navigate(Route.Dispense)
-                                        2 -> nav.navigate(Route.ReceiveStock)
-                                        3 -> nav.navigate(Route.Register)
-                                        else -> Unit
-                                    }
-                                },
-                            )
-                            Route.Settings -> SettingsScreen(
-                                settings = settings,
-                                onBack = { nav.back() },
-                            )
-                            else -> ComingSoonScreen(
-                                title = nav.current.title,
-                                icon = nav.current.icon(),
-                                onBack = { nav.back() },
-                            )
+                    if (!auth.isSignedIn) {
+                        LoginScreen(
+                            onSignIn = { email, password, onResult ->
+                                auth.signIn(email, password, onResult)
+                            },
+                        )
+                    } else {
+                        AppDrawer(
+                            drawerState = drawerState,
+                            current = nav.current,
+                            onNavigate = { route ->
+                                scope.launch { drawerState.close() }
+                                nav.navigate(route)
+                            },
+                            userEmail = auth.email,
+                            onSignOut = {
+                                scope.launch { drawerState.close() }
+                                showSignOut = true
+                            },
+                        ) {
+                            when (nav.current) {
+                                Route.Home -> HomeScreen(
+                                    onMenuClick = { scope.launch { drawerState.open() } },
+                                    onTabSelected = { index ->
+                                        when (index) {
+                                            1 -> nav.navigate(Route.Dispense)
+                                            2 -> nav.navigate(Route.ReceiveStock)
+                                            3 -> nav.navigate(Route.Register)
+                                            else -> Unit
+                                        }
+                                    },
+                                )
+                                Route.Settings -> SettingsScreen(
+                                    settings = settings,
+                                    onBack = { nav.back() },
+                                )
+                                else -> ComingSoonScreen(
+                                    title = nav.current.title,
+                                    icon = nav.current.icon(),
+                                    onBack = { nav.back() },
+                                )
+                            }
                         }
+                    }
+
+                    if (showSignOut) {
+                        AlertDialog(
+                            onDismissRequest = { showSignOut = false },
+                            title = { Text("Sign out?", fontWeight = FontWeight.Bold) },
+                            text = { Text("You will need to sign in again to use SamilliMed.") },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        showSignOut = false
+                                        auth.signOut()
+                                        nav.navigate(Route.Home)   // next person starts on Home
+                                    },
+                                ) { Text("Yes") }
+                            },
+                            dismissButton = { TextButton(onClick = { showSignOut = false }) { Text("No") } },
+                        )
                     }
 
                     if (showExit) {
