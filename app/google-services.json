@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "340534642278",
+    "project_id": "samillimed",
+    "storage_bucket": "samillimed.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:340534642278:android:bd8671363e4e26b7454fa7",
+        "android_client_info": {
+          "package_name": "org.samillimed.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCc19WMnhb_wNacCn4sAhfUtP_wmKdegb8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
