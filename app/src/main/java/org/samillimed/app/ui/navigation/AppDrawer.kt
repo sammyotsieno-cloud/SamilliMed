@@ -51,6 +51,9 @@ fun Route.icon(): ImageVector = when (this) {
     Route.Dispense -> SamilliIcons.Pill
     Route.ReceiveStock -> SamilliIcons.BoxPlus
     Route.Register -> SamilliIcons.ClipboardPlus
+    Route.DrugIndex -> MoreIcons.BookOpen
+    Route.RegisteredProducts -> MoreIcons.ProductTag
+    Route.RegisteredServices -> MoreIcons.Stethoscope
     Route.Inventory -> SamilliIcons.Box
     Route.Sales -> SamilliIcons.Coins
     Route.Expenses -> SamilliIcons.Wallet
@@ -60,6 +63,7 @@ fun Route.icon(): ImageVector = when (this) {
 }
 
 private val mainRoutes = listOf(Route.Home, Route.Dispense, Route.ReceiveStock, Route.Register)
+private val catalogueRoutes = listOf(Route.DrugIndex, Route.RegisteredProducts, Route.RegisteredServices)
 private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, Route.Reports, Route.Alerts)
 
 /**
@@ -103,10 +107,16 @@ private fun DrawerSheet(current: Route, onNavigate: (Route) -> Unit) {
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
                 Spacer(Modifier.height(10.dp))
+                DrawerLabel("CATALOGUE")
+                catalogueRoutes.forEach { route ->
+                    DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
+                }
+                Spacer(Modifier.height(10.dp))
                 DrawerLabel("MANAGE")
                 manageRoutes.forEach { route ->
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
+                Spacer(Modifier.height(10.dp))
             }
 
             // Settings stays pinned at the bottom
