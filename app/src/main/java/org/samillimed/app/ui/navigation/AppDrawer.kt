@@ -32,11 +32,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,6 +67,28 @@ fun Route.icon(): ImageVector = when (this) {
     Route.Settings -> MoreIcons.Settings
 }
 
+private val LogOutIcon: ImageVector = ImageVector.Builder(
+    name = "LogOut",
+    defaultWidth = 24.dp,
+    defaultHeight = 24.dp,
+    viewportWidth = 24f,
+    viewportHeight = 24f,
+).apply {
+    listOf(
+        "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4",
+        "M16 17l5-5-5-5",
+        "M21 12H9",
+    ).forEach { d ->
+        addPath(
+            pathData = PathParser().parsePathString(d).toNodes(),
+            stroke = SolidColor(Color.Black),
+            strokeLineWidth = 1.8f,
+            strokeLineCap = StrokeCap.Round,
+            strokeLineJoin = StrokeJoin.Round,
+        )
+    }
+}.build()
+
 private val mainRoutes = listOf(Route.Home, Route.Dispense, Route.ReceiveStock, Route.Register)
 private val catalogueRoutes = listOf(Route.DrugIndex, Route.RegisteredProducts, Route.RegisteredServices)
 private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, Route.Reports, Route.Alerts)
@@ -69,24 +96,34 @@ private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, 
 /**
  * Wraps a screen with the side menu. Open it with drawerState.open() (menu button).
  * Swiping only closes it, so it can't open by accident.
+ *
+ * userEmail: shown in the menu header when someone is signed in.
+ * onSignOut: when given, a Sign out item appears under Settings.
  */
 @Composable
 fun AppDrawer(
     drawerState: DrawerState,
     current: Route,
     onNavigate: (Route) -> Unit,
+    userEmail: String? = null,
+    onSignOut: (() -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
-        drawerContent = { DrawerSheet(current, onNavigate) },
+        drawerContent = { DrawerSheet(current, onNavigate, userEmail, onSignOut) },
         content = content,
     )
 }
 
 @Composable
-private fun DrawerSheet(current: Route, onNavigate: (Route) -> Unit) {
+private fun DrawerSheet(
+    current: Route,
+    onNavigate: (Route) -> Unit,
+    userEmail: String?,
+    onSignOut: (() -> Unit)?,
+) {
     val c = SamilliTheme.colors
     ModalDrawerSheet(
         drawerShape = RoundedCornerShape(topEnd = 28.dp, bottomEnd = 28.dp),
@@ -94,7 +131,7 @@ private fun DrawerSheet(current: Route, onNavigate: (Route) -> Unit) {
         windowInsets = WindowInsets(0.dp, 0.dp, 0.dp, 0.dp),
     ) {
         Column(Modifier.fillMaxHeight()) {
-            DrawerHeader()
+            DrawerHeader(userEmail)
 
             Column(
                 Modifier
@@ -119,7 +156,7 @@ private fun DrawerSheet(current: Route, onNavigate: (Route) -> Unit) {
                 Spacer(Modifier.height(10.dp))
             }
 
-            // Settings stays pinned at the bottom
+            // Settings and Sign out stay pinned at the bottom
             Box(Modifier.fillMaxWidth().height(1.dp).background(c.cardBorder))
             Column(
                 Modifier
@@ -131,13 +168,22 @@ private fun DrawerSheet(current: Route, onNavigate: (Route) -> Unit) {
                     Route.Settings.title,
                     Route.Settings == current,
                 ) { onNavigate(Route.Settings) }
+                if (onSignOut != null) {
+                    DrawerItem(
+                        icon = LogOutIcon,
+                        label = "Sign out",
+                        selected = false,
+                        danger = true,
+                        onClick = onSignOut,
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun DrawerHeader() {
+private fun DrawerHeader(userEmail: String?) {
     val c = SamilliTheme.colors
     Column(
         Modifier
@@ -171,6 +217,17 @@ private fun DrawerHeader() {
             color = c.onHeader.copy(alpha = 0.7f),
             fontSize = 12.sp,
         )
+        if (userEmail != null) {
+            Spacer(Modifier.height(10.dp))
+            Text(
+                text = "Signed in as $userEmail",
+                color = c.gold,
+                fontSize = 12.sp,
+                fontWeight = FontWeight.Medium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
     }
 }
 
@@ -192,6 +249,7 @@ private fun DrawerItem(
     icon: ImageVector,
     label: String,
     selected: Boolean,
+    danger: Boolean = false,
     onClick: () -> Unit,
 ) {
     val c = SamilliTheme.colors
@@ -209,12 +267,16 @@ private fun DrawerItem(
             icon,
             contentDescription = null,
             modifier = Modifier.size(22.dp),
-            tint = if (selected) c.iconTint else c.textSecondary,
+            tint = when {
+                danger -> c.urgent
+                selected -> c.iconTint
+                else -> c.textSecondary
+            },
         )
         Spacer(Modifier.width(14.dp))
         Text(
             text = label,
-            color = c.textPrimary,
+            color = if (danger) c.urgent else c.textPrimary,
             fontSize = 15.sp,
             fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium,
         )
