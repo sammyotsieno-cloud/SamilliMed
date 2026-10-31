@@ -12,6 +12,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberDrawerState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -21,7 +22,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.launch
 import org.samillimed.app.data.auth.rememberAuthController
+import org.samillimed.app.data.catalog.rememberCatalog
 import org.samillimed.app.ui.auth.LoginScreen
+import org.samillimed.app.ui.catalog.ProductFormScreen
+import org.samillimed.app.ui.catalog.RegisteredProductsScreen
+import org.samillimed.app.ui.common.LoadingState
 import org.samillimed.app.ui.home.HomeScreen
 import org.samillimed.app.ui.navigation.AppDrawer
 import org.samillimed.app.ui.navigation.Route
@@ -86,11 +91,19 @@ class MainActivity : ComponentActivity() {
                             },
                         )
                     } else {
+                        // Products, services and lists. Only started while signed in, because
+                        // the database refuses requests from signed-out users.
+                        val catalog = rememberCatalog()
+                        // Product form open on top of the current screen:
+                        // null = closed, "new" = registering, otherwise the id of the product being edited.
+                        var productForm by rememberSaveable { mutableStateOf<String?>(null) }
+
                         AppDrawer(
                             drawerState = drawerState,
                             current = nav.current,
                             onNavigate = { route ->
                                 scope.launch { drawerState.close() }
+                                productForm = null
                                 nav.navigate(route)
                             },
                             userEmail = auth.email,
@@ -99,27 +112,54 @@ class MainActivity : ComponentActivity() {
                                 showSignOut = true
                             },
                         ) {
-                            when (nav.current) {
-                                Route.Home -> HomeScreen(
-                                    onMenuClick = { scope.launch { drawerState.open() } },
-                                    onTabSelected = { index ->
-                                        when (index) {
-                                            1 -> nav.navigate(Route.Dispense)
-                                            2 -> nav.navigate(Route.ReceiveStock)
-                                            3 -> nav.navigate(Route.Register)
-                                            else -> Unit
-                                        }
-                                    },
-                                )
-                                Route.Settings -> SettingsScreen(
-                                    settings = settings,
-                                    onBack = { nav.back() },
-                                )
-                                else -> ComingSoonScreen(
-                                    title = nav.current.title,
-                                    icon = nav.current.icon(),
-                                    onBack = { nav.back() },
-                                )
+                            val target = productForm
+                            if (target != null) {
+                                val editing = if (target == "new") null else catalog.products.firstOrNull { it.id == target }
+                                when {
+                                    target != "new" && !catalog.loaded -> LoadingState()
+                                    target != "new" && editing == null -> LaunchedEffect(target) { productForm = null }
+                                    else -> ProductFormScreen(
+                                        catalog = catalog,
+                                        product = editing,
+                                        onClose = { productForm = null },
+                                    )
+                                }
+                            } else {
+                                when (nav.current) {
+                                    Route.Home -> HomeScreen(
+                                        onMenuClick = { scope.launch { drawerState.open() } },
+                                        onTabSelected = { index ->
+                                            when (index) {
+                                                1 -> nav.navigate(Route.Dispense)
+                                                2 -> nav.navigate(Route.ReceiveStock)
+                                                3 -> nav.navigate(Route.Register)
+                                                else -> Unit
+                                            }
+                                        },
+                                    )
+                                    // For now the Register tab opens the product form.
+                                    // It becomes a "Product or Service" chooser once services exist.
+                                    Route.Register -> ProductFormScreen(
+                                        catalog = catalog,
+                                        product = null,
+                                        onClose = { nav.back() },
+                                    )
+                                    Route.RegisteredProducts -> RegisteredProductsScreen(
+                                        catalog = catalog,
+                                        onBack = { nav.back() },
+                                        onAdd = { productForm = "new" },
+                                        onEdit = { productForm = it.id },
+                                    )
+                                    Route.Settings -> SettingsScreen(
+                                        settings = settings,
+                                        onBack = { nav.back() },
+                                    )
+                                    else -> ComingSoonScreen(
+                                        title = nav.current.title,
+                                        icon = nav.current.icon(),
+                                        onBack = { nav.back() },
+                                    )
+                                }
                             }
                         }
                     }
