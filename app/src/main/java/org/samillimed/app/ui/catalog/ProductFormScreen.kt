@@ -24,6 +24,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -41,9 +42,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.samillimed.app.data.catalog.Catalog
+import org.samillimed.app.data.catalog.Ingredient
 import org.samillimed.app.data.catalog.ListType
+import org.samillimed.app.data.catalog.MEDICINE_TYPE
 import org.samillimed.app.data.catalog.Product
 import org.samillimed.app.data.catalog.ProductUnit
+import org.samillimed.app.data.catalog.genericNames
+import org.samillimed.app.data.catalog.strengthText
+import org.samillimed.app.data.catalog.isMedicine
+import org.samillimed.app.data.catalog.suggestedMedicineName
 import org.samillimed.app.ui.common.ComboField
 import org.samillimed.app.ui.common.CommonIcons
 import org.samillimed.app.ui.common.ConfirmDialog
@@ -57,6 +64,9 @@ import org.samillimed.app.ui.theme.SamilliTheme
 /** One line of the units editor. qty = how many of the smallest unit it holds (text, as typed). */
 private data class UnitRow(val name: String, val qty: String)
 
+/** One ingredient line of a medicine: generic name and its strength, as typed. */
+private data class IngredientRow(val name: String, val strength: String)
+
 private val unitRowsSaver = listSaver<SnapshotStateList<UnitRow>, String>(
     save = { rows -> rows.flatMap { listOf(it.name, it.qty) } },
     restore = { flat ->
@@ -66,19 +76,26 @@ private val unitRowsSaver = listSaver<SnapshotStateList<UnitRow>, String>(
     },
 )
 
+private val ingredientRowsSaver = listSaver<SnapshotStateList<IngredientRow>, String>(
+    save = { rows -> rows.flatMap { listOf(it.name, it.strength) } },
+    restore = { flat ->
+        mutableStateListOf<IngredientRow>().apply {
+            flat.chunked(2).forEach { add(IngredientRow(it[0], it[1])) }
+        }
+    },
+)
+
 private class FormErrors(
+    val type: String?,
     val name: String?,
-    val category: String?,
+    val ingredientName: Map<Int, String>,
     val baseUnit: String?,
     val extraName: Map<Int, String>,
     val extraQty: Map<Int, String>,
-    val expiry: String?,
-    val reorder: String?,
-    val barcode: String?,
 ) {
     val any: Boolean
-        get() = name != null || category != null || baseUnit != null || extraName.isNotEmpty() ||
-            extraQty.isNotEmpty() || expiry != null || reorder != null || barcode != null
+        get() = type != null || name != null || ingredientName.isNotEmpty() || baseUnit != null ||
+            extraName.isNotEmpty() || extraQty.isNotEmpty()
 }
 
 /**
@@ -96,26 +113,25 @@ fun ProductFormScreen(
     val key = product?.id ?: "new"
 
     // ---- what the user is typing (survives screen rotation) --------------------------------
+    var type by rememberSaveable(key) { mutableStateOf(product?.type ?: MEDICINE_TYPE) }
     var name by rememberSaveable(key) { mutableStateOf(product?.name.orEmpty()) }
-    var genericName by rememberSaveable(key) { mutableStateOf(product?.genericName.orEmpty()) }
-    var brandName by rememberSaveable(key) { mutableStateOf(product?.brandName.orEmpty()) }
-    var strength by rememberSaveable(key) { mutableStateOf(product?.strength.orEmpty()) }
+    // Until the user types their own name, a medicine's name is built from its details.
+    var nameEdited by rememberSaveable(key) { mutableStateOf(product != null) }
+    var brand by rememberSaveable(key) { mutableStateOf(product?.brandName.orEmpty()) }
     var dosageForm by rememberSaveable(key) { mutableStateOf(product?.dosageForm.orEmpty()) }
-    var manufacturer by rememberSaveable(key) { mutableStateOf(product?.manufacturer.orEmpty()) }
-    var category by rememberSaveable(key) { mutableStateOf(product?.category.orEmpty()) }
-    var code by rememberSaveable(key) { mutableStateOf(product?.code.orEmpty()) }
-    var barcode by rememberSaveable(key) { mutableStateOf(product?.barcode.orEmpty()) }
-    var prescription by rememberSaveable(key) { mutableStateOf(product?.prescriptionStatus.orEmpty()) }
-    var controlled by rememberSaveable(key) { mutableStateOf(product?.controlled ?: false) }
+    var description by rememberSaveable(key) { mutableStateOf(product?.description.orEmpty()) }
     var trackExpiry by rememberSaveable(key) { mutableStateOf(product?.trackExpiry ?: true) }
-    var expiryDays by rememberSaveable(key) { mutableStateOf(product?.expiryAlertDays?.toString() ?: "90") }
+    var expiryTouched by rememberSaveable(key) { mutableStateOf(product != null) }
     var reorder by rememberSaveable(key) {
         mutableStateOf(product?.reorderLevel?.takeIf { it > 0 }?.toString().orEmpty())
     }
-    var storage by rememberSaveable(key) { mutableStateOf(product?.storage.orEmpty()) }
-    var location by rememberSaveable(key) { mutableStateOf(product?.location.orEmpty()) }
-    var notes by rememberSaveable(key) { mutableStateOf(product?.notes.orEmpty()) }
     var active by rememberSaveable(key) { mutableStateOf(product?.active ?: true) }
+    val ingredientRows = rememberSaveable(key, saver = ingredientRowsSaver) {
+        mutableStateListOf<IngredientRow>().apply {
+            val initial = product?.ingredients.orEmpty()
+            if (initial.isEmpty()) add(IngredientRow("", "")) else initial.forEach { add(IngredientRow(it.genericName, it.strength)) }
+        }
+    }
     val unitRows = rememberSaveable(key, saver = unitRowsSaver) {
         mutableStateListOf<UnitRow>().apply {
             val initial = product?.units.orEmpty()
@@ -131,7 +147,20 @@ fun ProductFormScreen(
     var showDiscard by remember { mutableStateOf(false) }
     var showDuplicate by remember { mutableStateOf(false) }
 
+    val isMedicine = type.trim().equals(MEDICINE_TYPE, ignoreCase = true)
+
+    // A new product starts with expiry tracking ON for medicines and OFF for other types,
+    // unless the user has already chosen.
+    LaunchedEffect(isMedicine) {
+        if (product == null && !expiryTouched) trackExpiry = isMedicine
+    }
+
     // ---- turning the typed values into a Product -------------------------------------------
+    fun cleanIngredients(): List<Ingredient> =
+        ingredientRows
+            .filter { it.name.isNotBlank() || it.strength.isNotBlank() }
+            .map { Ingredient(it.name.trim(), it.strength.trim()) }
+
     fun cleanUnits(): List<ProductUnit> {
         val first = unitRows.first()
         val extras = unitRows.drop(1).filter { it.name.isNotBlank() || it.qty.isNotBlank() }
@@ -139,26 +168,20 @@ fun ProductFormScreen(
             extras.map { ProductUnit(it.name.trim(), it.qty.toIntOrNull() ?: 0) }
     }
 
+    val suggested = suggestedMedicineName(brand, cleanIngredients(), dosageForm)
+    val effectiveName = if (isMedicine && !nameEdited) suggested else name
+
     fun build(): Product = Product(
         id = product?.id.orEmpty(),
-        name = name.trim(),
-        genericName = genericName.trim(),
-        brandName = brandName.trim(),
-        strength = strength.trim(),
-        dosageForm = dosageForm.trim(),
-        manufacturer = manufacturer.trim(),
-        category = category.trim(),
+        type = type.trim(),
+        name = effectiveName.trim(),
+        ingredients = if (isMedicine) cleanIngredients() else emptyList(),
+        brandName = brand.trim(),
+        dosageForm = if (isMedicine) dosageForm.trim() else "",
+        description = description.trim(),
         units = cleanUnits(),
-        code = code.trim(),
-        barcode = barcode.trim(),
-        prescriptionStatus = prescription.trim(),
-        controlled = controlled,
         trackExpiry = trackExpiry,
-        expiryAlertDays = expiryDays.toIntOrNull() ?: 90,
         reorderLevel = reorder.toIntOrNull() ?: 0,
-        storage = storage.trim(),
-        location = location.trim(),
-        notes = notes.trim(),
         active = active,
         createdAtMillis = product?.createdAtMillis ?: 0,
         createdBy = product?.createdBy.orEmpty(),
@@ -186,47 +209,55 @@ fun ProductFormScreen(
             if (q == null || q < 2) put(i, "2 or more")
         }
     }
+    val ingredientName = buildMap<Int, String> {
+        if (isMedicine) {
+            for (i in ingredientRows.indices) {
+                val row = ingredientRows[i]
+                if (row.name.isBlank() && (i == 0 || row.strength.isNotBlank())) put(i, "Enter the generic name")
+            }
+        }
+    }
     val errors = FormErrors(
-        name = if (name.isBlank()) "Enter the product name" else null,
-        category = if (category.isBlank()) "Choose or type a category" else null,
-        baseUnit = if (unitRows.first().name.isBlank()) "Enter the smallest unit, for example Tablet" else null,
+        type = if (type.isBlank()) "Choose or type the product type" else null,
+        name = if (effectiveName.isBlank()) "Enter the product name" else null,
+        ingredientName = ingredientName,
+        baseUnit = if (unitRows.first().name.isBlank()) "Enter the smallest unit, for example Tablet or Piece" else null,
         extraName = extraName,
         extraQty = extraQty,
-        expiry = if (!trackExpiry) null else {
-            val d = expiryDays.toIntOrNull()
-            if (d == null) "Enter the number of days" else if (d > 3650) "Too many days" else null
-        },
-        reorder = if (reorder.isNotBlank() && reorder.toIntOrNull() == null) "Enter a whole number" else null,
-        barcode = if (barcode.isNotBlank() && catalog.products.any {
-                it.id != product?.id && it.barcode.equals(barcode.trim(), ignoreCase = true)
-            }
-        ) "Another product already has this barcode" else null,
     )
-    val looksDuplicate = catalog.products.any {
-        it.id != product?.id &&
-            it.name.equals(name.trim(), ignoreCase = true) &&
-            it.strength.equals(strength.trim(), ignoreCase = true) &&
-            it.dosageForm.equals(dosageForm.trim(), ignoreCase = true)
-    }
 
     // ---- saving -----------------------------------------------------------------------------
     fun doSave() {
         val p = build()
-        catalog.repo.saveProduct(p)
-        // anything typed that is not in a list yet is added to it
         val repo = catalog.repo
-        repo.addToList(ListType.PRODUCT_CATEGORIES, p.category, catalog.list(ListType.PRODUCT_CATEGORIES))
-        repo.addToList(ListType.DOSAGE_FORMS, p.dosageForm, catalog.list(ListType.DOSAGE_FORMS))
-        repo.addToList(ListType.PRESCRIPTION_STATUS, p.prescriptionStatus, catalog.list(ListType.PRESCRIPTION_STATUS))
-        repo.addToList(ListType.STORAGE_CONDITIONS, p.storage, catalog.list(ListType.STORAGE_CONDITIONS))
+        repo.saveProduct(p)
+        // anything typed that is not in a list yet is added to it
+        repo.addToList(ListType.PRODUCT_TYPES, p.type, catalog.list(ListType.PRODUCT_TYPES))
+        if (p.dosageForm.isNotBlank()) {
+            repo.addToList(ListType.DOSAGE_FORMS, p.dosageForm, catalog.list(ListType.DOSAGE_FORMS))
+        }
         p.units.forEach { repo.addToList(ListType.UNITS, it.name, catalog.list(ListType.UNITS)) }
         onClose()
+    }
+
+    fun looksDuplicate(): Boolean {
+        val mine = build()
+        return catalog.products.any { other ->
+            other.id != product?.id && (
+                other.name.equals(mine.name, ignoreCase = true) ||
+                    (mine.isMedicine && other.isMedicine && mine.genericNames.isNotEmpty() &&
+                        other.genericNames.equals(mine.genericNames, ignoreCase = true) &&
+                        other.strengthText.equals(mine.strengthText, ignoreCase = true) &&
+                        other.dosageForm.equals(mine.dosageForm, ignoreCase = true) &&
+                        other.brandName.equals(mine.brandName, ignoreCase = true))
+                )
+        }
     }
 
     fun trySave() {
         showErrors = true
         if (errors.any) return
-        if (looksDuplicate) showDuplicate = true else doSave()
+        if (looksDuplicate()) showDuplicate = true else doSave()
     }
 
     fun leave() {
@@ -252,59 +283,126 @@ fun ProductFormScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            FormSection(title = "Product details") {
-                FormTextField(
-                    value = name,
-                    onValueChange = { name = it },
-                    label = "Product name *",
-                    capitalization = KeyboardCapitalization.Words,
-                    error = if (showErrors) errors.name else null,
-                    supporting = "As it should appear on sales, e.g. Amoxicillin 500 mg capsules",
-                )
-                FormTextField(
-                    value = genericName,
-                    onValueChange = { genericName = it },
-                    label = "Generic name (active ingredient)",
-                    capitalization = KeyboardCapitalization.Words,
-                )
-                FormTextField(
-                    value = brandName,
-                    onValueChange = { brandName = it },
-                    label = "Brand name",
-                    capitalization = KeyboardCapitalization.Words,
-                )
-                FormTextField(
-                    value = strength,
-                    onValueChange = { strength = it },
-                    label = "Strength",
-                    supporting = "e.g. 500 mg, 125 mg/5 ml",
-                )
+            FormSection(title = "Product type") {
                 ComboField(
-                    value = dosageForm,
-                    onValueChange = { dosageForm = it },
-                    label = "Dosage form",
-                    options = catalog.list(ListType.DOSAGE_FORMS),
+                    value = type,
+                    onValueChange = { type = it },
+                    label = "Product type *",
+                    options = catalog.list(ListType.PRODUCT_TYPES),
+                    error = if (showErrors) errors.type else null,
+                    supporting = "Medicine covers every drug. For anything else, pick or type the kind of item, e.g. Gauze",
                 )
+            }
+
+            if (isMedicine) {
+                FormSection(
+                    title = "Medicine details",
+                    hint = "Each generic name is the link to the Drug Index later. Combination medicines have several ingredients.",
+                ) {
+                    FormTextField(
+                        value = brand,
+                        onValueChange = { brand = it },
+                        label = "Brand name",
+                        capitalization = KeyboardCapitalization.Words,
+                        supporting = "Leave empty for unbranded generics",
+                    )
+                    ComboField(
+                        value = dosageForm,
+                        onValueChange = { dosageForm = it },
+                        label = "Dosage form",
+                        options = catalog.list(ListType.DOSAGE_FORMS),
+                    )
+                    for (i in ingredientRows.indices) {
+                        val row = ingredientRows[i]
+                        if (ingredientRows.size > 1) {
+                            Row(
+                                Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    text = "Ingredient ${i + 1}",
+                                    color = c.label,
+                                    fontSize = 13.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.weight(1f),
+                                )
+                                if (i > 0) {
+                                    TextButton(onClick = { ingredientRows.removeAt(i) }) {
+                                        Text("Remove", fontWeight = FontWeight.Bold)
+                                    }
+                                }
+                            }
+                        }
+                        FormTextField(
+                            value = row.name,
+                            onValueChange = { ingredientRows[i] = ingredientRows[i].copy(name = it) },
+                            label = if (i == 0) "Generic name *" else "Generic name",
+                            capitalization = KeyboardCapitalization.Words,
+                            error = if (showErrors) errors.ingredientName[i] else null,
+                            supporting = if (i == 0) "The active ingredient, e.g. Prednisolone" else null,
+                        )
+                        FormTextField(
+                            value = row.strength,
+                            onValueChange = { ingredientRows[i] = ingredientRows[i].copy(strength = it) },
+                            label = "Strength",
+                            supporting = if (i == 0) "As printed on the pack, e.g. 5 mg or 125 mg/5 ml" else null,
+                        )
+                    }
+                    TextButton(onClick = { ingredientRows.add(IngredientRow("", "")) }) {
+                        Icon(CommonIcons.Plus, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(Modifier.width(6.dp))
+                        Text("Add another ingredient", fontWeight = FontWeight.Bold)
+                    }
+                    FormTextField(
+                        value = effectiveName,
+                        onValueChange = { name = it; nameEdited = true },
+                        label = "Product name *",
+                        capitalization = KeyboardCapitalization.Words,
+                        error = if (showErrors) errors.name else null,
+                        supporting = "Built from the brand, ingredients and form. You can change it.",
+                    )
+                    if (nameEdited && suggested.isNotBlank() && effectiveName != suggested) {
+                        TextButton(onClick = { nameEdited = false }) {
+                            Text("Use suggested name: $suggested", fontWeight = FontWeight.Bold)
+                        }
+                    }
+                }
+            } else {
+                FormSection(title = "Product details") {
+                    FormTextField(
+                        value = name,
+                        onValueChange = { name = it; nameEdited = true },
+                        label = "Product name *",
+                        capitalization = KeyboardCapitalization.Words,
+                        error = if (showErrors) errors.name else null,
+                        supporting = "e.g. Gauze swab 10 x 10 cm, sterile",
+                    )
+                    FormTextField(
+                        value = brand,
+                        onValueChange = { brand = it },
+                        label = "Brand or manufacturer",
+                        capitalization = KeyboardCapitalization.Words,
+                    )
+                }
+            }
+
+            FormSection(title = "Description") {
                 FormTextField(
-                    value = manufacturer,
-                    onValueChange = { manufacturer = it },
-                    label = "Manufacturer",
-                    capitalization = KeyboardCapitalization.Words,
-                )
-                ComboField(
-                    value = category,
-                    onValueChange = { category = it },
-                    label = "Category *",
-                    options = catalog.list(ListType.PRODUCT_CATEGORIES),
-                    error = if (showErrors) errors.category else null,
-                    supporting = "Pick one, or type a new one to add it",
+                    value = description,
+                    onValueChange = { description = it },
+                    label = "Description",
+                    capitalization = KeyboardCapitalization.Sentences,
+                    imeAction = ImeAction.Default,
+                    singleLine = false,
+                    minLines = 3,
+                    supporting = "Optional: size, use, packaging, anything that helps identify the product",
                 )
             }
 
             FormSection(
-                title = "Units",
-                hint = "Stock is counted in the smallest unit. Add bigger units if you also sell by strip, box and so on. " +
-                    "Whoever sells picks the unit at the time.",
+                title = "Packaging units",
+                hint = "Stock is counted in the smallest unit. Add bigger units if you buy or sell by strip, box and so on. " +
+                    "Any unit can be used both when buying stock and when selling or dispensing.",
             ) {
                 ComboField(
                     value = unitRows.first().name,
@@ -312,7 +410,7 @@ fun ProductFormScreen(
                     label = "Smallest unit *",
                     options = unitOptions,
                     error = if (showErrors) errors.baseUnit else null,
-                    supporting = "e.g. Tablet, Capsule, Bottle, Piece",
+                    supporting = "e.g. Tablet, Piece, Bottle, Roll",
                 )
                 for (i in 1 until unitRows.size) {
                     val row = unitRows[i]
@@ -364,87 +462,20 @@ fun ProductFormScreen(
                 }
             }
 
-            FormSection(title = "Stock control") {
+            FormSection(title = "Stock settings") {
+                SwitchRow(
+                    title = "Track expiry dates",
+                    subtitle = "Every received batch will need an expiry date",
+                    checked = trackExpiry,
+                    onCheckedChange = { trackExpiry = it; expiryTouched = true },
+                )
                 FormTextField(
                     value = reorder,
                     onValueChange = { reorder = it.filter { ch -> ch.isDigit() } },
                     label = if (baseName.isNotEmpty()) "Reorder level (counted in $baseName)" else "Reorder level",
                     keyboardType = KeyboardType.Number,
-                    error = if (showErrors) errors.reorder else null,
-                    supporting = "Flagged as low stock at or below this quantity",
-                )
-                SwitchRow(
-                    title = "Track expiry dates",
-                    subtitle = "Every received batch will need an expiry date",
-                    checked = trackExpiry,
-                    onCheckedChange = { trackExpiry = it },
-                )
-                if (trackExpiry) {
-                    FormTextField(
-                        value = expiryDays,
-                        onValueChange = { expiryDays = it.filter { ch -> ch.isDigit() } },
-                        label = "Alert before expiry (days)",
-                        keyboardType = KeyboardType.Number,
-                        error = if (showErrors) errors.expiry else null,
-                        supporting = "A batch is flagged this many days before it expires",
-                    )
-                }
-            }
-
-            FormSection(title = "Regulatory") {
-                ComboField(
-                    value = prescription,
-                    onValueChange = { prescription = it },
-                    label = "Prescription status",
-                    options = catalog.list(ListType.PRESCRIPTION_STATUS),
-                )
-                SwitchRow(
-                    title = "Controlled drug",
-                    subtitle = "Marks the product so it is easy to find and report on",
-                    checked = controlled,
-                    onCheckedChange = { controlled = it },
-                )
-            }
-
-            FormSection(title = "Storage and notes") {
-                ComboField(
-                    value = storage,
-                    onValueChange = { storage = it },
-                    label = "Storage condition",
-                    options = catalog.list(ListType.STORAGE_CONDITIONS),
-                )
-                FormTextField(
-                    value = location,
-                    onValueChange = { location = it },
-                    label = "Shelf or location",
-                    capitalization = KeyboardCapitalization.Sentences,
-                    supporting = "e.g. Shelf B2, Fridge",
-                )
-                FormTextField(
-                    value = notes,
-                    onValueChange = { notes = it },
-                    label = "Notes",
-                    capitalization = KeyboardCapitalization.Sentences,
-                    imeAction = ImeAction.Default,
-                    singleLine = false,
-                    minLines = 3,
-                )
-            }
-
-            FormSection(title = "Codes") {
-                FormTextField(
-                    value = code,
-                    onValueChange = { code = it },
-                    label = "Product code",
-                    supporting = "Your own internal code (optional)",
-                )
-                FormTextField(
-                    value = barcode,
-                    onValueChange = { barcode = it },
-                    label = "Barcode",
-                    error = if (showErrors) errors.barcode else null,
-                    supporting = "Optional. Scanning can be added later",
                     imeAction = ImeAction.Done,
+                    supporting = "Optional. Flagged as low stock at or below this quantity",
                 )
             }
 
@@ -488,7 +519,7 @@ fun ProductFormScreen(
     if (showDuplicate) {
         ConfirmDialog(
             title = "Possible duplicate",
-            message = "A product with the same name, strength and form is already registered. Save it anyway?",
+            message = "A product with the same name or the same medicine details is already registered. Save it anyway?",
             confirmText = "Save anyway",
             dismissText = "Cancel",
             onConfirm = { showDuplicate = false; doSave() },
