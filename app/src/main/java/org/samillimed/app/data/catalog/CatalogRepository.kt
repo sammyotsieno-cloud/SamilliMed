@@ -18,12 +18,10 @@ private const val LISTS = "lists"
 
 /** Which records use each list, so a renamed value can be updated in them too. */
 private val listUsage: Map<String, Pair<String, String>> = mapOf(
-    ListType.PRODUCT_CATEGORIES to (PRODUCTS to "category"),
-    ListType.SERVICE_CATEGORIES to (SERVICES to "category"),
+    ListType.PRODUCT_TYPES to (PRODUCTS to "type"),
     ListType.DOSAGE_FORMS to (PRODUCTS to "dosageForm"),
+    ListType.SERVICE_CATEGORIES to (SERVICES to "category"),
     ListType.DEPARTMENTS to (SERVICES to "department"),
-    ListType.PRESCRIPTION_STATUS to (PRODUCTS to "prescriptionStatus"),
-    ListType.STORAGE_CONDITIONS to (PRODUCTS to "storage"),
 )
 
 /** Reads and writes products, services and the user-managed lists in Firestore. */
@@ -164,24 +162,15 @@ class CatalogRepository(
 // ---- what is written to Firestore ----------------------------------------------------------
 
 private fun Product.toMap(): Map<String, Any> = mapOf(
+    "type" to type,
     "name" to name,
-    "genericName" to genericName,
+    "ingredients" to ingredients.map { mapOf("genericName" to it.genericName, "strength" to it.strength) },
     "brandName" to brandName,
-    "strength" to strength,
     "dosageForm" to dosageForm,
-    "manufacturer" to manufacturer,
-    "category" to category,
+    "description" to description,
     "units" to units.map { mapOf("name" to it.name, "baseQty" to it.baseQty) },
-    "code" to code,
-    "barcode" to barcode,
-    "prescriptionStatus" to prescriptionStatus,
-    "controlled" to controlled,
     "trackExpiry" to trackExpiry,
-    "expiryAlertDays" to expiryAlertDays,
     "reorderLevel" to reorderLevel,
-    "storage" to storage,
-    "location" to location,
-    "notes" to notes,
     "active" to active,
 )
 
