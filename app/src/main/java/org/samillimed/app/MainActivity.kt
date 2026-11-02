@@ -28,6 +28,7 @@ import org.samillimed.app.ui.catalog.ProductFormScreen
 import org.samillimed.app.ui.catalog.RegisteredProductsScreen
 import org.samillimed.app.ui.common.LoadingState
 import org.samillimed.app.ui.home.HomeScreen
+import org.samillimed.app.ui.inventory.ReceiveStockScreen
 import org.samillimed.app.ui.navigation.AppDrawer
 import org.samillimed.app.ui.navigation.Route
 import org.samillimed.app.ui.navigation.icon
@@ -150,6 +151,16 @@ class MainActivity : ComponentActivity() {
                                         onAdd = { productForm = "new" },
                                         onEdit = { productForm = it.id },
                                     )
+                                    Route.ReceiveStock -> {
+                                        if (!catalog.loaded) {
+                                            LoadingState()
+                                        } else {
+                                            ReceiveStockScreen(
+                                                catalog = catalog,
+                                                onBack = { nav.back() },
+                                            )
+                                        }
+                                    }
                                     Route.Settings -> SettingsScreen(
                                         settings = settings,
                                         onBack = { nav.back() },
