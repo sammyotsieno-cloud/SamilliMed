@@ -143,6 +143,9 @@ data class DispensingLine(
  * One dispensing line can have multiple allocation records when
  * the requested quantity is fulfilled from several batches.
  *
+ * Original batch pricing and receiving-unit details are retained
+ * so historical price comparisons remain accurate.
+ *
  * Quantities are expressed in the product's smallest registered unit.
  * Monetary amounts are stored in cents.
  */
@@ -158,7 +161,9 @@ data class DispensingBatchAllocation(
 
     val quantityDeducted: Long = 0,
 
+    val receivingUnitName: String = "",
     val purchaseCostPerReceivingUnitCents: Long = 0,
+    val sellingPricePerReceivingUnitCents: Long = 0,
     val baseUnitsPerReceivingUnit: Long = 1,
 
     val allocatedPurchaseCostCents: Long = 0,
