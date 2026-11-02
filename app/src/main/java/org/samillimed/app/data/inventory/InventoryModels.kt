@@ -36,9 +36,7 @@ data class GoodsReceipt(
 /**
  * One product entry within a goods receipt.
  *
- * The receiving unit and its conversion factor are snapshots.
- * Historical receipts therefore remain accurate even if the
- * product's unit configuration changes later.
+ * Receiving-unit details and prices are historical snapshots.
  */
 data class GoodsReceiptLine(
     val id: String = "",
@@ -47,17 +45,14 @@ data class GoodsReceiptLine(
     val productNameSnapshot: String = "",
     val productTypeSnapshot: String = "",
 
-    // Receiving quantity and unit
     val quantityReceived: Long = 0,
     val receivingUnitName: String = "",
     val baseUnitsPerReceivingUnit: Long = 1,
     val baseQuantityReceived: Long = 0,
 
-    // Batch information
     val batchNumber: String = "",
     val expiryDateMillis: Long? = null,
 
-    // Financial values stored in cents
     val purchaseCostPerReceivingUnitCents: Long = 0,
     val lineTotalCostCents: Long = 0,
     val sellingPricePerReceivingUnitCents: Long = 0,
@@ -66,8 +61,8 @@ data class GoodsReceiptLine(
 /**
  * An individual received batch.
  *
- * Quantities are maintained in the product's smallest registered
- * unit, independently of the unit used when receiving stock.
+ * Stock quantities are maintained in the product's smallest unit.
+ * Purchase and reference selling prices belong to this batch.
  */
 data class StockBatch(
     val id: String = "",
@@ -82,7 +77,6 @@ data class StockBatch(
     val receivedQuantity: Long = 0,
     val remainingQuantity: Long = 0,
 
-    // Original receiving-unit snapshot
     val receivingUnitName: String = "",
     val baseUnitsPerReceivingUnit: Long = 1,
 
@@ -96,8 +90,8 @@ data class StockBatch(
 /**
  * Aggregate stock balance for a registered product.
  *
- * This is the authoritative quantity used for stock calculations.
- * It is always expressed in the product's smallest registered unit.
+ * The quantity is the sum of remaining quantities across its batches,
+ * expressed in the product's smallest registered unit.
  */
 data class StockBalance(
     val productId: String = "",
@@ -108,12 +102,6 @@ data class StockBalance(
 
 /**
  * A snapshot of the unit selected for a stock transaction.
- *
- * Example:
- * unitName = "Strip"
- * baseUnitsPerUnit = 10
- *
- * One strip therefore represents 10 smallest registered units.
  */
 data class TransactionUnitSnapshot(
     val unitName: String = "",
@@ -121,10 +109,13 @@ data class TransactionUnitSnapshot(
 )
 
 /**
- * A dispensing transaction line.
+ * A product-level dispensing request.
  *
- * The user may dispense in any supported product unit,
- * regardless of the unit originally used to receive stock.
+ * The actual selling price is entered for this particular sale.
+ * It is not required to match the registered selling price of any batch.
+ *
+ * Purchase cost and gross profit are calculated from the actual
+ * batch allocations and retained as historical transaction values.
  */
 data class DispensingLine(
     val id: String = "",
@@ -132,24 +123,56 @@ data class DispensingLine(
     val productId: String = "",
     val productNameSnapshot: String = "",
 
-    // Unit selected during dispensing
     val quantityDispensed: Long = 0,
-    val dispensingUnit: TransactionUnitSnapshot = TransactionUnitSnapshot(),
+    val dispensingUnit: TransactionUnitSnapshot =
+        TransactionUnitSnapshot(),
     val baseQuantityDispensed: Long = 0,
 
-    // Batch from which the stock was deducted
+    val actualSellingPricePerUnitCents: Long = 0,
+    val totalSaleValueCents: Long = 0,
+
+    val totalPurchaseCostCents: Long = 0,
+    val grossProfitCents: Long = 0,
+
+    val createdAtMillis: Long = 0,
+)
+
+/**
+ * A batch-level allocation belonging to a dispensing line.
+ *
+ * One dispensing line can have multiple allocation records when
+ * the requested quantity is fulfilled from several batches.
+ *
+ * Quantities are expressed in the product's smallest registered unit.
+ * Monetary amounts are stored in cents.
+ */
+data class DispensingBatchAllocation(
+    val id: String = "",
+    val dispensingId: String = "",
+    val dispensingLineId: String = "",
+    val productId: String = "",
+
     val batchId: String = "",
     val batchNumberSnapshot: String = "",
+    val expiryDateMillis: Long? = null,
 
-    val sellingPricePerUnitCents: Long = 0,
-    val lineTotalCents: Long = 0,
+    val quantityDeducted: Long = 0,
+
+    val purchaseCostPerReceivingUnitCents: Long = 0,
+    val baseUnitsPerReceivingUnit: Long = 1,
+
+    val allocatedPurchaseCostCents: Long = 0,
+    val allocatedSaleValueCents: Long = 0,
+    val allocatedProfitCents: Long = 0,
+
+    val resultingBatchBalance: Long = 0,
     val createdAtMillis: Long = 0,
 )
 
 /**
  * A dispensing transaction header.
  *
- * One dispensing transaction can contain multiple products.
+ * One transaction can contain multiple product lines.
  */
 data class DispensingRecord(
     val id: String = "",
@@ -158,15 +181,15 @@ data class DispensingRecord(
     val createdAtMillis: Long = 0,
     val createdBy: String = "",
     val totalAmountCents: Long = 0,
+    val totalPurchaseCostCents: Long = 0,
+    val grossProfitCents: Long = 0,
     val lineCount: Int = 0,
 )
 
 /**
  * An auditable record of every stock change.
  *
- * Movement quantities are always expressed in the smallest
- * registered unit, while the selected transaction unit is
- * retained separately for historical display.
+ * Movement quantities are expressed in the smallest registered unit.
  */
 data class StockMovement(
     val id: String = "",
@@ -179,12 +202,10 @@ data class StockMovement(
 
     val movementType: String = StockMovementType.RECEIPT,
 
-    // Positive for incoming stock; negative for outgoing stock
     val quantityChange: Long = 0,
     val resultingBatchBalance: Long = 0,
     val resultingProductBalance: Long = 0,
 
-    // Unit selected for the original transaction
     val transactionUnit: TransactionUnitSnapshot =
         TransactionUnitSnapshot(),
 
