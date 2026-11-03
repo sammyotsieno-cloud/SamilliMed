@@ -39,6 +39,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
@@ -76,6 +77,7 @@ import java.time.YearMonth
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import java.util.UUID
 
 // ---- the receipt being typed -----------------------------------------------------------------
 
@@ -210,7 +212,8 @@ fun ReceiveStockScreen(
     val c = SamilliTheme.colors
     val repository = remember { InventoryRepository() }
 
-    // the receipt
+    // the receipt. receiptId stays the same for this draft, so saving twice can never receive twice.
+    val receiptId = rememberSaveable { UUID.randomUUID().toString() }
     var supplier by rememberSaveable { mutableStateOf("") }
     var reference by rememberSaveable { mutableStateOf("") }
     var receivedText by rememberSaveable { mutableStateOf(todayText()) }
@@ -374,6 +377,7 @@ fun ReceiveStockScreen(
         saving = true
         repository.saveReceipt(
             receipt = GoodsReceipt(
+                id = receiptId,
                 supplierName = supplier.trim(),
                 referenceNumber = reference.trim(),
                 receivedAtMillis = receivedMillis,
@@ -404,7 +408,6 @@ fun ReceiveStockScreen(
             onPick = { p ->
                 productId = p.id
                 unitName = if (p.units.size == 1) p.units.first().name else ""
-                if (!p.trackExpiry) batchNumber = batchNumber
                 picking = false
             },
             onClose = { picking = false },
@@ -459,7 +462,9 @@ fun ReceiveStockScreen(
                         onClick = { picking = true },
                         error = if (showLineErrors) errors.product else null,
                         supporting = product?.let {
-                            listOf(it.detailText(), "Units: ${it.unitsText()}").filter { s -> s.isNotBlank() }.joinToString("\n")
+                            listOf(it.detailText(), "Units: ${it.unitsText()}")
+                                .filter { s -> s.isNotBlank() }
+                                .joinToString("\n")
                         },
                     )
 
@@ -527,16 +532,24 @@ fun ReceiveStockScreen(
                 }
 
                 if (lines.isNotEmpty()) {
-                    FormSection(title = if (lines.size == 1) "On this receipt (1 batch)" else "On this receipt (${lines.size} batches)") {
+                    FormSection(
+                        title = if (lines.size == 1) "On this receipt (1 batch)" else "On this receipt (${lines.size} batches)",
+                    ) {
                         lines.forEachIndexed { index, line ->
-                            val baseName = catalog.products.firstOrNull { it.id == line.productId }?.baseUnit?.name.orEmpty()
+                            val baseName = catalog.products
+                                .firstOrNull { it.id == line.productId }?.baseUnit?.name.orEmpty()
                             SamilliCard(
                                 modifier = Modifier.fillMaxWidth(),
                                 contentPadding = PaddingValues(12.dp),
                             ) {
-                                Row(Modifier.fillMaxWidth(), verticalAlignment = androidx.compose.ui.Alignment.Top) {
+                                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                                     Column(Modifier.weight(1f)) {
-                                        Text(line.productName, color = c.textPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                                        Text(
+                                            line.productName,
+                                            color = c.textPrimary,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold,
+                                        )
                                         val received = buildString {
                                             append("${formatCount(line.quantity)} ${line.unitName}")
                                             if (line.baseQty > 1 && baseName.isNotEmpty()) {
@@ -557,7 +570,10 @@ fun ReceiveStockScreen(
                                         )
                                         Text(
                                             "Line total " + formatKsh(
-                                                InventoryCalculations.calculateLineCostCents(line.quantity, line.purchaseCostCents) ?: 0L,
+                                                InventoryCalculations.calculateLineCostCents(
+                                                    line.quantity,
+                                                    line.purchaseCostCents,
+                                                ) ?: 0L,
                                             ),
                                             color = c.accentText,
                                             fontSize = 13.sp,
