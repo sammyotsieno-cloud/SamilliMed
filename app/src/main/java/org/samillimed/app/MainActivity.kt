@@ -1,3 +1,4 @@
+
 package org.samillimed.app
 
 import android.graphics.Color
@@ -25,7 +26,10 @@ import org.samillimed.app.data.auth.rememberAuthController
 import org.samillimed.app.data.catalog.rememberCatalog
 import org.samillimed.app.ui.auth.LoginScreen
 import org.samillimed.app.ui.catalog.ProductFormScreen
+import org.samillimed.app.ui.catalog.RegisterChooserScreen
 import org.samillimed.app.ui.catalog.RegisteredProductsScreen
+import org.samillimed.app.ui.catalog.RegisteredServicesScreen
+import org.samillimed.app.ui.catalog.ServiceFormScreen
 import org.samillimed.app.ui.common.LoadingState
 import org.samillimed.app.ui.home.HomeScreen
 import org.samillimed.app.ui.inventory.ReceiveStockScreen
@@ -40,30 +44,46 @@ import org.samillimed.app.ui.splash.SamilliSplashHost
 import org.samillimed.app.ui.theme.SamilliMedTheme
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
-        installSplashScreen()   // system splash (plain green) hands over to the animation
+        installSplashScreen()
         super.onCreate(savedInstanceState)
-        // The header and bottom bar are dark green in both themes, so system icons stay light.
+
+        // The header and bottom bar are dark green in both themes,
+        // so system icons stay light.
         enableEdgeToEdge(
             statusBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
             navigationBarStyle = SystemBarStyle.dark(Color.TRANSPARENT),
         )
+
         setContent {
-            // Saved settings: theme (System default / Light / Dark), font type, font size.
+            // Saved settings: theme, font type and font size.
             val settings = rememberAppSettings()
-            // Who is signed in. Staff stay signed in until they choose Sign out.
+
+            // Who is signed in.
             val auth = rememberAuthController()
-            // History of opened screens, used by the back buttons.
+
+            // History of opened screens.
             val nav = rememberBackStack()
+
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scope = rememberCoroutineScope()
-            var showExit by rememberSaveable { mutableStateOf(false) }
-            var showSignOut by rememberSaveable { mutableStateOf(false) }
-            // The splash only plays on a fresh launch; after rotation it counts as done.
-            var splashDone by rememberSaveable { mutableStateOf(savedInstanceState != null) }
 
-            // System back: ignore during the splash, otherwise go to the previous screen,
-            // and on Home (or the login screen) ask whether to exit.
+            var showExit by rememberSaveable {
+                mutableStateOf(false)
+            }
+
+            var showSignOut by rememberSaveable {
+                mutableStateOf(false)
+            }
+
+            // The splash only plays on a fresh launch.
+            var splashDone by rememberSaveable {
+                mutableStateOf(savedInstanceState != null)
+            }
+
+            // System back: ignore during splash, otherwise navigate back
+            // or ask whether to exit.
             BackHandler {
                 when {
                     !splashDone -> Unit
@@ -71,9 +91,12 @@ class MainActivity : ComponentActivity() {
                     else -> showExit = true
                 }
             }
-            // Registered later, so it wins while the side menu is open: back closes the menu first.
+
+            // Back closes the drawer before navigating away.
             BackHandler(enabled = drawerState.isOpen) {
-                scope.launch { drawerState.close() }
+                scope.launch {
+                    drawerState.close()
+                }
             }
 
             SamilliMedTheme(
@@ -83,7 +106,9 @@ class MainActivity : ComponentActivity() {
             ) {
                 SamilliSplashHost(
                     playSplash = savedInstanceState == null,
-                    onSplashFinished = { splashDone = true },
+                    onSplashFinished = {
+                        splashDone = true
+                    },
                 ) {
                     if (!auth.isSignedIn) {
                         LoginScreen(
@@ -92,114 +117,339 @@ class MainActivity : ComponentActivity() {
                             },
                         )
                     } else {
-                        // Products, services and lists. Only started while signed in, because
-                        // the database refuses requests from signed-out users.
+                        // Catalog is available only while signed in.
                         val catalog = rememberCatalog()
-                        // Product form open on top of the current screen:
-                        // null = closed, "new" = registering, otherwise the id of the product being edited.
-                        var productForm by rememberSaveable { mutableStateOf<String?>(null) }
+
+                        // Product form:
+                        // null = closed
+                        // "new" = registering
+                        // otherwise = product ID being edited
+                        var productForm by rememberSaveable {
+                            mutableStateOf<String?>(null)
+                        }
+
+                        // Service form:
+                        // null = closed
+                        // "new" = registering
+                        // otherwise = service ID being edited
+                        var serviceForm by rememberSaveable {
+                            mutableStateOf<String?>(null)
+                        }
 
                         AppDrawer(
                             drawerState = drawerState,
                             current = nav.current,
                             onNavigate = { route ->
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.close()
+                                }
+
                                 productForm = null
+                                serviceForm = null
+
                                 nav.navigate(route)
                             },
                             userEmail = auth.email,
                             onSignOut = {
-                                scope.launch { drawerState.close() }
+                                scope.launch {
+                                    drawerState.close()
+                                }
+
                                 showSignOut = true
                             },
                         ) {
-                            val target = productForm
-                            if (target != null) {
-                                val editing = if (target == "new") null else catalog.products.firstOrNull { it.id == target }
-                                when {
-                                    target != "new" && !catalog.loaded -> LoadingState()
-                                    target != "new" && editing == null -> LaunchedEffect(target) { productForm = null }
-                                    else -> ProductFormScreen(
-                                        catalog = catalog,
-                                        product = editing,
-                                        onClose = { productForm = null },
-                                    )
-                                }
-                            } else {
-                                when (nav.current) {
-                                    Route.Home -> HomeScreen(
-                                        onMenuClick = { scope.launch { drawerState.open() } },
-                                        onTabSelected = { index ->
-                                            when (index) {
-                                                1 -> nav.navigate(Route.Dispense)
-                                                2 -> nav.navigate(Route.ReceiveStock)
-                                                3 -> nav.navigate(Route.Register)
-                                                else -> Unit
-                                            }
-                                        },
-                                    )
-                                    // For now the Register tab opens the product form.
-                                    // It becomes a "Product or Service" chooser once services exist.
-                                    Route.Register -> ProductFormScreen(
-                                        catalog = catalog,
-                                        product = null,
-                                        onClose = { nav.back() },
-                                    )
-                                    Route.RegisteredProducts -> RegisteredProductsScreen(
-                                        catalog = catalog,
-                                        onBack = { nav.back() },
-                                        onAdd = { productForm = "new" },
-                                        onEdit = { productForm = it.id },
-                                    )
-                                    Route.ReceiveStock -> {
-                                        if (!catalog.loaded) {
-                                            LoadingState()
+                            val productTarget = productForm
+                            val serviceTarget = serviceForm
+
+                            when {
+
+                                // -------------------------------------------------
+                                // PRODUCT REGISTRATION / EDITING
+                                // -------------------------------------------------
+
+                                productTarget != null -> {
+                                    val editing =
+                                        if (productTarget == "new") {
+                                            null
                                         } else {
-                                            ReceiveStockScreen(
+                                            catalog.products.firstOrNull {
+                                                it.id == productTarget
+                                            }
+                                        }
+
+                                    when {
+                                        productTarget != "new" &&
+                                                !catalog.loaded -> {
+                                            LoadingState()
+                                        }
+
+                                        productTarget != "new" &&
+                                                editing == null -> {
+                                            LaunchedEffect(productTarget) {
+                                                productForm = null
+                                            }
+                                        }
+
+                                        else -> {
+                                            ProductFormScreen(
                                                 catalog = catalog,
-                                                onBack = { nav.back() },
+                                                product = editing,
+                                                onClose = {
+                                                    productForm = null
+                                                },
                                             )
                                         }
                                     }
-                                    Route.Settings -> SettingsScreen(
-                                        settings = settings,
-                                        onBack = { nav.back() },
-                                    )
-                                    else -> ComingSoonScreen(
-                                        title = nav.current.title,
-                                        icon = nav.current.icon(),
-                                        onBack = { nav.back() },
-                                    )
+                                }
+
+                                // -------------------------------------------------
+                                // SERVICE REGISTRATION / EDITING
+                                // -------------------------------------------------
+
+                                serviceTarget != null -> {
+                                    val editing =
+                                        if (serviceTarget == "new") {
+                                            null
+                                        } else {
+                                            catalog.services.firstOrNull {
+                                                it.id == serviceTarget
+                                            }
+                                        }
+
+                                    when {
+                                        serviceTarget != "new" &&
+                                                !catalog.loaded -> {
+                                            LoadingState()
+                                        }
+
+                                        serviceTarget != "new" &&
+                                                editing == null -> {
+                                            LaunchedEffect(serviceTarget) {
+                                                serviceForm = null
+                                            }
+                                        }
+
+                                        else -> {
+                                            ServiceFormScreen(
+                                                catalog = catalog,
+                                                service = editing,
+                                                onClose = {
+                                                    serviceForm = null
+                                                },
+                                            )
+                                        }
+                                    }
+                                }
+
+                                // -------------------------------------------------
+                                // NORMAL NAVIGATION
+                                // -------------------------------------------------
+
+                                else -> {
+                                    when (nav.current) {
+
+                                        // HOME
+                                        Route.Home -> {
+                                            HomeScreen(
+                                                onMenuClick = {
+                                                    scope.launch {
+                                                        drawerState.open()
+                                                    }
+                                                },
+                                                onTabSelected = { index ->
+                                                    when (index) {
+                                                        1 -> nav.navigate(
+                                                            Route.Dispense
+                                                        )
+
+                                                        2 -> nav.navigate(
+                                                            Route.ReceiveStock
+                                                        )
+
+                                                        3 -> nav.navigate(
+                                                            Route.Register
+                                                        )
+
+                                                        else -> Unit
+                                                    }
+                                                },
+                                            )
+                                        }
+
+                                        // REGISTRATION CHOOSER
+                                        Route.Register -> {
+                                            RegisterChooserScreen(
+                                                onBack = {
+                                                    nav.back()
+                                                },
+                                                onProduct = {
+                                                    serviceForm = null
+                                                    productForm = "new"
+                                                },
+                                                onService = {
+                                                    productForm = null
+                                                    serviceForm = "new"
+                                                },
+                                            )
+                                        }
+
+                                        // REGISTERED PRODUCTS
+                                        Route.RegisteredProducts -> {
+                                            RegisteredProductsScreen(
+                                                catalog = catalog,
+                                                onBack = {
+                                                    nav.back()
+                                                },
+                                                onAdd = {
+                                                    serviceForm = null
+                                                    productForm = "new"
+                                                },
+                                                onEdit = {
+                                                    serviceForm = null
+                                                    productForm = it.id
+                                                },
+                                            )
+                                        }
+
+                                        // REGISTERED SERVICES
+                                        Route.RegisteredServices -> {
+                                            RegisteredServicesScreen(
+                                                catalog = catalog,
+                                                onBack = {
+                                                    nav.back()
+                                                },
+                                                onAdd = {
+                                                    productForm = null
+                                                    serviceForm = "new"
+                                                },
+                                                onEdit = {
+                                                    productForm = null
+                                                    serviceForm = it.id
+                                                },
+                                            )
+                                        }
+
+                                        // RECEIVE STOCK
+                                        Route.ReceiveStock -> {
+                                            if (!catalog.loaded) {
+                                                LoadingState()
+                                            } else {
+                                                ReceiveStockScreen(
+                                                    catalog = catalog,
+                                                    onBack = {
+                                                        nav.back()
+                                                    },
+                                                )
+                                            }
+                                        }
+
+                                        // SETTINGS
+                                        Route.Settings -> {
+                                            SettingsScreen(
+                                                settings = settings,
+                                                onBack = {
+                                                    nav.back()
+                                                },
+                                            )
+                                        }
+
+                                        // OTHER SCREENS
+                                        else -> {
+                                            ComingSoonScreen(
+                                                title = nav.current.title,
+                                                icon = nav.current.icon(),
+                                                onBack = {
+                                                    nav.back()
+                                                },
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
 
+                    // ---------------------------------------------------------
+                    // SIGN-OUT CONFIRMATION
+                    // ---------------------------------------------------------
+
                     if (showSignOut) {
                         AlertDialog(
-                            onDismissRequest = { showSignOut = false },
-                            title = { Text("Sign out?", fontWeight = FontWeight.Bold) },
-                            text = { Text("You will need to sign in again to use SamilliMed.") },
+                            onDismissRequest = {
+                                showSignOut = false
+                            },
+                            title = {
+                                Text(
+                                    "Sign out?",
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            },
+                            text = {
+                                Text(
+                                    "You will need to sign in again to use SamilliMed."
+                                )
+                            },
                             confirmButton = {
                                 TextButton(
                                     onClick = {
                                         showSignOut = false
                                         auth.signOut()
-                                        nav.navigate(Route.Home)   // next person starts on Home
+                                        nav.navigate(Route.Home)
                                     },
-                                ) { Text("Yes") }
+                                ) {
+                                    Text("Yes")
+                                }
                             },
-                            dismissButton = { TextButton(onClick = { showSignOut = false }) { Text("No") } },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = {
+                                        showSignOut = false
+                                    },
+                                ) {
+                                    Text("No")
+                                }
+                            },
                         )
                     }
 
+                    // ---------------------------------------------------------
+                    // EXIT CONFIRMATION
+                    // ---------------------------------------------------------
+
                     if (showExit) {
                         AlertDialog(
-                            onDismissRequest = { showExit = false },
-                            title = { Text("Exit SamilliMed?", fontWeight = FontWeight.Bold) },
-                            text = { Text("Are you sure you want to exit the app?") },
-                            confirmButton = { TextButton(onClick = { finish() }) { Text("Yes") } },
-                            dismissButton = { TextButton(onClick = { showExit = false }) { Text("No") } },
+                            onDismissRequest = {
+                                showExit = false
+                            },
+                            title = {
+                                Text(
+                                    "Exit SamilliMed?",
+                                    fontWeight = FontWeight.Bold,
+                                )
+                            },
+                            text = {
+                                Text(
+                                    "Are you sure you want to exit the app?"
+                                )
+                            },
+                            confirmButton = {
+                                TextButton(
+                                    onClick = {
+                                        finish()
+                                    },
+                                ) {
+                                    Text("Yes")
+                                }
+                            },
+                            dismissButton = {
+                                TextButton(
+                                    onClick = {
+                                        showExit = false
+                                    },
+                                ) {
+                                    Text("No")
+                                }
+                            },
                         )
                     }
                 }
