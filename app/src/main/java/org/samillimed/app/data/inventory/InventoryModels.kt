@@ -16,6 +16,23 @@ object StockMovementType {
     const val ADJUSTMENT = "ADJUSTMENT"
 }
 
+/** How a bill was paid. */
+object PaymentMethod {
+    const val CASH = "CASH"
+    const val MPESA = "MPESA"
+    const val CARD = "CARD"
+    const val OTHER = "OTHER"
+
+    val all = listOf(CASH, MPESA, CARD, OTHER)
+
+    fun label(code: String): String = when (code) {
+        CASH -> "Cash"
+        MPESA -> "M-Pesa"
+        CARD -> "Card"
+        else -> "Other"
+    }
+}
+
 /**
  * A single supplier delivery or invoice.
  *
@@ -109,13 +126,13 @@ data class TransactionUnitSnapshot(
 )
 
 /**
- * A product-level dispensing request.
+ * A product-level dispensing line on a bill.
  *
- * The actual selling price is entered for this particular sale.
- * It is not required to match the registered selling price of any batch.
+ * The actual selling price is typed for this particular sale.
+ * It is not required to match the reference price of any batch.
  *
  * Purchase cost and gross profit are calculated from the actual
- * batch allocations and retained as historical transaction values.
+ * batch allocations and kept as historical transaction values.
  */
 data class DispensingLine(
     val id: String = "",
@@ -134,6 +151,23 @@ data class DispensingLine(
     val totalPurchaseCostCents: Long = 0,
     val grossProfitCents: Long = 0,
 
+    val createdAtMillis: Long = 0,
+)
+
+/**
+ * A service line on a bill (a consultation, a laboratory test and so on).
+ * Names are snapshots, so later renames never change old bills.
+ */
+data class DispensingServiceLine(
+    val id: String = "",
+    val dispensingId: String = "",
+    val serviceId: String = "",
+    val serviceNameSnapshot: String = "",
+    val categorySnapshot: String = "",
+    val departmentSnapshot: String = "",
+    val quantity: Long = 1,
+    val priceCents: Long = 0,
+    val totalCents: Long = 0,
     val createdAtMillis: Long = 0,
 )
 
@@ -175,21 +209,60 @@ data class DispensingBatchAllocation(
 )
 
 /**
- * A dispensing transaction header.
+ * A bill (one visit): the header of one dispensing transaction.
  *
- * One transaction can contain multiple product lines.
+ * A bill can hold medicines and services together. It is shown as a summary at a glance;
+ * the lines are read only when the bill is opened.
  */
 data class DispensingRecord(
     val id: String = "",
+
+    /** Full reference, e.g. 20261104-G-014. Unique and sortable. */
     val referenceNumber: String = "",
+    /** Date the shift (or day) belongs to, yyyy-MM-dd. */
+    val dateKey: String = "",
+    val shiftId: String = "",
+    val shiftCode: String = "",
+    val shiftName: String = "",
+    /** 1, 2, 3... within this shift; restarts at 1 for every shift and every day. */
+    val shiftNumber: Int = 0,
+    /** 1, 2, 3... across the whole day; restarts at 1 every day. */
+    val dayNumber: Int = 0,
+    /** True when the cashier kept dispensing after their shift had ended. */
+    val afterShift: Boolean = false,
+
+    val paymentMethod: String = PaymentMethod.CASH,
+    val amountReceivedCents: Long = 0,
+    val changeGivenCents: Long = 0,
+    /** Optional short label typed by the cashier (initials, for example). Never required. */
+    val label: String = "",
+
     val dispensedAtMillis: Long = 0,
     val createdAtMillis: Long = 0,
     val createdBy: String = "",
+
+    val productTotalCents: Long = 0,
+    val serviceTotalCents: Long = 0,
     val totalAmountCents: Long = 0,
     val totalPurchaseCostCents: Long = 0,
+    /** Total amount minus the purchase cost of the stock sold. Service income counts in full. */
     val grossProfitCents: Long = 0,
+
+    val productLineCount: Int = 0,
+    val serviceLineCount: Int = 0,
     val lineCount: Int = 0,
 )
+
+/** "G-014": the short form shown in lists. */
+fun visitShortLabel(shiftCode: String, shiftNumber: Int): String =
+    "${shiftCode.ifBlank { "G" }}-${shiftNumber.toString().padStart(3, '0')}"
+
+/** "20261104-G-014": the full form kept in records. */
+fun visitReference(dateKey: String, shiftCode: String, shiftNumber: Int): String =
+    dateKey.replace("-", "") + "-" + visitShortLabel(shiftCode, shiftNumber)
+
+val DispensingRecord.shortLabel: String
+    get() = visitShortLabel(shiftCode, shiftNumber)
 
 /**
  * An auditable record of every stock change.
