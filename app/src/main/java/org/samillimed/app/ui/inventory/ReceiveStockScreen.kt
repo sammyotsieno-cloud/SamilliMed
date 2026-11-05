@@ -278,8 +278,12 @@ fun ReceiveStockScreen(
         },
         cost = moneyError(costText, cost)
             ?: if (quantity != null && quantity > 0L && cost != null && lineCost == null) "The line total is too large" else null,
-        price = moneyError(priceText, price)
-            ?: if (price != null && price <= 0L) "The selling price must be above zero" else null,
+        price = if (priceText.isBlank()) {
+            null
+        } else {
+            moneyError(priceText, price)
+                ?: if (price != null && price <= 0L) "The selling price must be above zero" else null
+        },
         batch = when {
             trackExpiry && batchNumber.isBlank() -> "Enter the batch number printed on the pack"
             duplicate -> "This batch is already on the receipt"
@@ -505,10 +509,10 @@ fun ReceiveStockScreen(
                     FormTextField(
                         value = priceText,
                         onValueChange = { priceText = it.filter { ch -> ch.isDigit() || ch == '.' || ch == ',' } },
-                        label = if (unit != null) "Selling price per ${unit.name} (KSh) *" else "Selling price per unit (KSh) *",
+                        label = if (unit != null) "Suggested selling price per ${unit.name} (KSh)" else "Suggested selling price per unit (KSh)",
                         keyboardType = KeyboardType.Decimal,
                         error = if (showLineErrors) errors.price else null,
-                        supporting = "Reference price stored with this batch. Dispensing can use another price.",
+                        supporting = "Optional. Offered as the starting price when dispensing; the price is typed on each bill.",
                     )
                     FormTextField(
                         value = batchNumber,
