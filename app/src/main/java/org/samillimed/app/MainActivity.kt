@@ -32,6 +32,7 @@ import org.samillimed.app.ui.catalog.RegisteredServicesScreen
 import org.samillimed.app.ui.catalog.ServiceFormScreen
 import org.samillimed.app.ui.common.LoadingState
 import org.samillimed.app.ui.home.HomeScreen
+import org.samillimed.app.ui.inventory.DispenseScreen
 import org.samillimed.app.ui.inventory.ReceiveStockScreen
 import org.samillimed.app.ui.navigation.AppDrawer
 import org.samillimed.app.ui.navigation.Route
@@ -325,6 +326,16 @@ class MainActivity : ComponentActivity() {
                                                 onEdit = {
                                                     productForm = null
                                                     serviceForm = it.id
+                                                },
+                                            )
+                                        }
+
+                                        // DISPENSE
+                                        Route.Dispense -> {
+                                            DispenseScreen(
+                                                catalog = catalog,
+                                                onBack = {
+                                                    nav.back()
                                                 },
                                             )
                                         }
