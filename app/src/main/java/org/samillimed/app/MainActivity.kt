@@ -1,4 +1,3 @@
-
 package org.samillimed.app
 
 import android.graphics.Color
@@ -40,6 +39,7 @@ import org.samillimed.app.ui.navigation.Route
 import org.samillimed.app.ui.navigation.icon
 import org.samillimed.app.ui.navigation.rememberBackStack
 import org.samillimed.app.ui.placeholder.ComingSoonScreen
+import org.samillimed.app.ui.reports.ReportsHost
 import org.samillimed.app.ui.settings.SettingsScreen
 import org.samillimed.app.ui.settings.rememberAppSettings
 import org.samillimed.app.ui.splash.SamilliSplashHost
@@ -344,6 +344,14 @@ class MainActivity : ComponentActivity() {
                                         // INVENTORY
                                         Route.Inventory -> {
                                             InventoryHost(
+                                                catalog = catalog,
+                                                onBack = { nav.back() },
+                                            )
+                                        }
+
+                                        // REPORTS
+                                        Route.Reports -> {
+                                            ReportsHost(
                                                 catalog = catalog,
                                                 onBack = { nav.back() },
                                             )
