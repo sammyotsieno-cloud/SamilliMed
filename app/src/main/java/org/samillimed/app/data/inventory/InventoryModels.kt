@@ -290,6 +290,11 @@ data class StockMovement(
     val transactionQuantity: Long = 0,
 
     val referenceNumber: String = "",
+    /** For adjustments: why the stock changed (see AdjustmentReason) and an optional note. */
+    val reason: String = "",
+    val note: String = "",
+    /** For adjustments: the cost value of the quantity changed, in cents. */
+    val valueCents: Long = 0,
     val createdAtMillis: Long = 0,
     val createdBy: String = "",
 )
