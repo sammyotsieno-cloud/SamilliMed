@@ -3,9 +3,11 @@ package org.samillimed.app.data.inventory
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.SetOptions
 import org.samillimed.app.data.shifts.ShiftContext
 import org.samillimed.app.data.shifts.ShiftResolver
 import java.math.BigDecimal
@@ -17,7 +19,9 @@ private const val DISPENSING_RECORDS = "dispensingRecords"
 private const val DISPENSING_LINES = "dispensingLines"
 private const val DISPENSING_SERVICE_LINES = "dispensingServiceLines"
 private const val DISPENSING_ALLOCATIONS = "dispensingBatchAllocations"
-private const val DISPENSING_COUNTERS = "dispensingCounters"
+private const val DAILY_SUMMARIES = "dailySummaries"
+private const val PRODUCT_DAY_STATS = "productDayStats"
+private const val PRODUCT_MONTH_STATS = "productMonthStats"
 private const val PRODUCTS = "products"
 private const val SERVICES = "services"
 private const val STOCK_BATCHES = "stockBatches"
@@ -90,6 +94,18 @@ private fun ratioCents(amountCents: Long, numerator: Long, denominator: Long): L
         .multiply(BigDecimal.valueOf(numerator))
         .divide(BigDecimal.valueOf(denominator), 0, RoundingMode.HALF_UP)
         .toLong()
+
+/** A map field of numbers (for example payments) read from a document. */
+private fun DocumentSnapshot.longMap(field: String): Map<String, Long> =
+    (get(field) as? Map<*, *>)?.entries
+        ?.associate { it.key.toString() to ((it.value as? Number)?.toLong() ?: 0L) }
+        ?: emptyMap()
+
+/** A map field of text (for example shift names) read from a document. */
+private fun DocumentSnapshot.stringMap(field: String): Map<String, String> =
+    (get(field) as? Map<*, *>)?.entries
+        ?.associate { it.key.toString() to it.value.toString() }
+        ?: emptyMap()
 
 private class Prepared(
     val productLineTotals: List<Long>,
@@ -227,7 +243,8 @@ class DispensingRepository(
 
     /**
      * Saves one bill atomically: the bill, its lines and batch allocations, the stock taken from
-     * each batch, the stock movements, the product balances, and the visit numbers.
+     * each batch, the stock movements, the product balances, the visit numbers, and the totals
+     * that reports read (the day summary and the product day and month totals).
      * Needs an internet connection.
      */
     fun saveDispensing(
@@ -301,16 +318,20 @@ class DispensingRepository(
         val serviceIds = request.services.map { it.serviceId }.distinct()
         val batchIds = plan.map { it.batch.id }.distinct()
 
+        // record + day summary, every line, 2 per allocation (allocation + movement), every batch,
+        // and per product: balance + audit + day stats + month stats
         val writes = 2 + request.products.size + request.services.size + plan.size * 2 +
-            batchIds.size + productIds.size * 2
+            batchIds.size + productIds.size * 4
         if (writes > MAX_WRITES) {
             onFailure("This bill has too many lines to save in one step. Split it into two bills.")
             return
         }
 
         val now = System.currentTimeMillis()
+        val dateKey = shiftContext.dateKey
+        val monthKey = dateKey.take(7)
         val recordRef = db.collection(DISPENSING_RECORDS).document(request.id)
-        val counterRef = db.collection(DISPENSING_COUNTERS).document(shiftContext.dateKey)
+        val summaryRef = db.collection(DAILY_SUMMARIES).document(dateKey)
 
         db.runTransaction { tx ->
 
@@ -332,7 +353,7 @@ class DispensingRepository(
                 )
             }
 
-            val counterSnap = tx.get(counterRef)
+            val summarySnap = tx.get(summaryRef)
             val productSnaps = productIds.associateWith { tx.get(db.collection(PRODUCTS).document(it)) }
             val balanceSnaps = productIds.associateWith { tx.get(db.collection(STOCK_BALANCES).document(it)) }
             val serviceSnaps = serviceIds.associateWith { tx.get(db.collection(SERVICES).document(it)) }
@@ -374,13 +395,16 @@ class DispensingRepository(
                 batchRunning[id] = snap.getLong("remainingQuantity") ?: 0L
             }
 
-            // ---- visit numbers ------------------------------------------------------------------
-            val dayNumber = (counterSnap.getLong("dayCount") ?: 0L) + 1L
-            val shiftCounts: Map<String, Long> = (counterSnap.get("shiftCounts") as? Map<*, *>)
-                ?.entries?.associate { it.key.toString() to ((it.value as? Number)?.toLong() ?: 0L) }
-                ?: emptyMap()
-            val shiftNumber = (shiftCounts[shiftContext.shift.id] ?: 0L) + 1L
-            val reference = visitReference(shiftContext.dateKey, shiftContext.shift.code, shiftNumber.toInt())
+            // ---- visit numbers and the day's running totals --------------------------------------
+            val shiftId = shiftContext.shift.id
+            val dayNumber = (summarySnap.getLong("dayCount") ?: 0L) + 1L
+            val shiftCounts = summarySnap.longMap("shiftCounts")
+            val shiftSales = summarySnap.longMap("shiftSales")
+            val shiftNames = summarySnap.stringMap("shiftNames")
+            val shiftCodes = summarySnap.stringMap("shiftCodes")
+            val payments = summarySnap.longMap("payments")
+            val shiftNumber = (shiftCounts[shiftId] ?: 0L) + 1L
+            val reference = visitReference(dateKey, shiftContext.shift.code, shiftNumber.toInt())
             val shortLabel = visitShortLabel(shiftContext.shift.code, shiftNumber.toInt())
 
             // ---- writes ---------------------------------------------------------------------------
@@ -390,6 +414,11 @@ class DispensingRepository(
             }
             val balanceMismatch = HashMap<String, Long>() // product -> recorded balance that was too low
             var totalCostCents = 0L
+
+            // per product: what this bill adds to the product totals that reports read
+            val statBase = HashMap<String, Long>()
+            val statSale = HashMap<String, Long>()
+            val statCost = HashMap<String, Long>()
 
             request.products.forEachIndexed { index, p ->
                 val lineTotal = prepared.productLineTotals[index]
@@ -483,6 +512,10 @@ class DispensingRepository(
                 }
 
                 totalCostCents += lineCost
+                statBase[p.productId] = (statBase[p.productId] ?: 0L) + baseQuantity
+                statSale[p.productId] = (statSale[p.productId] ?: 0L) + lineTotal
+                statCost[p.productId] = (statCost[p.productId] ?: 0L) + lineCost
+
                 tx.set(
                     lineRef,
                     mapOf(
@@ -559,24 +592,62 @@ class DispensingRepository(
                 )
             }
 
-            tx.set(
-                counterRef,
-                mapOf(
-                    "dateKey" to shiftContext.dateKey,
-                    "dayCount" to dayNumber,
-                    "shiftCounts" to (shiftCounts + (shiftContext.shift.id to shiftNumber)),
-                ),
-            )
+            // ---- totals that reports read (increments, so bills never overwrite each other) ----
+            productIds.forEach { id ->
+                val sale = statSale[id] ?: 0L
+                val cost = statCost[id] ?: 0L
+                val stats = mapOf<String, Any>(
+                    "productId" to id,
+                    "productName" to (productSnaps.getValue(id).getString("name") ?: ""),
+                    "unitsSoldBase" to FieldValue.increment(statBase[id] ?: 0L),
+                    "saleCents" to FieldValue.increment(sale),
+                    "costCents" to FieldValue.increment(cost),
+                    "profitCents" to FieldValue.increment(sale - cost),
+                    "lineCount" to FieldValue.increment(1L),
+                )
+                tx.set(
+                    db.collection(PRODUCT_DAY_STATS).document("${dateKey}_$id"),
+                    stats + ("dateKey" to dateKey),
+                    SetOptions.merge(),
+                )
+                tx.set(
+                    db.collection(PRODUCT_MONTH_STATS).document("${monthKey}_$id"),
+                    stats + ("monthKey" to monthKey),
+                    SetOptions.merge(),
+                )
+            }
 
             val productTotal = prepared.productLineTotals.sum()
             val serviceTotal = prepared.serviceLineTotals.sum()
+            val method = request.paymentMethod
+            tx.set(
+                summaryRef,
+                mapOf(
+                    "dateKey" to dateKey,
+                    "dayCount" to dayNumber,
+                    "shiftCounts" to (shiftCounts + (shiftId to shiftNumber)),
+                    "shiftSales" to (shiftSales + (shiftId to ((shiftSales[shiftId] ?: 0L) + prepared.totalCents))),
+                    "shiftNames" to (shiftNames + (shiftId to shiftContext.shift.name)),
+                    "shiftCodes" to (shiftCodes + (shiftId to shiftContext.shift.code)),
+                    "payments" to (payments + (method to ((payments[method] ?: 0L) + prepared.totalCents))),
+                    "totalSalesCents" to ((summarySnap.getLong("totalSalesCents") ?: 0L) + prepared.totalCents),
+                    "productSalesCents" to ((summarySnap.getLong("productSalesCents") ?: 0L) + productTotal),
+                    "serviceSalesCents" to ((summarySnap.getLong("serviceSalesCents") ?: 0L) + serviceTotal),
+                    "costCents" to ((summarySnap.getLong("costCents") ?: 0L) + totalCostCents),
+                    "profitCents" to ((summarySnap.getLong("profitCents") ?: 0L) + (prepared.totalCents - totalCostCents)),
+                    "afterShiftBills" to ((summarySnap.getLong("afterShiftBills") ?: 0L) + if (shiftContext.afterShift) 1L else 0L),
+                    "updatedAtMillis" to now,
+                ),
+                SetOptions.merge(),
+            )
+
             tx.set(
                 recordRef,
                 mapOf(
                     "id" to recordRef.id,
                     "referenceNumber" to reference,
-                    "dateKey" to shiftContext.dateKey,
-                    "shiftId" to shiftContext.shift.id,
+                    "dateKey" to dateKey,
+                    "shiftId" to shiftId,
                     "shiftCode" to shiftContext.shift.code,
                     "shiftName" to shiftContext.shift.name,
                     "shiftNumber" to shiftNumber,
