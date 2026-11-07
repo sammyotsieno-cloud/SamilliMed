@@ -84,6 +84,7 @@ fun HomeScreen(
     onOpenSales: () -> Unit = {},
     onOpenReports: () -> Unit = {},
     onOpenInventory: () -> Unit = {},
+    isAdmin: Boolean = true,
 ) {
     val c = SamilliTheme.colors
     val alerts = data.alerts
@@ -259,7 +260,7 @@ fun HomeScreen(
             Spacer(Modifier.height(16.dp))
         }
 
-        HomeBottomBar(selected = 0, onSelect = onTabSelected)
+        HomeBottomBar(isAdmin = isAdmin, selected = 0, onSelect = onTabSelected)
     }
 }
 
@@ -470,15 +471,24 @@ private fun HomeHeader(
 }
 
 @Composable
-private fun HomeBottomBar(selected: Int, onSelect: (Int) -> Unit) {
+private fun HomeBottomBar(isAdmin: Boolean, selected: Int, onSelect: (Int) -> Unit) {
     val c = SamilliTheme.colors
     val shape = RoundedCornerShape(topStart = 26.dp, topEnd = 26.dp)
-    val tabs = listOf(
-        "Home" to SamilliIcons.Home,
-        "Dispense" to SamilliIcons.Pill,
-        "Receive Stock" to SamilliIcons.BoxPlus,
-        "Register" to SamilliIcons.ClipboardPlus,
-    )
+    val tabs = if (isAdmin) {
+        listOf(
+            "Home" to SamilliIcons.Home,
+            "Dispense" to SamilliIcons.Pill,
+            "Receive Stock" to SamilliIcons.BoxPlus,
+            "Register" to SamilliIcons.ClipboardPlus,
+        )
+    } else {
+        listOf(
+            "Home" to SamilliIcons.Home,
+            "Dispense" to SamilliIcons.Pill,
+            "Inventory" to SamilliIcons.Box,
+            "Sales" to SamilliIcons.Coins,
+        )
+    }
     Row(
         Modifier
             .fillMaxWidth()
