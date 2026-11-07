@@ -1,6 +1,7 @@
 package org.samillimed.app.ui.facility
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
@@ -30,9 +31,11 @@ fun AccountGate(state: ProfileState, onSignOut: () -> Unit) {
         ProfileState.Loading, ProfileState.SignedOut -> LoadingState()
         else -> {
             val (title, message) = when (state) {
-                ProfileState.NotLinked ->
+                ProfileState.NotLinked -> {
+                    val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
                     "Account not set up" to
-                        "Your account is not linked to a facility yet. Ask the owner to finish setting it up, then sign in again."
+                        "No users document matches this account. In Firestore, the users collection needs a document whose ID is exactly this UID, with facilityId = main and active = true.\n\nEmail: ${user?.email}\nUID: ${user?.uid}"
+                }
                 ProfileState.Disabled ->
                     "Account disabled" to
                         "This account has been disabled. Contact your facility administrator."
@@ -49,13 +52,15 @@ fun AccountGate(state: ProfileState, onSignOut: () -> Unit) {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text(title, color = c.textPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
-                Text(
-                    text = message,
-                    color = c.textSecondary,
-                    fontSize = 14.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
-                )
+                SelectionContainer {
+                    Text(
+                        text = message,
+                        color = c.textSecondary,
+                        fontSize = 14.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 16.dp),
+                    )
+                }
                 TextButton(onClick = onSignOut) { Text("Sign out", fontWeight = FontWeight.Bold) }
             }
         }
