@@ -28,6 +28,7 @@ import org.samillimed.app.data.facility.FacilityScope
 import org.samillimed.app.data.facility.ProfileState
 import org.samillimed.app.data.facility.rememberProfileState
 import org.samillimed.app.ui.facility.AccountGate
+import org.samillimed.app.ui.facility.rememberAccessProbe
 import org.samillimed.app.data.catalog.rememberCatalog
 import org.samillimed.app.data.reports.ReportsReader
 import org.samillimed.app.ui.alerts.AlertsScreen
@@ -78,6 +79,7 @@ class MainActivity : ComponentActivity() {
 
             // The signed-in account: its facility, role, and whether it is active.
             val profileState = rememberProfileState(auth.isSignedIn)
+            val accessError = rememberAccessProbe(profileState)
 
             // History of opened screens.
             val nav = rememberBackStack()
@@ -136,6 +138,12 @@ class MainActivity : ComponentActivity() {
                         // Signed in, but the account is loading, not linked to a facility, or disabled.
                         AccountGate(
                             state = profileState,
+                            onSignOut = { auth.signOut() },
+                        )
+                    } else if (accessError != null) {
+                        // The account is fine, but the database refused or could not answer.
+                        AccountGate(
+                            state = ProfileState.Failed(accessError),
                             onSignOut = { auth.signOut() },
                         )
                     } else {
