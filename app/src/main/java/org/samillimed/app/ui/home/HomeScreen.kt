@@ -49,30 +49,51 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import org.samillimed.app.R
+import org.samillimed.app.data.catalog.formatKsh
+import org.samillimed.app.data.reports.marginPercent
+import org.samillimed.app.ui.alerts.alertDetail
+import org.samillimed.app.ui.alerts.alertIcon
+import org.samillimed.app.ui.alerts.alertTag
+import org.samillimed.app.ui.alerts.alertUrgent
 import org.samillimed.app.ui.icons.SamilliIcons
+import org.samillimed.app.ui.inventory.fmtNumber
+import org.samillimed.app.ui.reports.MetricCard
 import org.samillimed.app.ui.theme.SamilliTheme
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 /**
- * Home screen. All numbers and items below are SAMPLE DATA from the design mockup;
- * they get replaced when the real data layer exists.
+ * Home screen, on live data.
  *
  * onMenuClick:    the menu (three lines) button in the header was tapped.
  * onTabSelected:  a bottom bar tab was tapped (0 Home, 1 Dispense, 2 Receive Stock, 3 Register).
+ * onOpenAlerts:   the bell, the alert tiles or "View all" were tapped.
+ * onOpenSales:    the sales card was tapped (today's bills).
+ * onOpenReports:  the profit card was tapped.
+ * onOpenInventory: the stock card was tapped.
  */
 @Composable
 fun HomeScreen(
+    data: HomeData,
     modifier: Modifier = Modifier,
     onMenuClick: () -> Unit = {},
     onTabSelected: (Int) -> Unit = {},
+    onOpenAlerts: () -> Unit = {},
+    onOpenSales: () -> Unit = {},
+    onOpenReports: () -> Unit = {},
+    onOpenInventory: () -> Unit = {},
 ) {
     val c = SamilliTheme.colors
+    val alerts = data.alerts
+    val today = data.date
+    val bills = data.today.billCount
 
     Column(modifier.fillMaxSize().background(c.background)) {
         HomeHeader(
-            notificationCount = 3,
+            notificationCount = alerts?.total ?: 0,
+            onBellClick = onOpenAlerts,
             onMenuClick = onMenuClick,
             modifier = Modifier.zIndex(1f),
         )
@@ -88,76 +109,238 @@ fun HomeScreen(
                 Modifier.padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                // ---- alert tiles ------------------------------------------------------------
                 Row(
                     Modifier.height(IntrinsicSize.Min),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
+                    val expiring = alerts?.expiringProducts
+                    val expired = alerts?.expiredProducts ?: 0
                     AlertTile(
                         icon = SamilliIcons.CalendarClock,
-                        pill = "URGENT",
-                        pillBackground = c.urgent,
-                        pillTextColor = c.onUrgent,
-                        count = "2",
+                        pill = when {
+                            alerts == null -> "…"
+                            expired > 0 -> "EXPIRED"
+                            (expiring ?: 0) > 0 -> "URGENT"
+                            else -> "CLEAR"
+                        },
+                        pillBackground = if ((expiring ?: 0) > 0) c.urgent else c.deltaBg,
+                        pillTextColor = if ((expiring ?: 0) > 0) c.onUrgent else c.deltaText,
+                        count = expiring?.toString() ?: "–",
                         label = "Expiring soon",
-                        caption = "Within the next 30 days",
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                        caption = if (expired > 0) "$expired with expired stock" else "Within the next 30 days",
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clickable(onClick = onOpenAlerts),
                     )
+                    val low = alerts?.lowProducts
                     AlertTile(
                         icon = SamilliIcons.Box,
-                        pill = "REORDER",
-                        pillBackground = c.reorder,
-                        pillTextColor = c.onReorder,
-                        count = "5",
+                        pill = when {
+                            alerts == null -> "…"
+                            (low ?: 0) > 0 -> "REORDER"
+                            else -> "CLEAR"
+                        },
+                        pillBackground = if ((low ?: 0) > 0) c.reorder else c.deltaBg,
+                        pillTextColor = if ((low ?: 0) > 0) c.onReorder else c.deltaText,
+                        count = low?.toString() ?: "–",
                         label = "Low stock",
-                        caption = "Below reorder level",
-                        modifier = Modifier.weight(1f).fillMaxHeight(),
+                        caption = "At or below reorder level",
+                        modifier = Modifier
+                            .weight(1f)
+                            .fillMaxHeight()
+                            .clickable(onClick = onOpenAlerts),
                     )
                 }
 
-                TrendCard(
+                // ---- sales and profit -------------------------------------------------------
+                val salesChip = ofYesterday(data.today.totalSalesCents, data.yesterday.totalSalesCents)
+                LiveTrendCard(
                     icon = SamilliIcons.Coins,
                     title = "Today’s sales",
-                    amount = "12,450",
-                    caption = "Total revenue today",
-                    delta = "+12%",
-                    deltaUp = true,
-                    trend = listOf(1f, 2.2f, 1.7f, 3.4f, 3.2f, 4.6f, 5.4f),
+                    amountCents = if (data.salesLoaded) data.today.totalSalesCents else null,
+                    caption = when {
+                        !data.salesLoaded -> "Loading…"
+                        bills == 0L -> "No bills yet today"
+                        else -> "$bills bill${if (bills == 1L) "" else "s"} so far"
+                    },
+                    chipText = salesChip.first,
+                    chipGood = salesChip.second,
+                    trend = data.weekSalesCents.map { it.toFloat() },
                     trendColor = c.sparkUp,
+                    onClick = onOpenSales,
                 )
-                TrendCard(
+                val profitChip = ofYesterday(data.today.profitCents, data.yesterday.profitCents)
+                LiveTrendCard(
                     icon = SamilliIcons.Wallet,
-                    title = "Today’s expenses",
-                    amount = "2,100",
-                    caption = "Total expenses today",
-                    delta = "−8%",
-                    deltaUp = false,
-                    trend = listOf(5f, 4.4f, 4.7f, 3.0f, 3.3f, 2.4f, 2.1f),
+                    title = "Today’s profit",
+                    amountCents = if (data.salesLoaded) data.today.profitCents else null,
+                    caption = if (data.today.totalSalesCents > 0L) {
+                        String.format(Locale.US, "Gross profit · %.0f%% margin", data.today.marginPercent)
+                    } else {
+                        "Gross profit, before expenses"
+                    },
+                    chipText = profitChip.first,
+                    chipGood = profitChip.second,
+                    trend = data.weekProfitCents.map { it.toFloat() },
                     trendColor = c.sparkDown,
+                    onClick = onOpenReports,
                 )
 
+                // ---- average bill and stock value -------------------------------------------
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    val average = if (bills > 0L) data.today.totalSalesCents / bills else 0L
+                    MetricCard(
+                        title = "Average bill",
+                        value = if (data.salesLoaded) formatKsh(average) else "–",
+                        sub = if (data.salesLoaded && data.yesterday.billCount > 0L) {
+                            "yesterday ${formatKsh(data.yesterday.totalSalesCents / data.yesterday.billCount)}"
+                        } else {
+                            null
+                        },
+                        modifier = Modifier.weight(1f).clickable(onClick = onOpenSales),
+                    )
+                    MetricCard(
+                        title = "Stock at cost",
+                        value = alerts?.let { formatKsh(it.stockValueCents) } ?: "–",
+                        sub = "open Inventory",
+                        modifier = Modifier.weight(1f).clickable(onClick = onOpenInventory),
+                    )
+                }
+
+                // ---- needs attention --------------------------------------------------------
                 Spacer(Modifier.height(2.dp))
-                SectionHeader(title = "Needs attention", action = "View all")
-                AttentionRow(
-                    icon = SamilliIcons.CalendarClock,
-                    title = "Amoxicillin 500 mg",
-                    detail = "Expires in 12 days · 3 packs",
-                    tag = "12 days",
-                    tagBackground = c.urgent,
-                    tagTextColor = c.onUrgent,
+                SectionHeader(
+                    title = "Needs attention",
+                    action = "View all",
+                    modifier = Modifier.clickable(onClick = onOpenAlerts),
                 )
-                AttentionRow(
-                    icon = SamilliIcons.Box,
-                    title = "Paracetamol 500 mg",
-                    detail = "8 left · reorder level 20",
-                    tag = "Low",
-                    tagBackground = c.reorder,
-                    tagTextColor = c.onReorder,
-                )
+                when {
+                    alerts == null -> SamilliCard(Modifier.fillMaxWidth()) {
+                        Text("Checking stock…", color = c.textSecondary, fontSize = 13.sp)
+                    }
+                    alerts.items.isEmpty() -> SamilliCard(Modifier.fillMaxWidth()) {
+                        Text("Nothing needs attention", color = c.textPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            "Nothing is expired, out of stock, low or close to expiry.",
+                            color = c.textSecondary,
+                            fontSize = 12.sp,
+                            modifier = Modifier.padding(top = 2.dp),
+                        )
+                    }
+                    else -> {
+                        alerts.items.take(5).forEach { a ->
+                            val urgent = alertUrgent(a, today)
+                            AttentionRow(
+                                icon = alertIcon(a),
+                                title = a.product.name,
+                                detail = alertDetail(a, today),
+                                tag = alertTag(a, today),
+                                tagBackground = if (urgent) c.urgent else c.reorder,
+                                tagTextColor = if (urgent) c.onUrgent else c.onReorder,
+                                modifier = Modifier.clickable(onClick = onOpenAlerts),
+                            )
+                        }
+                        if (alerts.items.size > 5) {
+                            Text(
+                                text = "+ ${alerts.items.size - 5} more",
+                                color = c.sectionLink,
+                                fontSize = 12.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .padding(start = 4.dp)
+                                    .clickable(onClick = onOpenAlerts),
+                            )
+                        }
+                    }
+                }
             }
             Spacer(Modifier.height(16.dp))
         }
 
         HomeBottomBar(selected = 0, onSelect = onTabSelected)
+    }
+}
+
+/** "62% of yesterday", green once today has caught up. Null when yesterday had nothing to compare with. */
+private fun ofYesterday(today: Long, yesterday: Long): Pair<String?, Boolean> =
+    if (yesterday <= 0L) {
+        null to false
+    } else {
+        "${Math.round(today * 100.0 / yesterday)}% of yesterday" to (today >= yesterday)
+    }
+
+/** Like TrendCard, but with a plain "of yesterday" chip, because today is only part of a day. */
+@Composable
+private fun LiveTrendCard(
+    icon: ImageVector,
+    title: String,
+    amountCents: Long?,
+    caption: String,
+    chipText: String?,
+    chipGood: Boolean,
+    trend: List<Float>,
+    trendColor: Color,
+    onClick: () -> Unit,
+) {
+    val c = SamilliTheme.colors
+    SamilliCard(Modifier.fillMaxWidth().clickable(onClick = onClick)) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .height(IntrinsicSize.Min),
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column(Modifier.weight(1f)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconChip(icon)
+                    Spacer(Modifier.width(8.dp))
+                    Text(text = title, color = c.label, fontSize = 12.5.sp, fontWeight = FontWeight.Bold)
+                }
+                Row(Modifier.padding(top = 12.dp), verticalAlignment = Alignment.Bottom) {
+                    Text(
+                        text = "KSh",
+                        modifier = Modifier.padding(end = 5.dp, bottom = 3.dp),
+                        color = c.accentText,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Text(
+                        text = if (amountCents == null) "–" else fmtNumber(amountCents / 100L),
+                        color = c.textPrimary,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+                Text(
+                    text = caption,
+                    modifier = Modifier.padding(top = 4.dp),
+                    color = c.textSecondary,
+                    fontSize = 11.5.sp,
+                )
+            }
+            Column(
+                modifier = Modifier.fillMaxHeight(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.SpaceBetween,
+            ) {
+                if (chipText != null) {
+                    Text(
+                        text = chipText,
+                        color = if (chipGood) c.deltaText else c.accentText,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .background(if (chipGood) c.deltaBg else c.iconBg, RoundedCornerShape(50))
+                            .padding(horizontal = 9.dp, vertical = 4.dp),
+                    )
+                } else {
+                    Spacer(Modifier.height(1.dp))
+                }
+                Sparkline(trend, trendColor)
+            }
+        }
     }
 }
 
@@ -224,10 +407,10 @@ private fun HeaderButton(
 }
 
 @Composable
-private fun BellButton(count: Int) {
+private fun BellButton(count: Int, onClick: () -> Unit) {
     val c = SamilliTheme.colors
     Box(Modifier.size(40.dp)) {
-        HeaderButton(SamilliIcons.Bell, "Notifications")
+        HeaderButton(SamilliIcons.Bell, "Notifications", onClick)
         if (count > 0) {
             Box(
                 Modifier
@@ -262,6 +445,7 @@ private fun BellButton(count: Int) {
 @Composable
 private fun HomeHeader(
     notificationCount: Int,
+    onBellClick: () -> Unit,
     onMenuClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -279,7 +463,7 @@ private fun HomeHeader(
     ) {
         Wordmark()
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            BellButton(notificationCount)
+            BellButton(notificationCount, onBellClick)
             HeaderButton(SamilliIcons.Menu, "Menu", onMenuClick)
         }
     }
