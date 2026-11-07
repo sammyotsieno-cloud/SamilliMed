@@ -24,6 +24,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.launch
 import org.samillimed.app.data.auth.rememberAuthController
+import org.samillimed.app.data.facility.CurrentUser
 import org.samillimed.app.data.facility.FacilityScope
 import org.samillimed.app.data.facility.ProfileState
 import org.samillimed.app.data.facility.rememberProfileState
@@ -149,6 +150,7 @@ class MainActivity : ComponentActivity() {
                     } else {
                         // Every screen below reads and writes only this facility's data.
                         FacilityScope.facilityId = profileState.profile.facilityId
+                        CurrentUser.update(profileState.profile)
 
                         // Catalog is available only while signed in.
                         val catalog = rememberCatalog()
@@ -186,7 +188,8 @@ class MainActivity : ComponentActivity() {
 
                                 nav.navigate(route)
                             },
-                            userEmail = auth.email,
+                            userEmail = "${auth.email} (${CurrentUser.roleLabel()})",
+                            isAdmin = CurrentUser.isAdmin,
                             onSignOut = {
                                 scope.launch {
                                     drawerState.close()
@@ -294,20 +297,13 @@ class MainActivity : ComponentActivity() {
                                                         drawerState.open()
                                                     }
                                                 },
+                                                isAdmin = CurrentUser.isAdmin,
                                                 onTabSelected = { index ->
+                                                    val admin = CurrentUser.isAdmin
                                                     when (index) {
-                                                        1 -> nav.navigate(
-                                                            Route.Dispense
-                                                        )
-
-                                                        2 -> nav.navigate(
-                                                            Route.ReceiveStock
-                                                        )
-
-                                                        3 -> nav.navigate(
-                                                            Route.Register
-                                                        )
-
+                                                        1 -> nav.navigate(Route.Dispense)
+                                                        2 -> nav.navigate(if (admin) Route.ReceiveStock else Route.Inventory)
+                                                        3 -> nav.navigate(if (admin) Route.Register else Route.Sales)
                                                         else -> Unit
                                                     }
                                                 },
@@ -318,7 +314,7 @@ class MainActivity : ComponentActivity() {
                                                     nav.navigate(Route.Sales)
                                                 },
                                                 onOpenReports = {
-                                                    nav.navigate(Route.Reports)
+                                                    if (CurrentUser.isAdmin) nav.navigate(Route.Reports)
                                                 },
                                                 onOpenInventory = {
                                                     nav.navigate(Route.Inventory)
