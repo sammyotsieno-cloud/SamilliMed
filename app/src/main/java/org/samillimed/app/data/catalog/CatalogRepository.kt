@@ -1,5 +1,7 @@
 package org.samillimed.app.data.catalog
 
+import org.samillimed.app.data.facility.FacilityScope
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -12,12 +14,12 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-private const val PRODUCTS = "products"
-private const val SERVICES = "services"
-private const val LISTS = "lists"
+private val PRODUCTS: String get() = FacilityScope.path("products")
+private val SERVICES: String get() = FacilityScope.path("services")
+private val LISTS: String get() = FacilityScope.path("lists")
 
 /** Which records use each list, so a renamed value can be updated in them too. */
-private val listUsage: Map<String, Pair<String, String>> = mapOf(
+private val listUsage: Map<String, Pair<String, String>> get() = mapOf(
     ListType.PRODUCT_TYPES to (PRODUCTS to "type"),
     ListType.DOSAGE_FORMS to (PRODUCTS to "dosageForm"),
     ListType.SERVICE_CATEGORIES to (SERVICES to "category"),
