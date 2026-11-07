@@ -93,6 +93,12 @@ private val mainRoutes = listOf(Route.Home, Route.Dispense, Route.ReceiveStock, 
 private val catalogueRoutes = listOf(Route.DrugIndex, Route.RegisteredProducts, Route.RegisteredServices)
 private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, Route.Reports, Route.Alerts)
 
+/** Screens only an admin or owner can open. */
+private val adminOnly = setOf(
+    Route.Register, Route.ReceiveStock, Route.RegisteredProducts,
+    Route.RegisteredServices, Route.Expenses, Route.Reports,
+)
+
 /**
  * Wraps a screen with the side menu. Open it with drawerState.open() (menu button).
  * Swiping only closes it, so it can't open by accident.
@@ -107,12 +113,13 @@ fun AppDrawer(
     onNavigate: (Route) -> Unit,
     userEmail: String? = null,
     onSignOut: (() -> Unit)? = null,
+    isAdmin: Boolean = true,
     content: @Composable () -> Unit,
 ) {
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
-        drawerContent = { DrawerSheet(current, onNavigate, userEmail, onSignOut) },
+        drawerContent = { DrawerSheet(current, onNavigate, userEmail, onSignOut, isAdmin) },
         content = content,
     )
 }
@@ -123,6 +130,7 @@ private fun DrawerSheet(
     onNavigate: (Route) -> Unit,
     userEmail: String?,
     onSignOut: (() -> Unit)?,
+    isAdmin: Boolean,
 ) {
     val c = SamilliTheme.colors
     ModalDrawerSheet(
@@ -140,17 +148,17 @@ private fun DrawerSheet(
                     .padding(top = 10.dp),
             ) {
                 DrawerLabel("MAIN")
-                mainRoutes.forEach { route ->
+                mainRoutes.filter { isAdmin || it !in adminOnly }.forEach { route ->
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
                 Spacer(Modifier.height(10.dp))
                 DrawerLabel("CATALOGUE")
-                catalogueRoutes.forEach { route ->
+                catalogueRoutes.filter { isAdmin || it !in adminOnly }.forEach { route ->
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
                 Spacer(Modifier.height(10.dp))
                 DrawerLabel("MANAGE")
-                manageRoutes.forEach { route ->
+                manageRoutes.filter { isAdmin || it !in adminOnly }.forEach { route ->
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
                 Spacer(Modifier.height(10.dp))
