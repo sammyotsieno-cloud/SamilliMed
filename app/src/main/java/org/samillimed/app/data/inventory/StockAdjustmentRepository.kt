@@ -1,5 +1,7 @@
 package org.samillimed.app.data.inventory
 
+import org.samillimed.app.data.facility.FacilityScope
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
@@ -9,11 +11,11 @@ import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
 
-private const val STOCK_BATCHES = "stockBatches"
-private const val STOCK_BALANCES = "stockBalances"
-private const val STOCK_MOVEMENTS = "stockMovements"
-private const val STOCK_RECONCILIATIONS = "stockReconciliations"
-private const val DAILY_SUMMARIES = "dailySummaries"
+private val STOCK_BATCHES: String get() = FacilityScope.path("stockBatches")
+private val STOCK_BALANCES: String get() = FacilityScope.path("stockBalances")
+private val STOCK_MOVEMENTS: String get() = FacilityScope.path("stockMovements")
+private val STOCK_RECONCILIATIONS: String get() = FacilityScope.path("stockReconciliations")
+private val DAILY_SUMMARIES: String get() = FacilityScope.path("dailySummaries")
 
 /** Why stock was changed by hand. Every adjustment needs one. */
 object AdjustmentReason {
