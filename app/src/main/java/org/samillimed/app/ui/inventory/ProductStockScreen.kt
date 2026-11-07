@@ -41,6 +41,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.samillimed.app.data.facility.CurrentUser
 import org.samillimed.app.data.catalog.Product
 import org.samillimed.app.data.catalog.formatKsh
 import org.samillimed.app.data.catalog.genericNames
@@ -134,7 +135,7 @@ fun ProductStockScreen(
                             modifier = Modifier.padding(top = 4.dp),
                         )
                     }
-                    Text(
+                    if (CurrentUser.isAdmin) Text(
                         text = "Stock value at cost ${formatKsh(stockValue)}",
                         color = c.textSecondary,
                         fontSize = 12.sp,
@@ -274,18 +275,19 @@ private fun BatchCard(
             ""
         }
         Text(
-            text = "Received ${fmtDay(batch.receivedAtMillis)}  ·  cost ${formatKsh(batch.purchaseCostPerReceivingUnitCents)} per ${batch.receivingUnitName}$price",
+            text = "Received ${fmtDay(batch.receivedAtMillis)}" +
+                if (CurrentUser.isAdmin) "  ·  cost ${formatKsh(batch.purchaseCostPerReceivingUnitCents)} per ${batch.receivingUnitName}$price" else "",
             color = c.textSecondary,
             fontSize = 12.sp,
             modifier = Modifier.padding(top = 2.dp),
         )
-        Text(
+        if (CurrentUser.isAdmin) Text(
             text = "Value at cost ${formatKsh(batchValueCents(batch))}",
             color = c.textSecondary,
             fontSize = 12.sp,
             modifier = Modifier.padding(top = 2.dp),
         )
-        Row(Modifier.padding(top = 4.dp)) {
+        if (CurrentUser.isAdmin) Row(Modifier.padding(top = 4.dp)) {
             if (expired) {
                 TextButton(onClick = onWriteOff) {
                     Text("Write off expired stock", color = c.urgent, fontWeight = FontWeight.Bold)
