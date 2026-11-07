@@ -39,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.samillimed.app.data.facility.CurrentUser
 import org.samillimed.app.data.catalog.Catalog
 import org.samillimed.app.data.catalog.formatKsh
 import org.samillimed.app.data.catalog.writeTextToUri
@@ -117,7 +118,7 @@ fun BillsScreen(
             subtitle = date.format(dayFormat),
             onBack = onBack,
             actions = {
-                InvHeaderPill("Export", enabled = !bills.isNullOrEmpty()) {
+                InvHeaderPill("Export", enabled = !bills.isNullOrEmpty() && CurrentUser.isAdmin) {
                     exportLauncher.launch("samillimed-bills-$dateKey.csv")
                 }
             },
@@ -258,7 +259,7 @@ private fun BillDetailScreen(
                 }
             }
 
-            SamilliCard(Modifier.fillMaxWidth()) {
+            if (CurrentUser.isAdmin) SamilliCard(Modifier.fillMaxWidth()) {
                 Text("Cost and profit", color = c.textPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 DetailLine("Cost of stock sold", formatKsh(bill.totalPurchaseCostCents))
                 DetailLine("Gross profit", formatKsh(bill.grossProfitCents))
