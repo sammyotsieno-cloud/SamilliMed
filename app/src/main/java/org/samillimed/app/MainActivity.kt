@@ -15,6 +15,7 @@ import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -23,6 +24,8 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.launch
 import org.samillimed.app.data.auth.rememberAuthController
 import org.samillimed.app.data.catalog.rememberCatalog
+import org.samillimed.app.data.reports.ReportsReader
+import org.samillimed.app.ui.alerts.AlertsScreen
 import org.samillimed.app.ui.auth.LoginScreen
 import org.samillimed.app.ui.catalog.ProductFormScreen
 import org.samillimed.app.ui.catalog.RegisterChooserScreen
@@ -31,6 +34,7 @@ import org.samillimed.app.ui.catalog.RegisteredServicesScreen
 import org.samillimed.app.ui.catalog.ServiceFormScreen
 import org.samillimed.app.ui.common.LoadingState
 import org.samillimed.app.ui.home.HomeScreen
+import org.samillimed.app.ui.home.rememberHomeData
 import org.samillimed.app.ui.inventory.DispenseScreen
 import org.samillimed.app.ui.inventory.InventoryHost
 import org.samillimed.app.ui.inventory.ReceiveStockScreen
@@ -39,11 +43,13 @@ import org.samillimed.app.ui.navigation.Route
 import org.samillimed.app.ui.navigation.icon
 import org.samillimed.app.ui.navigation.rememberBackStack
 import org.samillimed.app.ui.placeholder.ComingSoonScreen
+import org.samillimed.app.ui.reports.BillsScreen
 import org.samillimed.app.ui.reports.ReportsHost
 import org.samillimed.app.ui.settings.SettingsScreen
 import org.samillimed.app.ui.settings.rememberAppSettings
 import org.samillimed.app.ui.splash.SamilliSplashHost
 import org.samillimed.app.ui.theme.SamilliMedTheme
+import java.time.LocalDate
 
 class MainActivity : ComponentActivity() {
 
@@ -121,6 +127,10 @@ class MainActivity : ComponentActivity() {
                     } else {
                         // Catalog is available only while signed in.
                         val catalog = rememberCatalog()
+
+                        // Live numbers for Home and Alerts. Kept for the whole signed-in
+                        // session, so coming back to Home does not read everything again.
+                        val homeData = rememberHomeData(catalog)
 
                         // Product form:
                         // null = closed
@@ -253,6 +263,7 @@ class MainActivity : ComponentActivity() {
                                         // HOME
                                         Route.Home -> {
                                             HomeScreen(
+                                                data = homeData,
                                                 onMenuClick = {
                                                     scope.launch {
                                                         drawerState.open()
@@ -274,6 +285,18 @@ class MainActivity : ComponentActivity() {
 
                                                         else -> Unit
                                                     }
+                                                },
+                                                onOpenAlerts = {
+                                                    nav.navigate(Route.Alerts)
+                                                },
+                                                onOpenSales = {
+                                                    nav.navigate(Route.Sales)
+                                                },
+                                                onOpenReports = {
+                                                    nav.navigate(Route.Reports)
+                                                },
+                                                onOpenInventory = {
+                                                    nav.navigate(Route.Inventory)
                                                 },
                                             )
                                         }
@@ -349,11 +372,33 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
 
+                                        // SALES: today's bills, with day navigation and bill details
+                                        Route.Sales -> {
+                                            val reportsReader = remember { ReportsReader() }
+                                            BillsScreen(
+                                                catalog = catalog,
+                                                reader = reportsReader,
+                                                initialDateKey = LocalDate.now().toString(),
+                                                onBack = { nav.back() },
+                                            )
+                                        }
+
                                         // REPORTS
                                         Route.Reports -> {
                                             ReportsHost(
                                                 catalog = catalog,
                                                 onBack = { nav.back() },
+                                            )
+                                        }
+
+                                        // ALERTS
+                                        Route.Alerts -> {
+                                            AlertsScreen(
+                                                alerts = homeData.alerts,
+                                                onBack = { nav.back() },
+                                                onOpenInventory = {
+                                                    nav.navigate(Route.Inventory)
+                                                },
                                             )
                                         }
 
@@ -381,7 +426,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
 
-                                        // OTHER SCREENS
+                                        // NOT BUILT YET: Drug Index and Expenses
                                         else -> {
                                             ComingSoonScreen(
                                                 title = nav.current.title,
