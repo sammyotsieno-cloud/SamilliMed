@@ -1,5 +1,7 @@
 package org.samillimed.app.data.reports
 
+import org.samillimed.app.data.facility.FacilityScope
+
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
@@ -8,12 +10,12 @@ import org.samillimed.app.data.inventory.DispensingLine
 import org.samillimed.app.data.inventory.DispensingRecord
 import org.samillimed.app.data.inventory.DispensingServiceLine
 
-private const val DAILY_SUMMARIES = "dailySummaries"
-private const val PRODUCT_DAY_STATS = "productDayStats"
-private const val PRODUCT_MONTH_STATS = "productMonthStats"
-private const val DISPENSING_RECORDS = "dispensingRecords"
-private const val DISPENSING_LINES = "dispensingLines"
-private const val DISPENSING_SERVICE_LINES = "dispensingServiceLines"
+private val DAILY_SUMMARIES: String get() = FacilityScope.path("dailySummaries")
+private val PRODUCT_DAY_STATS: String get() = FacilityScope.path("productDayStats")
+private val PRODUCT_MONTH_STATS: String get() = FacilityScope.path("productMonthStats")
+private val DISPENSING_RECORDS: String get() = FacilityScope.path("dispensingRecords")
+private val DISPENSING_LINES: String get() = FacilityScope.path("dispensingLines")
+private val DISPENSING_SERVICE_LINES: String get() = FacilityScope.path("dispensingServiceLines")
 
 /**
  * Live readers for Reports. Each one reads as little as possible: day totals, product totals, or
