@@ -172,6 +172,7 @@ fun HomeScreen(
                     trendColor = c.sparkUp,
                     onClick = onOpenSales,
                 )
+                if (isAdmin) {
                 val profitChip = ofYesterday(data.today.profitCents, data.yesterday.profitCents)
                 LiveTrendCard(
                     icon = SamilliIcons.Wallet,
@@ -188,6 +189,7 @@ fun HomeScreen(
                     trendColor = c.sparkDown,
                     onClick = onOpenReports,
                 )
+                }
 
                 // ---- average bill and stock value -------------------------------------------
                 Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -203,10 +205,10 @@ fun HomeScreen(
                         modifier = Modifier.weight(1f).clickable(onClick = onOpenSales),
                     )
                     MetricCard(
-                        title = "Stock at cost",
-                        value = alerts?.let { formatKsh(it.stockValueCents) } ?: "–",
-                        sub = "open Inventory",
-                        modifier = Modifier.weight(1f).clickable(onClick = onOpenInventory),
+                        title = if (isAdmin) "Stock at cost" else "Bills today",
+                        value = if (isAdmin) (alerts?.let { formatKsh(it.stockValueCents) } ?: "–") else fmtNumber(bills),
+                        sub = if (isAdmin) "open Inventory" else "open Sales",
+                        modifier = Modifier.weight(1f).clickable(onClick = if (isAdmin) onOpenInventory else onOpenSales),
                     )
                 }
 
