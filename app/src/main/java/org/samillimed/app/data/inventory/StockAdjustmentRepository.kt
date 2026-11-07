@@ -60,7 +60,7 @@ private fun friendlyMessage(error: Exception, fallback: String): String =
         FirebaseFirestoreException.Code.ABORTED ->
             "Someone changed this stock at the same moment. Please try again."
         FirebaseFirestoreException.Code.PERMISSION_DENIED ->
-            "You are not allowed to do this. Sign in again."
+            "Only an administrator can adjust stock."
         else -> error.message ?: fallback
     }
 
