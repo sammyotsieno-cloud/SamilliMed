@@ -1,5 +1,7 @@
 package org.samillimed.app.data.inventory
 
+import org.samillimed.app.data.facility.FacilityScope
+
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
 import com.google.firebase.firestore.Query
@@ -8,9 +10,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import org.samillimed.app.data.reports.ProductStat
 
-private const val STOCK_BATCHES = "stockBatches"
-private const val STOCK_MOVEMENTS = "stockMovements"
-private const val PRODUCT_MONTH_STATS = "productMonthStats"
+private val STOCK_BATCHES: String get() = FacilityScope.path("stockBatches")
+private val STOCK_MOVEMENTS: String get() = FacilityScope.path("stockMovements")
+private val PRODUCT_MONTH_STATS: String get() = FacilityScope.path("productMonthStats")
 
 /** The stock card of a product: its movements, or why they could not be read. */
 sealed class MovementsResult {
