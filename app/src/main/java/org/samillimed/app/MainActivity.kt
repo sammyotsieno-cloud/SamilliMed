@@ -1,3 +1,4 @@
+
 package org.samillimed.app
 
 import android.graphics.Color
@@ -23,6 +24,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.launch
 import org.samillimed.app.data.auth.rememberAuthController
+import org.samillimed.app.data.facility.FacilityScope
+import org.samillimed.app.data.facility.ProfileState
+import org.samillimed.app.data.facility.rememberProfileState
+import org.samillimed.app.ui.facility.AccountGate
 import org.samillimed.app.data.catalog.rememberCatalog
 import org.samillimed.app.data.reports.ReportsReader
 import org.samillimed.app.ui.alerts.AlertsScreen
@@ -70,6 +75,9 @@ class MainActivity : ComponentActivity() {
 
             // Who is signed in.
             val auth = rememberAuthController()
+
+            // The signed-in account: its facility, role, and whether it is active.
+            val profileState = rememberProfileState(auth.isSignedIn)
 
             // History of opened screens.
             val nav = rememberBackStack()
@@ -124,7 +132,16 @@ class MainActivity : ComponentActivity() {
                                 auth.signIn(email, password, onResult)
                             },
                         )
+                    } else if (profileState !is ProfileState.Ready) {
+                        // Signed in, but the account is loading, not linked to a facility, or disabled.
+                        AccountGate(
+                            state = profileState,
+                            onSignOut = { auth.signOut() },
+                        )
                     } else {
+                        // Every screen below reads and writes only this facility's data.
+                        FacilityScope.facilityId = profileState.profile.facilityId
+
                         // Catalog is available only while signed in.
                         val catalog = rememberCatalog()
 
