@@ -1,5 +1,7 @@
 package org.samillimed.app.data.inventory
 
+import org.samillimed.app.data.facility.FacilityScope
+
 import com.google.android.gms.tasks.Tasks
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentSnapshot
@@ -15,19 +17,19 @@ import java.math.RoundingMode
 import java.time.LocalDate
 import java.time.ZoneId
 
-private const val DISPENSING_RECORDS = "dispensingRecords"
-private const val DISPENSING_LINES = "dispensingLines"
-private const val DISPENSING_SERVICE_LINES = "dispensingServiceLines"
-private const val DISPENSING_ALLOCATIONS = "dispensingBatchAllocations"
-private const val DAILY_SUMMARIES = "dailySummaries"
-private const val PRODUCT_DAY_STATS = "productDayStats"
-private const val PRODUCT_MONTH_STATS = "productMonthStats"
-private const val PRODUCTS = "products"
-private const val SERVICES = "services"
-private const val STOCK_BATCHES = "stockBatches"
-private const val STOCK_BALANCES = "stockBalances"
-private const val STOCK_MOVEMENTS = "stockMovements"
-private const val STOCK_RECONCILIATIONS = "stockReconciliations"
+private val DISPENSING_RECORDS: String get() = FacilityScope.path("dispensingRecords")
+private val DISPENSING_LINES: String get() = FacilityScope.path("dispensingLines")
+private val DISPENSING_SERVICE_LINES: String get() = FacilityScope.path("dispensingServiceLines")
+private val DISPENSING_ALLOCATIONS: String get() = FacilityScope.path("dispensingBatchAllocations")
+private val DAILY_SUMMARIES: String get() = FacilityScope.path("dailySummaries")
+private val PRODUCT_DAY_STATS: String get() = FacilityScope.path("productDayStats")
+private val PRODUCT_MONTH_STATS: String get() = FacilityScope.path("productMonthStats")
+private val PRODUCTS: String get() = FacilityScope.path("products")
+private val SERVICES: String get() = FacilityScope.path("services")
+private val STOCK_BATCHES: String get() = FacilityScope.path("stockBatches")
+private val STOCK_BALANCES: String get() = FacilityScope.path("stockBalances")
+private val STOCK_MOVEMENTS: String get() = FacilityScope.path("stockMovements")
+private val STOCK_RECONCILIATIONS: String get() = FacilityScope.path("stockReconciliations")
 
 private const val MAX_WRITES = 480
 
