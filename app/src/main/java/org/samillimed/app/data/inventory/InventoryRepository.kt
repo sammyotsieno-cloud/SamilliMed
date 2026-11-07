@@ -1,5 +1,7 @@
 package org.samillimed.app.data.inventory
 
+import org.samillimed.app.data.facility.FacilityScope
+
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.FirebaseFirestoreException
@@ -7,13 +9,13 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 
-private const val RECEIPTS = "goodsReceipts"
-private const val RECEIPT_LINES = "goodsReceiptLines"
-private const val STOCK_BATCHES = "stockBatches"
-private const val STOCK_BALANCES = "stockBalances"
-private const val STOCK_MOVEMENTS = "stockMovements"
-private const val STOCK_RECONCILIATIONS = "stockReconciliations"
-private const val PRODUCTS = "products"
+private val RECEIPTS: String get() = FacilityScope.path("goodsReceipts")
+private val RECEIPT_LINES: String get() = FacilityScope.path("goodsReceiptLines")
+private val STOCK_BATCHES: String get() = FacilityScope.path("stockBatches")
+private val STOCK_BALANCES: String get() = FacilityScope.path("stockBalances")
+private val STOCK_MOVEMENTS: String get() = FacilityScope.path("stockMovements")
+private val STOCK_RECONCILIATIONS: String get() = FacilityScope.path("stockReconciliations")
+private val PRODUCTS: String get() = FacilityScope.path("products")
 
 private const val FIRESTORE_MAX_WRITES = 500
 
