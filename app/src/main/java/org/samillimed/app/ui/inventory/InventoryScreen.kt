@@ -43,6 +43,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.samillimed.app.data.facility.CurrentUser
 import org.samillimed.app.data.catalog.Catalog
 import org.samillimed.app.data.catalog.Product
 import org.samillimed.app.data.catalog.formatKsh
@@ -254,11 +255,11 @@ private fun InventoryScreen(
     Column(modifier.fillMaxSize().background(c.background)) {
         ScreenHeader(
             title = "Inventory",
-            subtitle = if (batches != null) "Stock at cost ${formatKsh(totalValue)}" else null,
+            subtitle = if (batches != null && CurrentUser.isAdmin) "Stock at cost ${formatKsh(totalValue)}" else null,
             onBack = onBack,
             actions = {
                 InvHeaderPill("Reorder", onClick = onReorder)
-                InvHeaderPill("Export", enabled = rows.isNotEmpty()) {
+                InvHeaderPill("Export", enabled = rows.isNotEmpty() && CurrentUser.isAdmin) {
                     exportLauncher.launch("samillimed-stock-$today.csv")
                 }
             },
@@ -403,7 +404,7 @@ private fun StockCard(row: StockRow, today: LocalDate, onClick: () -> Unit) {
         }
         Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
             Text(
-                text = "At cost ${formatKsh(row.valueCents)}",
+                text = if (CurrentUser.isAdmin) "At cost ${formatKsh(row.valueCents)}" else "",
                 color = c.textSecondary,
                 fontSize = 12.sp,
                 modifier = Modifier.weight(1f),
