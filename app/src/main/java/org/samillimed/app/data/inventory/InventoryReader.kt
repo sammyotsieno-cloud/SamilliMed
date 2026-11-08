@@ -28,7 +28,7 @@ sealed class MovementsResult {
  * someone signs out.
  */
 class InventoryReader(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val db: FirebaseFirestore = FacilityScope.firestore(),
 ) {
 
     /** Every batch that still holds stock. Used-up batches are left out to save reads. */

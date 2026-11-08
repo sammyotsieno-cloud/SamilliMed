@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import org.samillimed.app.data.facility.ProfileState
 import org.samillimed.app.ui.common.LoadingState
 import org.samillimed.app.ui.theme.SamilliTheme
+import org.samillimed.app.data.facility.FacilityScope
 
 /** Shown instead of the app while the account is loading, not linked to a facility, or disabled. */
 @Composable
@@ -32,7 +33,7 @@ fun AccountGate(state: ProfileState, onSignOut: () -> Unit) {
         else -> {
             val (title, message) = when (state) {
                 ProfileState.NotLinked -> {
-                    val user = com.google.firebase.auth.FirebaseAuth.getInstance().currentUser
+                    val user = FacilityScope.auth().currentUser
                     "Account not set up" to
                         "No users document matches this account. In Firestore, the users collection needs a document whose ID is exactly this UID, with facilityId = main and active = true.\n\nEmail: ${user?.email}\nUID: ${user?.uid}"
                 }

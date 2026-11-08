@@ -42,7 +42,7 @@ sealed class ProfileState {
 
 /** Live: if the owner disables the account, the app notices without a restart. One document read. */
 private fun userProfileFlow(uid: String): Flow<ProfileState> = callbackFlow {
-    val registration = FirebaseFirestore.getInstance()
+    val registration = FacilityScope.firestore()
         .collection("users")
         .document(uid)
         .addSnapshotListener { snap, error ->
@@ -68,7 +68,7 @@ private fun userProfileFlow(uid: String): Flow<ProfileState> = callbackFlow {
 
 @Composable
 fun rememberProfileState(signedIn: Boolean): ProfileState {
-    val uid = if (signedIn) FirebaseAuth.getInstance().currentUser?.uid else null
+    val uid = if (signedIn) FacilityScope.auth().currentUser?.uid else null
     val state by produceState<ProfileState>(ProfileState.Loading, uid) {
         if (uid == null) {
             value = ProfileState.SignedOut

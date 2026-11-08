@@ -28,9 +28,9 @@ private val listUsage: Map<String, Pair<String, String>> get() = mapOf(
 
 /** Reads and writes products, services and the user-managed lists in Firestore. */
 class CatalogRepository(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val db: FirebaseFirestore = FacilityScope.firestore(),
 ) {
-    private fun who(): String = FirebaseAuth.getInstance().currentUser?.email.orEmpty()
+    private fun who(): String = FacilityScope.auth().currentUser?.email.orEmpty()
 
     // ---- live data -------------------------------------------------------------------------
 

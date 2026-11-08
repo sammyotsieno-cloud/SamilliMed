@@ -25,7 +25,7 @@ fun rememberAccessProbe(state: ProfileState): String? {
         if (facilityId == null) return@produceState
         val path = "facilities/$facilityId/lists"
         value = suspendCancellableCoroutine<String?> { cont ->
-            FirebaseFirestore.getInstance().collection(path).limit(1).get(Source.SERVER)
+            FacilityScope.firestore().collection(path).limit(1).get(Source.SERVER)
                 .addOnSuccessListener { if (cont.isActive) cont.resume(null) }
                 .addOnFailureListener { e ->
                     if (cont.isActive) cont.resume("Could not read $path.\n\n${e.message ?: "Unknown error"}")

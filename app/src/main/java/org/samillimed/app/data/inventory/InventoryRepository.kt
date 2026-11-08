@@ -47,11 +47,11 @@ private fun friendlyMessage(error: Exception, fallback: String): String =
  * with the balance in reconcileProductBalance, outside the transaction.
  */
 class InventoryRepository(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val db: FirebaseFirestore = FacilityScope.firestore(),
 ) {
 
     private fun currentUser(): String =
-        FirebaseAuth.getInstance().currentUser?.email.orEmpty()
+        FacilityScope.auth().currentUser?.email.orEmpty()
 
     /** Sums batch quantities. Returns null if one is invalid or the total overflows. */
     private fun sumBatchQuantities(quantities: List<Long>): Long? {

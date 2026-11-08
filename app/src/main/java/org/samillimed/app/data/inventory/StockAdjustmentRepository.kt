@@ -77,11 +77,11 @@ private fun DocumentSnapshot.longMap(field: String): Map<String, Long> =
 
 /** Changes the quantity of one batch by hand, with a reason, in one step. */
 class StockAdjustmentRepository(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val db: FirebaseFirestore = FacilityScope.firestore(),
 ) {
 
     private fun currentUser(): String =
-        FirebaseAuth.getInstance().currentUser?.email.orEmpty()
+        FacilityScope.auth().currentUser?.email.orEmpty()
 
     /**
      * Takes stock out of a batch (or puts a count correction back) and records it in the stock

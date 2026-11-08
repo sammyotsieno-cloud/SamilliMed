@@ -22,7 +22,7 @@ private val DISPENSING_SERVICE_LINES: String get() = FacilityScope.path("dispens
  * the bills of a single day. Listener errors are ignored on purpose (as elsewhere in the app).
  */
 class ReportsReader(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val db: FirebaseFirestore = FacilityScope.firestore(),
 ) {
 
     /** The day totals from fromKey to toKey (yyyy-MM-dd), both included. One read per day. */

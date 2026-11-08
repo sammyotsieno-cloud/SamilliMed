@@ -237,11 +237,11 @@ private fun planAllocations(
 
 /** Saves bills: medicines and services together, with stock, cost and profit, in one step. */
 class DispensingRepository(
-    private val db: FirebaseFirestore = FirebaseFirestore.getInstance(),
+    private val db: FirebaseFirestore = FacilityScope.firestore(),
 ) {
 
     private fun currentUser(): String =
-        FirebaseAuth.getInstance().currentUser?.email.orEmpty()
+        FacilityScope.auth().currentUser?.email.orEmpty()
 
     /**
      * Saves one bill atomically: the bill, its lines and batch allocations, the stock taken from

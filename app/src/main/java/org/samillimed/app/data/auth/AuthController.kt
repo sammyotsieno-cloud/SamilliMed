@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseTooManyRequestsException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
 import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import org.samillimed.app.data.facility.FacilityScope
 
 /**
  * Who is signed in, and how to sign in or out.
@@ -45,7 +46,7 @@ private fun friendlyMessage(e: Exception?): String = when (e) {
 /** Keeps the signed-in state up to date: the screen changes the moment someone signs in or out. */
 @Composable
 fun rememberAuthController(): AuthController {
-    val auth = remember { FirebaseAuth.getInstance() }
+    val auth = remember { FacilityScope.auth() }
     var user by remember { mutableStateOf(auth.currentUser) }
     DisposableEffect(auth) {
         val listener = FirebaseAuth.AuthStateListener { user = it.currentUser }
