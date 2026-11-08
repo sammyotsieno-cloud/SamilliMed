@@ -1,0 +1,62 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null; }
+    function me() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function isOwner() { return signedIn() && me().active == true && me().role == 'owner'; }
+    function member(fid) { return signedIn() && me().active == true && me().facilityId == fid; }
+    function isAdmin(fid) { return member(fid) && (me().role == 'admin' || me().role == 'owner'); }
+
+    match /users/{uid} {
+      allow read: if signedIn() && (request.auth.uid == uid || isOwner()
+                     || (me().role == 'admin' && me().facilityId == resource.data.facilityId));
+      allow write: if isOwner();
+    }
+
+    match /facilities/{fid} {
+      allow read: if member(fid) || isOwner();
+      allow write: if isOwner();
+
+      match /products/{id} { allow read: if member(fid); allow write: if isAdmin(fid); }
+      match /services/{id} { allow read: if member(fid); allow write: if isAdmin(fid); }
+      match /lists/{id}    { allow read: if member(fid); allow write: if isAdmin(fid); }
+
+      match /goodsReceipts/{id}     { allow read: if member(fid); allow create: if isAdmin(fid); }
+      match /goodsReceiptLines/{id} { allow read: if member(fid); allow create: if isAdmin(fid); }
+
+      match /stockBatches/{id} {
+        allow read: if member(fid);
+        allow create: if isAdmin(fid);
+        allow update: if isAdmin(fid) || (member(fid)
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['remainingQuantity'])
+          && request.resource.data.remainingQuantity >= 0
+          && request.resource.data.remainingQuantity < resource.data.remainingQuantity);
+      }
+      match /stockBalances/{id} {
+        allow read: if member(fid);
+        allow create: if isAdmin(fid) || (member(fid) && request.resource.data.quantityOnHand == 0);
+        allow update: if isAdmin(fid) || (member(fid)
+          && request.resource.data.quantityOnHand <= resource.data.quantityOnHand);
+      }
+      match /stockMovements/{id} {
+        allow read: if member(fid);
+        allow create: if isAdmin(fid) || (member(fid) && request.resource.data.movementType == 'DISPENSING');
+      }
+      match /stockReconciliations/{id} { allow read: if member(fid); allow create: if member(fid); }
+
+      match /dispensingRecords/{id} {
+        allow read: if member(fid);
+        allow create: if member(fid) && request.resource.data.createdBy == request.auth.token.email;
+        allow update: if isAdmin(fid);
+      }
+      match /dispensingLines/{id}            { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
+      match /dispensingServiceLines/{id}     { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
+      match /dispensingBatchAllocations/{id} { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
+
+      match /dailySummaries/{id}    { allow read, create, update: if member(fid); }
+      match /productDayStats/{id}   { allow read, create, update: if member(fid); }
+      match /productMonthStats/{id} { allow read, create, update: if member(fid); }
+    }
+  }
+}
