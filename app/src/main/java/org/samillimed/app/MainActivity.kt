@@ -8,6 +8,8 @@ import androidx.activity.SystemBarStyle
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Text
@@ -20,15 +22,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import kotlinx.coroutines.launch
 import org.samillimed.app.data.auth.rememberAuthController
 import org.samillimed.app.data.facility.CurrentUser
+import org.samillimed.app.data.facility.FacilityConnection
 import org.samillimed.app.data.facility.FacilityScope
 import org.samillimed.app.data.facility.ProfileState
 import org.samillimed.app.data.facility.rememberProfileState
 import org.samillimed.app.ui.facility.AccountGate
+import org.samillimed.app.ui.facility.FacilitySetupLink
 import org.samillimed.app.ui.facility.rememberAccessProbe
 import org.samillimed.app.data.catalog.rememberCatalog
 import org.samillimed.app.data.reports.ReportsReader
@@ -63,6 +69,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         installSplashScreen()
         super.onCreate(savedInstanceState)
+        FacilityConnection.init(applicationContext)
 
         // The header and bottom bar are dark green in both themes,
         // so system icons stay light.
@@ -130,11 +137,14 @@ class MainActivity : ComponentActivity() {
                     },
                 ) {
                     if (!auth.isSignedIn) {
-                        LoginScreen(
-                            onSignIn = { email, password, onResult ->
-                                auth.signIn(email, password, onResult)
-                            },
-                        )
+                        Box(Modifier.fillMaxSize()) {
+                            LoginScreen(
+                                onSignIn = { email, password, onResult ->
+                                    auth.signIn(email, password, onResult)
+                                },
+                            )
+                            FacilitySetupLink(Modifier.align(Alignment.BottomCenter))
+                        }
                     } else if (profileState !is ProfileState.Ready) {
                         // Signed in, but the account is loading, not linked to a facility, or disabled.
                         AccountGate(
