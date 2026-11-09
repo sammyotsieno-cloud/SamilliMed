@@ -209,6 +209,21 @@ private fun BillDetailScreen(
     val serviceLines by produceState<List<DispensingServiceLine>?>(null, bill.id) {
         reader.billServiceLinesFlow(bill.id).collect { value = it }
     }
+    val returns by produceState<List<SalesReturn>?>(null, bill.id) {
+        reader.billReturnsFlow(bill.id).collect { value = it }
+    }
+    var showReturn by rememberSaveable { mutableStateOf(false) }
+    BackHandler(enabled = showReturn) { showReturn = false }
+    if (showReturn) {
+        ReturnScreen(
+            bill = bill,
+            lines = lines.orEmpty(),
+            serviceLines = serviceLines.orEmpty(),
+            onBack = { showReturn = false },
+            modifier = modifier,
+        )
+        return
+    }
 
     Column(modifier.fillMaxSize().background(c.background)) {
         ScreenHeader(title = bill.shortLabel, subtitle = bill.referenceNumber, onBack = onBack)
