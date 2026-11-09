@@ -54,6 +54,8 @@ service cloud.firestore {
       match /dispensingServiceLines/{id}     { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
       match /dispensingBatchAllocations/{id} { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
 
+      // Returns and voids: only admins record them, and they are never edited afterwards.
+      match /salesReturns/{id} { allow read: if member(fid); allow create: if isAdmin(fid); }
       match /dailySummaries/{id}    { allow read, create, update: if member(fid); }
       match /productDayStats/{id}   { allow read, create, update: if member(fid); }
       match /productMonthStats/{id} { allow read, create, update: if member(fid); }
