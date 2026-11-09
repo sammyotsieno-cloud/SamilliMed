@@ -87,6 +87,17 @@ class ReportsReader(
         awaitClose { registration.remove() }
     }
 
+    /** The returns and voids recorded against one bill. Read only when the bill is opened. */
+    fun billReturnsFlow(billId: String): Flow<List<SalesReturn>> = callbackFlow {
+        val registration = db.collection(SALES_RETURNS)
+            .whereEqualTo("billId", billId)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null || snapshot == null) return@addSnapshotListener
+                trySend(snapshot.documents.mapNotNull { it.toObject(SalesReturn::class.java) })
+            }
+        awaitClose { registration.remove() }
+    }
+
     /** The service lines of one bill. Read only when the bill is opened. */
     fun billServiceLinesFlow(dispensingId: String): Flow<List<DispensingServiceLine>> = callbackFlow {
         val registration = db.collection(DISPENSING_SERVICE_LINES)
