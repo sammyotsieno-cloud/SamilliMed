@@ -147,6 +147,9 @@ data class DispensingLine(
     val baseQuantityDispensed: Long = 0,
 
     val actualSellingPricePerUnitCents: Long = 0,
+    /** Returned so far, in the unit the line was sold in, and the amount refunded. */
+    val returnedQuantity: Long = 0,
+    val returnedCents: Long = 0,
     val totalSaleValueCents: Long = 0,
 
     val totalPurchaseCostCents: Long = 0,
