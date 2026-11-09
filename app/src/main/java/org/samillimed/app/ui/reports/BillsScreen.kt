@@ -43,6 +43,8 @@ import org.samillimed.app.data.facility.CurrentUser
 import org.samillimed.app.data.catalog.Catalog
 import org.samillimed.app.data.catalog.formatKsh
 import org.samillimed.app.data.catalog.writeTextToUri
+import org.samillimed.app.data.inventory.BillStatus
+import org.samillimed.app.data.reports.SalesReturn
 import org.samillimed.app.data.inventory.DispensingLine
 import org.samillimed.app.data.inventory.DispensingRecord
 import org.samillimed.app.data.inventory.DispensingServiceLine
