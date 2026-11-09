@@ -14,6 +14,7 @@ object StockMovementType {
     const val RECEIPT = "RECEIPT"
     const val DISPENSING = "DISPENSING"
     const val ADJUSTMENT = "ADJUSTMENT"
+    const val RETURN = "RETURN"
 }
 
 /** How a bill was paid. */
@@ -251,6 +252,13 @@ data class DispensingRecord(
     val productLineCount: Int = 0,
     val serviceLineCount: Int = 0,
     val lineCount: Int = 0,
+
+    /** ACTIVE, PARTIALLY_RETURNED or VOIDED. Bills saved before returns existed have no status, which means ACTIVE. */
+    val status: String = BillStatus.ACTIVE,
+    val returnedCents: Long = 0,
+    val voidedAtMillis: Long = 0,
+    val voidedBy: String = "",
+    val voidReason: String = "",
 )
 
 /** "G-014": the short form shown in lists. */
