@@ -289,6 +289,12 @@ private fun BillDetailScreen(
                     DetailLine("Margin", String.format(Locale.US, "%.0f%%", bill.grossProfitCents * 100.0 / bill.totalAmountCents))
                 }
             }
+            ReturnsSection(
+                bill = bill,
+                returns = returns.orEmpty(),
+                ready = lines != null && serviceLines != null,
+                onStart = { showReturn = true },
+            )
             Spacer(Modifier.height(4.dp))
         }
     }
