@@ -188,6 +188,11 @@ private fun BillRow(bill: DispensingRecord, onClick: () -> Unit) {
             Column(horizontalAlignment = Alignment.End) {
                 Text(formatKsh(bill.totalAmountCents), color = c.textPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 if (bill.afterShift) StatusPill("AFTER SHIFT", c.reorder, c.onReorder)
+                if (bill.status == BillStatus.VOIDED) {
+                    StatusPill("VOIDED", c.urgent, c.onUrgent)
+                } else if (bill.status == BillStatus.PARTIALLY_RETURNED) {
+                    StatusPill("RETURNED", c.reorder, c.onReorder)
+                }
             }
         }
     }
