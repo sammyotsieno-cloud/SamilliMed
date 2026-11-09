@@ -172,6 +172,8 @@ data class DispensingServiceLine(
     val quantity: Long = 1,
     val priceCents: Long = 0,
     val totalCents: Long = 0,
+    val returnedQuantity: Long = 0,
+    val returnedCents: Long = 0,
     val createdAtMillis: Long = 0,
 )
 
