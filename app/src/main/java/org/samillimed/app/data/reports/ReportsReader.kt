@@ -16,6 +16,7 @@ private val PRODUCT_MONTH_STATS: String get() = FacilityScope.path("productMonth
 private val DISPENSING_RECORDS: String get() = FacilityScope.path("dispensingRecords")
 private val DISPENSING_LINES: String get() = FacilityScope.path("dispensingLines")
 private val DISPENSING_SERVICE_LINES: String get() = FacilityScope.path("dispensingServiceLines")
+private val SALES_RETURNS: String get() = FacilityScope.path("salesReturns")
 
 /**
  * Live readers for Reports. Each one reads as little as possible: day totals, product totals, or
