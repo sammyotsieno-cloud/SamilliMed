@@ -247,6 +247,11 @@ private fun BillDetailScreen(
                 DetailLine("Served by", bill.createdBy.substringBefore('@').ifBlank { "Unknown" })
                 if (bill.label.isNotBlank()) DetailLine("Label", bill.label)
                 if (bill.afterShift) DetailLine("Note", "Made after the shift ended")
+                if (bill.status == BillStatus.VOIDED) {
+                    DetailLine("Status", "VOIDED: ${bill.voidReason}")
+                } else if (bill.status == BillStatus.PARTIALLY_RETURNED) {
+                    DetailLine("Status", "Partly returned: ${formatKsh(bill.returnedCents)} refunded")
+                }
             }
 
             SamilliCard(Modifier.fillMaxWidth()) {
