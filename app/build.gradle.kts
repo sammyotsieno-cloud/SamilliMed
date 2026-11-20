@@ -5,6 +5,25 @@ plugins {
 }
 
 android {
+    // One fixed signing key on every build, so a new build installs over the old one.
+    signingConfigs {
+        create("fixed") {
+            val keystorePath = System.getenv("SM_KEYSTORE_PATH")
+            if (!keystorePath.isNullOrBlank()) {
+                storeFile = file(keystorePath)
+                storePassword = System.getenv("SM_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("SM_KEY_ALIAS")
+                keyPassword = System.getenv("SM_KEY_PASSWORD")
+            }
+        }
+    }
+    buildTypes {
+        getByName("debug") {
+            if (!System.getenv("SM_KEYSTORE_PATH").isNullOrBlank()) {
+                signingConfig = signingConfigs.getByName("fixed")
+            }
+        }
+    }
     namespace = "org.samillimed.app"
     compileSdk = 36
 

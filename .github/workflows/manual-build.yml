@@ -45,6 +45,27 @@ jobs:
         with:
           cache-provider: basic
 
+      - name: Prepare signing key
+        shell: bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+        run: |
+          set -eu
+          if [ -n "${KEYSTORE_BASE64:-}" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/samillimed.jks"
+            {
+              echo "SM_KEYSTORE_PATH=$RUNNER_TEMP/samillimed.jks"
+              echo "SM_KEYSTORE_PASSWORD=$KEYSTORE_PASSWORD"
+              echo "SM_KEY_ALIAS=$KEY_ALIAS"
+              echo "SM_KEY_PASSWORD=$KEY_PASSWORD"
+            } >> "$GITHUB_ENV"
+          else
+            echo "No signing key configured: this build will be signed with a temporary key."
+          fi
+
       - name: Build debug APK
         run: bash ./gradlew --no-daemon --warning-mode=all --stacktrace assembleDebug
 
@@ -54,7 +75,7 @@ jobs:
           set -euo pipefail
           APK="app/build/outputs/apk/debug/app-debug.apk"
           test -s "$APK"
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose "$APK"
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK"
           BADGING="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK")"
           printf '%s\n' "$BADGING" | head -n 1
           printf '%s\n' "$BADGING" | grep -F "package: name='org.samillimed.app'"
