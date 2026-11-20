@@ -14,7 +14,7 @@ enum class Route(val title: String) {
     Register("Register"),
     DrugIndex("Drug Index"),
     RegisteredProducts("Registered Products"),
-    RegisteredServices("Registered Services"),
+    RegisteredServices("Services & Lab Tests"),
     Inventory("Inventory"),
     Sales("Sales"),
     Expenses("Expenses"),

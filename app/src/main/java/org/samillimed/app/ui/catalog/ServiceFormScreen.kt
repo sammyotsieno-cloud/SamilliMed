@@ -40,6 +40,7 @@ import org.samillimed.app.ui.common.PrimaryButton
 import org.samillimed.app.ui.common.ScreenHeader
 import org.samillimed.app.ui.common.SwitchRow
 import org.samillimed.app.ui.theme.SamilliTheme
+import org.samillimed.app.data.catalog.ServiceKind
 
 /**
  * Register a new service (service = null) or edit an existing one.
@@ -47,6 +48,7 @@ import org.samillimed.app.ui.theme.SamilliTheme
  */
 @Composable
 fun ServiceFormScreen(
+    kind: String = ServiceKind.SERVICE,
     catalog: Catalog,
     service: ServiceItem?,
     onClose: () -> Unit,
@@ -58,7 +60,11 @@ fun ServiceFormScreen(
     // ---- what the user is typing (survives screen rotation) --------------------------------
     var name by rememberSaveable(key) { mutableStateOf(service?.name.orEmpty()) }
     var category by rememberSaveable(key) { mutableStateOf(service?.category.orEmpty()) }
-    var department by rememberSaveable(key) { mutableStateOf(service?.department.orEmpty()) }
+    val isLab = (service?.kind ?: kind) == ServiceKind.LAB
+    var department by rememberSaveable(key) {
+        mutableStateOf(service?.department ?: if (isLab) "Laboratory" else "")
+    }
+    var specimen by rememberSaveable(key) { mutableStateOf(service?.specimen.orEmpty()) }
     var priceText by rememberSaveable(key) {
         mutableStateOf(service?.priceCents?.takeIf { it > 0L }?.let { formatAmount(it) }.orEmpty())
     }
@@ -78,6 +84,8 @@ fun ServiceFormScreen(
         code = service?.code.orEmpty(),
         category = category.trim(),
         department = department.trim(),
+        kind = if (isLab) ServiceKind.LAB else ServiceKind.SERVICE,
+        specimen = specimen.trim(),
         priceCents = price ?: 0L,
         notes = notes.trim(),
         active = active,
@@ -125,7 +133,7 @@ fun ServiceFormScreen(
 
     Column(modifier.fillMaxSize().background(c.background).imePadding()) {
         ScreenHeader(
-            title = if (service == null) "Register service" else "Edit service",
+            title = (if (service == null) "Register " else "Edit ") + (if (isLab) "lab test" else "service"),
             subtitle = service?.name,
             onBack = { leave() },
         )
@@ -137,14 +145,14 @@ fun ServiceFormScreen(
                 .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
-            FormSection(title = "Service details") {
+            FormSection(title = if (isLab) "Lab test details" else "Service details") {
                 FormTextField(
                     value = name,
                     onValueChange = { name = it },
-                    label = "Service name *",
+                    label = if (isLab) "Test name *" else "Service name *",
                     capitalization = KeyboardCapitalization.Words,
                     error = if (showErrors) nameError else null,
-                    supporting = "e.g. General consultation, Malaria test, Wound dressing",
+                    supporting = if (isLab) "e.g. Malaria RDT, Full haemogram, Blood glucose" else "e.g. General consultation, Malaria test, Wound dressing",
                 )
                 ComboField(
                     value = category,
@@ -171,6 +179,18 @@ fun ServiceFormScreen(
                     minLines = 3,
                     supporting = "Optional: what the service includes",
                 )
+            }
+
+            if (isLab) {
+                FormSection(title = "Sample") {
+                    FormTextField(
+                        value = specimen,
+                        onValueChange = { specimen = it },
+                        label = "Specimen",
+                        capitalization = KeyboardCapitalization.Words,
+                        supporting = "Optional: the sample taken, e.g. Blood, Urine, Stool",
+                    )
+                }
             }
 
             FormSection(title = "Price") {
@@ -206,7 +226,7 @@ fun ServiceFormScreen(
                 .padding(16.dp),
         ) {
             PrimaryButton(
-                text = if (service == null) "Register service" else "Save changes",
+                text = if (service == null) (if (isLab) "Register lab test" else "Register service") else "Save changes",
                 onClick = { trySave() },
             )
         }

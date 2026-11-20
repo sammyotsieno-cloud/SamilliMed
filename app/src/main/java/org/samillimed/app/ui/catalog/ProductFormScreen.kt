@@ -119,6 +119,8 @@ fun ProductFormScreen(
     var nameEdited by rememberSaveable(key) { mutableStateOf(product != null) }
     var brand by rememberSaveable(key) { mutableStateOf(product?.brandName.orEmpty()) }
     var dosageForm by rememberSaveable(key) { mutableStateOf(product?.dosageForm.orEmpty()) }
+    // Until the smallest unit is edited by hand, it follows the dosage form.
+    var baseUnitEdited by rememberSaveable(key) { mutableStateOf(product != null) }
     var description by rememberSaveable(key) { mutableStateOf(product?.description.orEmpty()) }
     var trackExpiry by rememberSaveable(key) { mutableStateOf(product?.trackExpiry ?: true) }
     var expiryTouched by rememberSaveable(key) { mutableStateOf(product != null) }
@@ -308,7 +310,10 @@ fun ProductFormScreen(
                     )
                     ComboField(
                         value = dosageForm,
-                        onValueChange = { dosageForm = it },
+                        onValueChange = {
+                            dosageForm = it
+                            if (!baseUnitEdited && isMedicine) unitRows[0] = unitRows[0].copy(name = it)
+                        },
                         label = "Dosage form",
                         options = catalog.list(ListType.DOSAGE_FORMS),
                     )
@@ -406,7 +411,10 @@ fun ProductFormScreen(
             ) {
                 ComboField(
                     value = unitRows.first().name,
-                    onValueChange = { unitRows[0] = unitRows[0].copy(name = it) },
+                    onValueChange = {
+                        baseUnitEdited = true
+                        unitRows[0] = unitRows[0].copy(name = it)
+                    },
                     label = "Smallest unit *",
                     options = unitOptions,
                     error = if (showErrors) errors.baseUnit else null,

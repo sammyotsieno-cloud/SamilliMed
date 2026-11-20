@@ -89,6 +89,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
+import org.samillimed.app.data.catalog.ServiceKind
+import org.samillimed.app.data.catalog.rankedForSearch
 
 // ---- the bill being typed --------------------------------------------------------------------
 
@@ -323,7 +325,7 @@ fun DispenseScreen(
     val serviceQty = serviceQtyText.trim().toLongOrNull()
     val servicePrice = parseMoney(servicePriceText)
     val serviceErrors = ItemErrors(
-        product = if (service == null) "Choose the service" else null,
+        product = if (service == null) "Choose the service or lab test" else null,
         unit = null,
         quantity = if (serviceQty == null || serviceQty <= 0L) "Enter a whole number above zero" else null,
         price = when {
@@ -581,11 +583,11 @@ fun DispenseScreen(
                     PrimaryButton(text = "Add to bill", onClick = { addItem() })
                 }
 
-                FormSection(title = "Add a service") {
+                FormSection(title = "Add a service or lab test") {
                     PickerField(
                         value = service?.name.orEmpty(),
-                        label = "Service",
-                        placeholder = "Tap to choose a registered service",
+                        label = "Service or lab test",
+                        placeholder = "Tap to choose a service or lab test",
                         onClick = { page = 2 },
                         error = if (showServiceErrors) serviceErrors.product else null,
                         supporting = service?.let { listOf(it.category, it.department).filter { s -> s.isNotBlank() }.joinToString(" · ") },
@@ -606,7 +608,7 @@ fun DispenseScreen(
                             error = if (showServiceErrors) serviceErrors.price else null,
                             supporting = "Filled from the registered standard price. You can change it for this bill.",
                         )
-                        PrimaryButton(text = "Add service to bill", onClick = { addService() })
+                        PrimaryButton(text = "Add to bill", onClick = { addService() })
                     }
                 }
 
@@ -816,7 +818,7 @@ private fun ProductSearch(
     var query by rememberSaveable { mutableStateOf("") }
     val shown = remember(products, query) {
         val q = query.trim().lowercase()
-        products.filter { p ->
+        rankedForSearch(products, q).filter { p ->
             q.isEmpty() || listOf(p.name, p.brandName, p.genericNames, p.strengthText, p.type, p.description)
                 .any { it.lowercase().contains(q) }
         }
@@ -877,28 +879,37 @@ private fun ServiceSearch(
 ) {
     val c = SamilliTheme.colors
     var query by rememberSaveable { mutableStateOf("") }
-    val shown = remember(services, query) {
+    var kindFilter by rememberSaveable { mutableStateOf("ALL") }
+    val shown = remember(services, query, kindFilter) {
         val q = query.trim().lowercase()
-        services.filter { s ->
+        services.filter { s -> kindFilter == "ALL" || s.kind == kindFilter }.filter { s ->
             q.isEmpty() || listOf(s.name, s.category, s.department, s.notes).any { it.lowercase().contains(q) }
         }
     }
     val navBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
 
     Column(modifier.fillMaxSize().background(c.background).imePadding()) {
-        ScreenHeader(title = "Choose a service", subtitle = "${services.size} active services", onBack = onClose)
+        ScreenHeader(title = "Choose a service or lab test", subtitle = "${services.size} active", onBack = onClose)
+        Row(
+            Modifier.padding(start = 16.dp, end = 16.dp, top = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            InvChip("All", kindFilter == "ALL") { kindFilter = "ALL" }
+            InvChip("Services", kindFilter == ServiceKind.SERVICE) { kindFilter = ServiceKind.SERVICE }
+            InvChip("Lab tests", kindFilter == ServiceKind.LAB) { kindFilter = ServiceKind.LAB }
+        }
         if (services.isEmpty()) {
             EmptyState(
                 icon = MoreIcons.Stethoscope,
                 title = "No services registered",
-                message = "Register a service from the Register tab, then come back.",
+                message = "Register a service or lab test from the Register tab, then come back.",
             )
         } else {
             Spacer(Modifier.height(14.dp))
             SearchField(
                 value = query,
                 onValueChange = { query = it },
-                placeholder = "Search services",
+                placeholder = "Search services and lab tests",
                 modifier = Modifier.padding(horizontal = 16.dp),
             )
             if (shown.isEmpty()) {

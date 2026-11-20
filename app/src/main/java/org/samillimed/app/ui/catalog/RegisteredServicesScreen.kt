@@ -49,6 +49,9 @@ import org.samillimed.app.ui.common.SearchField
 import org.samillimed.app.ui.home.SamilliCard
 import org.samillimed.app.ui.icons.MoreIcons
 import org.samillimed.app.ui.theme.SamilliTheme
+import org.samillimed.app.data.catalog.ServiceKind
+import org.samillimed.app.data.catalog.isLab
+import org.samillimed.app.ui.inventory.InvChip
 
 /** All registered services: search, filter by category, show or hide inactive ones. */
 @Composable
@@ -56,6 +59,7 @@ fun RegisteredServicesScreen(
     catalog: Catalog,
     onBack: () -> Unit,
     onAdd: () -> Unit,
+    onAddKind: ((String) -> Unit)? = null,
     onEdit: (ServiceItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -63,6 +67,7 @@ fun RegisteredServicesScreen(
     var query by rememberSaveable { mutableStateOf("") }
     var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
     var showInactive by rememberSaveable { mutableStateOf(false) }
+    var kindFilter by rememberSaveable { mutableStateOf("ALL") }
 
     val inactiveCount = catalog.services.count { !it.active }
     val activeCount = catalog.services.size - inactiveCount
@@ -70,10 +75,11 @@ fun RegisteredServicesScreen(
         catalog.services.map { it.category.trim() }.filter { it.isNotEmpty() }.distinct().sortedBy { it.lowercase() }
     }
     val categoryFilter = selectedCategory?.takeIf { it in categories }
-    val visible = remember(catalog.services, query, categoryFilter, showInactive) {
+    val visible = remember(catalog.services, query, categoryFilter, showInactive, kindFilter) {
         val q = query.trim().lowercase()
         catalog.services.filter { s ->
             (showInactive || s.active) &&
+                (kindFilter == "ALL" || s.kind == kindFilter) &&
                 (categoryFilter == null || s.category.trim() == categoryFilter) &&
                 (q.isEmpty() || listOf(s.name, s.category, s.department, s.notes).any { it.lowercase().contains(q) })
         }
@@ -82,7 +88,7 @@ fun RegisteredServicesScreen(
 
     Column(modifier.fillMaxSize().background(c.background)) {
         ScreenHeader(
-            title = "Registered Services",
+            title = "Services & Lab Tests",
             subtitle = if (catalog.loaded) {
                 "$activeCount active" + if (inactiveCount > 0) " · $inactiveCount inactive" else ""
             } else {
@@ -107,6 +113,14 @@ fun RegisteredServicesScreen(
                         placeholder = "Search services",
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
+                    Row(
+                        Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        InvChip("All", kindFilter == "ALL") { kindFilter = "ALL" }
+                        InvChip("Services", kindFilter == ServiceKind.SERVICE) { kindFilter = ServiceKind.SERVICE }
+                        InvChip("Lab tests", kindFilter == ServiceKind.LAB) { kindFilter = ServiceKind.LAB }
+                    }
                     if (categories.size > 1) {
                         Spacer(Modifier.height(10.dp))
                         ChipRow(options = categories, selected = categoryFilter, onSelect = { selectedCategory = it })
@@ -147,8 +161,11 @@ fun RegisteredServicesScreen(
             }
 
             AddFab(
-                text = "Add service",
-                onClick = onAdd,
+                text = if (kindFilter == ServiceKind.LAB) "Add lab test" else "Add service",
+                onClick = {
+                    val kind = if (kindFilter == ServiceKind.LAB) ServiceKind.LAB else ServiceKind.SERVICE
+                    onAddKind?.invoke(kind) ?: onAdd()
+                },
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .windowInsetsPadding(WindowInsets.navigationBars)
@@ -178,6 +195,7 @@ private fun ServiceCard(s: ServiceItem, onClick: () -> Unit) {
                     modifier = Modifier.padding(top = 2.dp),
                 )
             }
+            if (s.isLab) ServiceTag("LAB TEST", c.deltaBg, c.deltaText)
             if (!s.active) ServiceTag("INACTIVE", c.textMuted.copy(alpha = 0.25f), c.textSecondary)
         }
 
@@ -190,6 +208,7 @@ private fun ServiceCard(s: ServiceItem, onClick: () -> Unit) {
             ) {
                 if (s.category.isNotBlank()) ServiceTag(s.category, c.iconBg, c.accentText)
                 if (s.department.isNotBlank()) ServiceTag(s.department, c.deltaBg, c.deltaText)
+                if (s.specimen.isNotBlank()) ServiceTag(s.specimen, c.iconBg, c.accentText)
             }
         }
 

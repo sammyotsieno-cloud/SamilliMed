@@ -78,6 +78,12 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import java.util.UUID
+import org.samillimed.app.data.catalog.ServiceKind
+import org.samillimed.app.data.catalog.rankedForSearch
+import org.samillimed.app.data.inventory.ReceiptType
+import org.samillimed.app.ui.catalog.ProductFormScreen
+import org.samillimed.app.ui.catalog.RegisterChoiceDialog
+import org.samillimed.app.ui.catalog.ServiceFormScreen
 
 // ---- the receipt being typed -----------------------------------------------------------------
 
@@ -214,6 +220,10 @@ fun ReceiveStockScreen(
 
     // the receipt. receiptId stays the same for this draft, so saving twice can never receive twice.
     val receiptId = rememberSaveable { UUID.randomUUID().toString() }
+    // Opening stock: stock already on the shelves, not a delivery from a supplier.
+    var opening by rememberSaveable { mutableStateOf(false) }
+    var showRegisterChoice by rememberSaveable { mutableStateOf(false) }
+    var registering by rememberSaveable { mutableStateOf<String?>(null) } // PRODUCT, SERVICE or LAB
     var supplier by rememberSaveable { mutableStateOf("") }
     var reference by rememberSaveable { mutableStateOf("") }
     var receivedText by rememberSaveable { mutableStateOf(todayText()) }
@@ -276,7 +286,7 @@ fun ReceiveStockScreen(
             unit != null && baseQuantity == null -> "That quantity is too large"
             else -> null
         },
-        cost = moneyError(costText, cost)
+        cost = (if (opening && costText.isBlank()) null else moneyError(costText, cost))
             ?: if (quantity != null && quantity > 0L && cost != null && lineCost == null) "The line total is too large" else null,
         price = if (priceText.isBlank()) {
             null
@@ -304,7 +314,7 @@ fun ReceiveStockScreen(
         receivedDate.isAfter(today) -> "The date cannot be in the future"
         else -> null
     }
-    val supplierError = if (supplier.isBlank()) "Enter the supplier name" else null
+    val supplierError = if (!opening && supplier.isBlank()) "Enter the supplier name" else null
 
     val batchInProgress = productId != null || quantityText.isNotBlank() || batchNumber.isNotBlank() ||
         expiryText.isNotBlank() || costText.isNotBlank() || priceText.isNotBlank()
@@ -381,6 +391,7 @@ fun ReceiveStockScreen(
         saving = true
         repository.saveReceipt(
             receipt = GoodsReceipt(
+                receiptType = if (opening) ReceiptType.OPENING else ReceiptType.SUPPLIER,
                 id = receiptId,
                 supplierName = supplier.trim(),
                 referenceNumber = reference.trim(),
@@ -406,7 +417,28 @@ fun ReceiveStockScreen(
     BackHandler(enabled = !picking) { leave() }
 
     // ---- screen ----------------------------------------------------------------------------
-    if (picking) {
+    if (showRegisterChoice) {
+        RegisterChoiceDialog(
+            onProduct = { showRegisterChoice = false; registering = "PRODUCT" },
+            onService = { showRegisterChoice = false; registering = "SERVICE" },
+            onLabTest = { showRegisterChoice = false; registering = "LAB" },
+            onDismiss = { showRegisterChoice = false },
+        )
+    }
+    if (registering != null) {
+        // Shown inside this screen, so the receipt being typed is kept while you register.
+        if (registering == "PRODUCT") {
+            ProductFormScreen(catalog = catalog, product = null, onClose = { registering = null }, modifier = modifier)
+        } else {
+            ServiceFormScreen(
+                catalog = catalog,
+                service = null,
+                kind = if (registering == "LAB") ServiceKind.LAB else ServiceKind.SERVICE,
+                onClose = { registering = null },
+                modifier = modifier,
+            )
+        }
+    } else if (picking) {
         ProductPicker(
             products = activeProducts,
             onPick = { p ->
@@ -421,7 +453,8 @@ fun ReceiveStockScreen(
         Column(modifier.fillMaxSize().background(c.background).imePadding()) {
             ScreenHeader(
                 title = "Receive Stock",
-                subtitle = "Record a supplier delivery",
+                subtitle = if (opening) "Opening stock: stock already on hand" else "Record a supplier delivery",
+                actions = { InvHeaderPill("Register") { showRegisterChoice = true } },
                 onBack = { leave() },
             )
 
@@ -432,11 +465,23 @@ fun ReceiveStockScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    InvChip("Supplier delivery", !opening) { opening = false }
+                    InvChip("Opening stock", opening) { opening = true }
+                }
+                if (opening) {
+                    Text(
+                        "Use this for stock already on your shelves when you start using the app. " +
+                            "It is recorded as opening stock, not as a purchase from a supplier. Cost is optional.",
+                        color = c.textSecondary,
+                        fontSize = 12.sp,
+                    )
+                }
                 FormSection(title = "Receipt details") {
                     FormTextField(
                         value = supplier,
                         onValueChange = { supplier = it },
-                        label = "Supplier name *",
+                        label = if (opening) "Supplier name (optional)" else "Supplier name *",
                         error = if (showReceiptErrors) supplierError else null,
                     )
                     FormTextField(
@@ -731,7 +776,7 @@ private fun ProductPicker(
     var query by rememberSaveable { mutableStateOf("") }
     val shown = remember(products, query) {
         val q = query.trim().lowercase()
-        products.filter { p ->
+        rankedForSearch(products, q).filter { p ->
             q.isEmpty() || listOf(p.name, p.brandName, p.genericNames, p.strengthText, p.type, p.description)
                 .any { it.lowercase().contains(q) }
         }
