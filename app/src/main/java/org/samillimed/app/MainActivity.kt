@@ -63,6 +63,8 @@ import org.samillimed.app.ui.settings.rememberAppSettings
 import org.samillimed.app.ui.splash.SamilliSplashHost
 import org.samillimed.app.ui.theme.SamilliMedTheme
 import java.time.LocalDate
+import org.samillimed.app.data.catalog.ServiceKind
+import org.samillimed.app.ui.catalog.RegisterChoiceDialog
 
 class MainActivity : ComponentActivity() {
 
@@ -177,12 +179,39 @@ class MainActivity : ComponentActivity() {
                             mutableStateOf<String?>(null)
                         }
 
+                        // The Register pop-up, and whether a new item is a service or a lab test.
+                        var showRegister by rememberSaveable { mutableStateOf(false) }
+                        var newKind by rememberSaveable { mutableStateOf(ServiceKind.SERVICE) }
+
                         // Service form:
                         // null = closed
                         // "new" = registering
                         // otherwise = service ID being edited
                         var serviceForm by rememberSaveable {
                             mutableStateOf<String?>(null)
+                        }
+
+                        if (showRegister) {
+                            RegisterChoiceDialog(
+                                onProduct = {
+                                    showRegister = false
+                                    serviceForm = null
+                                    productForm = "new"
+                                },
+                                onService = {
+                                    showRegister = false
+                                    productForm = null
+                                    newKind = ServiceKind.SERVICE
+                                    serviceForm = "new"
+                                },
+                                onLabTest = {
+                                    showRegister = false
+                                    productForm = null
+                                    newKind = ServiceKind.LAB
+                                    serviceForm = "new"
+                                },
+                                onDismiss = { showRegister = false },
+                            )
                         }
 
                         AppDrawer(
@@ -196,7 +225,12 @@ class MainActivity : ComponentActivity() {
                                 productForm = null
                                 serviceForm = null
 
-                                nav.navigate(route)
+                                if (route == Route.Register) {
+                                    showRegister = true
+                                } else {
+                                    nav.navigate(route)
+                                }
+                                Unit
                             },
                             userEmail = "${auth.email} (${CurrentUser.roleLabel()})",
                             isAdmin = CurrentUser.isAdmin,
@@ -283,6 +317,7 @@ class MainActivity : ComponentActivity() {
                                             ServiceFormScreen(
                                                 catalog = catalog,
                                                 service = editing,
+                                                kind = newKind,
                                                 onClose = {
                                                     serviceForm = null
                                                 },
@@ -313,7 +348,14 @@ class MainActivity : ComponentActivity() {
                                                     when (index) {
                                                         1 -> nav.navigate(Route.Dispense)
                                                         2 -> nav.navigate(if (admin) Route.ReceiveStock else Route.Inventory)
-                                                        3 -> nav.navigate(if (admin) Route.Register else Route.Sales)
+                                                        3 -> {
+                                                            if (admin) {
+                                                                showRegister = true
+                                                            } else {
+                                                                nav.navigate(Route.Sales)
+                                                            }
+                                                            Unit
+                                                        }
                                                         else -> Unit
                                                     }
                                                 },
@@ -370,6 +412,11 @@ class MainActivity : ComponentActivity() {
                                         // REGISTERED SERVICES
                                         Route.RegisteredServices -> {
                                             RegisteredServicesScreen(
+                                                onAddKind = { kind ->
+                                                    productForm = null
+                                                    newKind = kind
+                                                    serviceForm = "new"
+                                                },
                                                 catalog = catalog,
                                                 onBack = {
                                                     nav.back()

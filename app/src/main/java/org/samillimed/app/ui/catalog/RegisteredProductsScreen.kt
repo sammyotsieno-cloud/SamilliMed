@@ -62,6 +62,7 @@ import org.samillimed.app.ui.common.SearchField
 import org.samillimed.app.ui.home.SamilliCard
 import org.samillimed.app.ui.icons.MoreIcons
 import org.samillimed.app.ui.theme.SamilliTheme
+import org.samillimed.app.data.catalog.rankedForSearch
 
 /** All registered products: search, filter by type, show or hide inactive ones, export the list. */
 @Composable
@@ -105,7 +106,7 @@ fun RegisteredProductsScreen(
     val typeFilter = selectedType?.takeIf { it in types }
     val visible = remember(catalog.products, query, typeFilter, showInactive) {
         val q = query.trim().lowercase()
-        catalog.products.filter { p ->
+        (if (q.isEmpty()) catalog.products else rankedForSearch(catalog.products, q)).filter { p ->
             (showInactive || p.active) &&
                 (typeFilter == null || p.type.trim() == typeFilter) &&
                 (q.isEmpty() || listOf(
