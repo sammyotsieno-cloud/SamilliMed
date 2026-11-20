@@ -310,6 +310,7 @@ private fun MovementRow(m: StockMovement, product: Product) {
         StockMovementType.ADJUSTMENT -> AdjustmentReason.label(m.reason).ifBlank { "Adjustment" }
         StockMovementType.RETURN -> "Returned by customer"
         StockMovementType.OPENING -> "Opening stock"
+        StockMovementType.OPENING -> "Opening stock"
         else -> m.movementType
     }
     val increase = m.quantityChange > 0L

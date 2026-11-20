@@ -60,6 +60,7 @@ fun RegisteredServicesScreen(
     onBack: () -> Unit,
     onAdd: () -> Unit,
     onAddKind: ((String) -> Unit)? = null,
+    onAddKind: ((String) -> Unit)? = null,
     onEdit: (ServiceItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -67,6 +68,7 @@ fun RegisteredServicesScreen(
     var query by rememberSaveable { mutableStateOf("") }
     var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
     var showInactive by rememberSaveable { mutableStateOf(false) }
+    var kindFilter by rememberSaveable { mutableStateOf("ALL") }
     var kindFilter by rememberSaveable { mutableStateOf("ALL") }
 
     val inactiveCount = catalog.services.count { !it.active }
@@ -79,6 +81,7 @@ fun RegisteredServicesScreen(
         val q = query.trim().lowercase()
         catalog.services.filter { s ->
             (showInactive || s.active) &&
+                (kindFilter == "ALL" || s.kind == kindFilter) &&
                 (kindFilter == "ALL" || s.kind == kindFilter) &&
                 (categoryFilter == null || s.category.trim() == categoryFilter) &&
                 (q.isEmpty() || listOf(s.name, s.category, s.department, s.notes).any { it.lowercase().contains(q) })
@@ -113,6 +116,14 @@ fun RegisteredServicesScreen(
                         placeholder = "Search services",
                         modifier = Modifier.padding(horizontal = 16.dp),
                     )
+                    Row(
+                        Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    ) {
+                        InvChip("All", kindFilter == "ALL") { kindFilter = "ALL" }
+                        InvChip("Services", kindFilter == ServiceKind.SERVICE) { kindFilter = ServiceKind.SERVICE }
+                        InvChip("Lab tests", kindFilter == ServiceKind.LAB) { kindFilter = ServiceKind.LAB }
+                    }
                     Row(
                         Modifier.padding(start = 16.dp, end = 16.dp, top = 10.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -196,6 +207,7 @@ private fun ServiceCard(s: ServiceItem, onClick: () -> Unit) {
                 )
             }
             if (s.isLab) ServiceTag("LAB TEST", c.deltaBg, c.deltaText)
+            if (s.isLab) ServiceTag("LAB TEST", c.deltaBg, c.deltaText)
             if (!s.active) ServiceTag("INACTIVE", c.textMuted.copy(alpha = 0.25f), c.textSecondary)
         }
 
@@ -208,6 +220,7 @@ private fun ServiceCard(s: ServiceItem, onClick: () -> Unit) {
             ) {
                 if (s.category.isNotBlank()) ServiceTag(s.category, c.iconBg, c.accentText)
                 if (s.department.isNotBlank()) ServiceTag(s.department, c.deltaBg, c.deltaText)
+                if (s.specimen.isNotBlank()) ServiceTag(s.specimen, c.iconBg, c.accentText)
                 if (s.specimen.isNotBlank()) ServiceTag(s.specimen, c.iconBg, c.accentText)
             }
         }

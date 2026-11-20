@@ -882,7 +882,7 @@ private fun ServiceSearch(
     var kindFilter by rememberSaveable { mutableStateOf("ALL") }
     val shown = remember(services, query, kindFilter) {
         val q = query.trim().lowercase()
-        services.filter { s -> kindFilter == "ALL" || s.kind == kindFilter }.filter { s ->
+        services.filter { s -> kindFilter == "ALL" || s.kind == kindFilter }.filter { s -> kindFilter == "ALL" || s.kind == kindFilter }.filter { s ->
             q.isEmpty() || listOf(s.name, s.category, s.department, s.notes).any { it.lowercase().contains(q) }
         }
     }

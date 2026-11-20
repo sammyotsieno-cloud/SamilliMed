@@ -185,6 +185,8 @@ private fun ServiceItem.toMap(): Map<String, Any> = mapOf(
     "notes" to notes,
             "kind" to kind,
             "specimen" to specimen,
+            "kind" to kind,
+            "specimen" to specimen,
     "active" to active,
 )
 

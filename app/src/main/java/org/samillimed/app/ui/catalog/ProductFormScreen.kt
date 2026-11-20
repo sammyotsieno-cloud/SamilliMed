@@ -121,6 +121,8 @@ fun ProductFormScreen(
     var dosageForm by rememberSaveable(key) { mutableStateOf(product?.dosageForm.orEmpty()) }
     // Until the smallest unit is edited by hand, it follows the dosage form.
     var baseUnitEdited by rememberSaveable(key) { mutableStateOf(product != null) }
+    // Until the smallest unit is edited by hand, it follows the dosage form.
+    var baseUnitEdited by rememberSaveable(key) { mutableStateOf(product != null) }
     var description by rememberSaveable(key) { mutableStateOf(product?.description.orEmpty()) }
     var trackExpiry by rememberSaveable(key) { mutableStateOf(product?.trackExpiry ?: true) }
     var expiryTouched by rememberSaveable(key) { mutableStateOf(product != null) }

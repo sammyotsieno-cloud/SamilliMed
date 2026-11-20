@@ -49,6 +49,7 @@ import org.samillimed.app.data.catalog.ServiceKind
 @Composable
 fun ServiceFormScreen(
     kind: String = ServiceKind.SERVICE,
+    kind: String = ServiceKind.SERVICE,
     catalog: Catalog,
     service: ServiceItem?,
     onClose: () -> Unit,
@@ -84,6 +85,8 @@ fun ServiceFormScreen(
         code = service?.code.orEmpty(),
         category = category.trim(),
         department = department.trim(),
+        kind = if (isLab) ServiceKind.LAB else ServiceKind.SERVICE,
+        specimen = specimen.trim(),
         kind = if (isLab) ServiceKind.LAB else ServiceKind.SERVICE,
         specimen = specimen.trim(),
         priceCents = price ?: 0L,
@@ -179,6 +182,18 @@ fun ServiceFormScreen(
                     minLines = 3,
                     supporting = "Optional: what the service includes",
                 )
+            }
+
+            if (isLab) {
+                FormSection(title = "Sample") {
+                    FormTextField(
+                        value = specimen,
+                        onValueChange = { specimen = it },
+                        label = "Specimen",
+                        capitalization = KeyboardCapitalization.Words,
+                        supporting = "Optional: the sample taken, e.g. Blood, Urine, Stool",
+                    )
+                }
             }
 
             if (isLab) {

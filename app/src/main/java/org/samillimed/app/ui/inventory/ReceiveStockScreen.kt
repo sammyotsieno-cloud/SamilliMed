@@ -224,6 +224,10 @@ fun ReceiveStockScreen(
     var opening by rememberSaveable { mutableStateOf(false) }
     var showRegisterChoice by rememberSaveable { mutableStateOf(false) }
     var registering by rememberSaveable { mutableStateOf<String?>(null) } // PRODUCT, SERVICE or LAB
+    // Opening stock: stock already on the shelves, not a delivery from a supplier.
+    var opening by rememberSaveable { mutableStateOf(false) }
+    var showRegisterChoice by rememberSaveable { mutableStateOf(false) }
+    var registering by rememberSaveable { mutableStateOf<String?>(null) } // PRODUCT, SERVICE or LAB
     var supplier by rememberSaveable { mutableStateOf("") }
     var reference by rememberSaveable { mutableStateOf("") }
     var receivedText by rememberSaveable { mutableStateOf(todayText()) }
@@ -392,6 +396,7 @@ fun ReceiveStockScreen(
         repository.saveReceipt(
             receipt = GoodsReceipt(
                 receiptType = if (opening) ReceiptType.OPENING else ReceiptType.SUPPLIER,
+                receiptType = if (opening) ReceiptType.OPENING else ReceiptType.SUPPLIER,
                 id = receiptId,
                 supplierName = supplier.trim(),
                 referenceNumber = reference.trim(),
@@ -418,6 +423,27 @@ fun ReceiveStockScreen(
 
     // ---- screen ----------------------------------------------------------------------------
     if (showRegisterChoice) {
+        RegisterChoiceDialog(
+            onProduct = { showRegisterChoice = false; registering = "PRODUCT" },
+            onService = { showRegisterChoice = false; registering = "SERVICE" },
+            onLabTest = { showRegisterChoice = false; registering = "LAB" },
+            onDismiss = { showRegisterChoice = false },
+        )
+    }
+    if (registering != null) {
+        // Shown inside this screen, so the receipt being typed is kept while you register.
+        if (registering == "PRODUCT") {
+            ProductFormScreen(catalog = catalog, product = null, onClose = { registering = null }, modifier = modifier)
+        } else {
+            ServiceFormScreen(
+                catalog = catalog,
+                service = null,
+                kind = if (registering == "LAB") ServiceKind.LAB else ServiceKind.SERVICE,
+                onClose = { registering = null },
+                modifier = modifier,
+            )
+        }
+    } else if (showRegisterChoice) {
         RegisterChoiceDialog(
             onProduct = { showRegisterChoice = false; registering = "PRODUCT" },
             onService = { showRegisterChoice = false; registering = "SERVICE" },
@@ -465,6 +491,18 @@ fun ReceiveStockScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
             ) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    InvChip("Supplier delivery", !opening) { opening = false }
+                    InvChip("Opening stock", opening) { opening = true }
+                }
+                if (opening) {
+                    Text(
+                        "Use this for stock already on your shelves when you start using the app. " +
+                            "It is recorded as opening stock, not as a purchase from a supplier. Cost is optional.",
+                        color = c.textSecondary,
+                        fontSize = 12.sp,
+                    )
+                }
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     InvChip("Supplier delivery", !opening) { opening = false }
                     InvChip("Opening stock", opening) { opening = true }

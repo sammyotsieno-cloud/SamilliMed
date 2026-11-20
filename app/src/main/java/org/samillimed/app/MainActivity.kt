@@ -183,12 +183,39 @@ class MainActivity : ComponentActivity() {
                         var showRegister by rememberSaveable { mutableStateOf(false) }
                         var newKind by rememberSaveable { mutableStateOf(ServiceKind.SERVICE) }
 
+                        // The Register pop-up, and whether a new item is a service or a lab test.
+                        var showRegister by rememberSaveable { mutableStateOf(false) }
+                        var newKind by rememberSaveable { mutableStateOf(ServiceKind.SERVICE) }
+
                         // Service form:
                         // null = closed
                         // "new" = registering
                         // otherwise = service ID being edited
                         var serviceForm by rememberSaveable {
                             mutableStateOf<String?>(null)
+                        }
+
+                        if (showRegister) {
+                            RegisterChoiceDialog(
+                                onProduct = {
+                                    showRegister = false
+                                    serviceForm = null
+                                    productForm = "new"
+                                },
+                                onService = {
+                                    showRegister = false
+                                    productForm = null
+                                    newKind = ServiceKind.SERVICE
+                                    serviceForm = "new"
+                                },
+                                onLabTest = {
+                                    showRegister = false
+                                    productForm = null
+                                    newKind = ServiceKind.LAB
+                                    serviceForm = "new"
+                                },
+                                onDismiss = { showRegister = false },
+                            )
                         }
 
                         if (showRegister) {
@@ -228,7 +255,12 @@ class MainActivity : ComponentActivity() {
                                 if (route == Route.Register) {
                                     showRegister = true
                                 } else {
+                                    if (route == Route.Register) {
+                                    showRegister = true
+                                } else {
                                     nav.navigate(route)
+                                }
+                                Unit
                                 }
                                 Unit
                             },
@@ -317,6 +349,7 @@ class MainActivity : ComponentActivity() {
                                             ServiceFormScreen(
                                                 catalog = catalog,
                                                 service = editing,
+                                                kind = newKind,
                                                 kind = newKind,
                                                 onClose = {
                                                     serviceForm = null
@@ -412,6 +445,11 @@ class MainActivity : ComponentActivity() {
                                         // REGISTERED SERVICES
                                         Route.RegisteredServices -> {
                                             RegisteredServicesScreen(
+                                                onAddKind = { kind ->
+                                                    productForm = null
+                                                    newKind = kind
+                                                    serviceForm = "new"
+                                                },
                                                 onAddKind = { kind ->
                                                     productForm = null
                                                     newKind = kind

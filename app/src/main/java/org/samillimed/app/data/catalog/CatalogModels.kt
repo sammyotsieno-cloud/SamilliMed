@@ -102,6 +102,10 @@ data class ServiceItem(
     val kind: String = ServiceKind.SERVICE,
     /** Lab tests: the sample taken, for example Blood or Urine. */
     val specimen: String = "",
+    /** SERVICE or LAB. A lab test is registered, listed and billed like a service. */
+    val kind: String = ServiceKind.SERVICE,
+    /** Lab tests: the sample taken, for example Blood or Urine. */
+    val specimen: String = "",
     val active: Boolean = true,
     val createdAtMillis: Long = 0,
     val createdBy: String = "",

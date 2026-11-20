@@ -258,6 +258,7 @@ class InventoryRepository(
                     "id" to receiptRef.id,
                     "supplierName" to receipt.supplierName.trim(),
                     "receiptType" to receipt.receiptType,
+                    "receiptType" to receipt.receiptType,
                     "referenceNumber" to receipt.referenceNumber.trim(),
                     "receivedAtMillis" to receipt.receivedAtMillis,
                     "createdAtMillis" to now,
