@@ -87,7 +87,7 @@ class InventoryRepository(
             onFailure("A receipt must contain at least one product.")
             return
         }
-        if (receipt.receiptType != ReceiptType.OPENING && receipt.supplierName.isBlank()) {
+        if (receipt.supplierName.isBlank()) {
             onFailure("Enter the supplier name.")
             return
         }
@@ -257,8 +257,6 @@ class InventoryRepository(
                 mapOf(
                     "id" to receiptRef.id,
                     "supplierName" to receipt.supplierName.trim(),
-                    "receiptType" to receipt.receiptType,
-                    "receiptType" to receipt.receiptType,
                     "referenceNumber" to receipt.referenceNumber.trim(),
                     "receivedAtMillis" to receipt.receivedAtMillis,
                     "createdAtMillis" to now,
@@ -336,7 +334,7 @@ class InventoryRepository(
                         "receiptLineId" to lineRef.id,
                         "dispensingId" to "",
                         "dispensingLineId" to "",
-                        "movementType" to (if (receipt.receiptType == ReceiptType.OPENING) StockMovementType.OPENING else StockMovementType.RECEIPT),
+                        "movementType" to StockMovementType.RECEIPT,
                         "quantityChange" to prepared.baseQuantity,
                         "resultingBatchBalance" to prepared.baseQuantity,
                         "resultingProductBalance" to newBalance,

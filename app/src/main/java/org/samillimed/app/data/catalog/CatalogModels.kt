@@ -98,14 +98,6 @@ data class ServiceItem(
     /** Kept in cents (KSh 12.50 = 1250) so that sums are always exact. */
     val priceCents: Long = 0,
     val notes: String = "",
-    /** SERVICE or LAB. A lab test is registered, listed and billed like a service. */
-    val kind: String = ServiceKind.SERVICE,
-    /** Lab tests: the sample taken, for example Blood or Urine. */
-    val specimen: String = "",
-    /** SERVICE or LAB. A lab test is registered, listed and billed like a service. */
-    val kind: String = ServiceKind.SERVICE,
-    /** Lab tests: the sample taken, for example Blood or Urine. */
-    val specimen: String = "",
     val active: Boolean = true,
     val createdAtMillis: Long = 0,
     val createdBy: String = "",

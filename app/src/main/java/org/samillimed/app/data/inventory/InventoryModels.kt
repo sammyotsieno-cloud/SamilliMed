@@ -15,8 +15,6 @@ object StockMovementType {
     const val DISPENSING = "DISPENSING"
     const val ADJUSTMENT = "ADJUSTMENT"
     const val RETURN = "RETURN"
-    const val OPENING = "OPENING"
-    const val OPENING = "OPENING"
 }
 
 /** How a bill was paid. */
@@ -49,10 +47,6 @@ data class GoodsReceipt(
     val createdAtMillis: Long = 0,
     val createdBy: String = "",
     val status: String = ReceiptStatus.COMPLETED,
-    /** SUPPLIER (a delivery) or OPENING (stock already on hand when the facility started). */
-    val receiptType: String = ReceiptType.SUPPLIER,
-    /** SUPPLIER (a delivery) or OPENING (stock already on hand when the facility started). */
-    val receiptType: String = ReceiptType.SUPPLIER,
     val totalCostCents: Long = 0,
     val lineCount: Int = 0,
 )
