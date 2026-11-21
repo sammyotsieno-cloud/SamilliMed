@@ -65,6 +65,7 @@ import org.samillimed.app.ui.theme.SamilliMedTheme
 import java.time.LocalDate
 import org.samillimed.app.data.catalog.ServiceKind
 import org.samillimed.app.ui.catalog.RegisterChoiceDialog
+import org.samillimed.app.ui.finance.ExpensesScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -504,7 +505,12 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
 
-                                        // NOT BUILT YET: Drug Index and Expenses
+                                        // EXPENSES
+                                        Route.Expenses -> {
+                                            ExpensesScreen(onBack = { nav.back() })
+                                        }
+
+                                        // NOT BUILT YET: Drug Index
                                         else -> {
                                             ComingSoonScreen(
                                                 title = nav.current.title,
