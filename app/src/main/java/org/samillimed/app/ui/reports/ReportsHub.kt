@@ -295,7 +295,7 @@ private fun ReportsHub(
 
         when {
             totals == null -> LoadingState()
-            totals.bills == 0L && totals.writeOffCents == 0L -> EmptyState(
+            totals.bills == 0L && totals.writeOffCents == 0L && totals.refundCents == 0L -> EmptyState(
                 icon = SamilliIcons.Box,
                 title = "No sales in this period",
                 message = "Bills and stock losses will appear here as soon as there are some.",
@@ -332,6 +332,7 @@ private fun ReportsHub(
                 if (totals.shifts.size > 1) ShiftsSection(totals)
                 TopSection(catalog, stats, onTopSellers)
                 LossSection(totals)
+                ExpensesSection(totals)
             }
         }
     }
@@ -341,14 +342,23 @@ private fun ReportsHub(
 private fun HeadlineSection(totals: ReportTotals, previous: ReportTotals?, comparison: String) {
     val c = SamilliTheme.colors
     SamilliCard(Modifier.fillMaxWidth()) {
-        Text("Sales", color = c.textSecondary, fontSize = 12.sp)
+        Text(if (totals.refundCents > 0L) "Net sales (after refunds)" else "Sales", color = c.textSecondary, fontSize = 12.sp)
         Text(formatKsh(totals.salesCents), color = c.textPrimary, fontSize = 26.sp, fontWeight = FontWeight.Bold)
         Spacer(Modifier.height(6.dp))
         ChangeChip(previous?.let { changePercent(totals.salesCents, it.salesCents) }, comparison)
+        if (totals.refundCents > 0L) {
+            Text(
+                text = "Refunds of ${formatKsh(totals.refundCents)} in ${totals.refundCount} " +
+                    "return${if (totals.refundCount == 1L) "" else "s"} are already taken off.",
+                color = c.urgent,
+                fontSize = 11.sp,
+                modifier = Modifier.padding(top = 6.dp),
+            )
+        }
     }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         MetricCard(
-            title = "Profit",
+            title = "Gross profit",
             value = formatKsh(totals.profitCents),
             sub = if (totals.salesCents > 0L) String.format(Locale.US, "%.0f%% margin", totals.marginPercent) else null,
             modifier = Modifier.weight(1f),

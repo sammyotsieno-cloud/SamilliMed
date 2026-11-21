@@ -144,16 +144,18 @@ fun BillsScreen(
                 message = "Bills saved from Dispense will appear here.",
             )
             else -> {
-                val total = list.sumOf { it.totalAmountCents }
+                val voided = list.count { it.status == BillStatus.VOIDED }
+                val active = (list.size - voided).coerceAtLeast(1)
+                val total = list.filter { it.status != BillStatus.VOIDED }.sumOf { it.totalAmountCents }
                 SamilliCard(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Column(Modifier.weight(1f)) {
-                            Text("Total for the day", color = c.textSecondary, fontSize = 12.sp)
+                            Text("Billed that day (voided excluded)", color = c.textSecondary, fontSize = 12.sp)
                             Text(formatKsh(total), color = c.textPrimary, fontSize = 20.sp, fontWeight = FontWeight.Bold)
                         }
                         Column(horizontalAlignment = Alignment.End) {
-                            Text("${fmtNumber(list.size.toLong())} bills", color = c.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                            Text("average ${formatKsh(total / list.size)}", color = c.textSecondary, fontSize = 12.sp)
+                            Text("${fmtNumber(list.size.toLong())} bills" + if (voided > 0) " · $voided voided" else "", color = c.textPrimary, fontSize = 13.sp, fontWeight = FontWeight.Bold)
+                            Text("average ${formatKsh(total / active)}", color = c.textSecondary, fontSize = 12.sp)
                         }
                     }
                 }

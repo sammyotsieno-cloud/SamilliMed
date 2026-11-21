@@ -24,6 +24,14 @@ data class DailySummary(
     val lossByReason: Map<String, Long> = emptyMap(),
     val returnedToSupplierCents: Long = 0,
     val adjustmentCount: Long = 0,
+    /** Refunds paid out on this day (returns and voids). Already subtracted from the sales figures. */
+    val refundCents: Long = 0,
+    val refundCount: Long = 0,
+    /** Expenses recorded for this day (voided ones already taken off), and what they were for. */
+    val expensesCents: Long = 0,
+    val expenseCount: Long = 0,
+    val expenseByCategory: Map<String, Long> = emptyMap(),
+    val expensePayments: Map<String, Long> = emptyMap(),
 )
 
 private fun DocumentSnapshot.longMap(field: String): Map<String, Long> =
@@ -54,6 +62,12 @@ fun DocumentSnapshot.toDailySummary(): DailySummary = DailySummary(
     lossByReason = longMap("lossByReason"),
     returnedToSupplierCents = getLong("returnedToSupplierCents") ?: 0L,
     adjustmentCount = getLong("adjustmentCount") ?: 0L,
+    refundCents = getLong("refundCents") ?: 0L,
+    refundCount = getLong("refundCount") ?: 0L,
+    expensesCents = getLong("expensesCents") ?: 0L,
+    expenseCount = getLong("expenseCount") ?: 0L,
+    expenseByCategory = longMap("expenseByCategory"),
+    expensePayments = longMap("expensePayments"),
 )
 
 /** Profit as a share of sales, in percent. 0 when nothing was sold. */

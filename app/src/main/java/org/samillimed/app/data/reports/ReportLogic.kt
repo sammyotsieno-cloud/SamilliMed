@@ -123,6 +123,11 @@ class ReportTotals(
     val lossByReason: Map<String, Long>,
     val returnedToSupplierCents: Long,
     val afterShiftBills: Long,
+    val refundCents: Long,
+    val refundCount: Long,
+    val expensesCents: Long,
+    val expenseCount: Long,
+    val expenseByCategory: Map<String, Long>,
 ) {
     val averageBillCents: Long get() = if (bills > 0L) salesCents / bills else 0L
     val marginPercent: Double get() = if (salesCents > 0L) profitCents * 100.0 / salesCents else 0.0
@@ -158,6 +163,11 @@ fun List<DailySummary>.totals(): ReportTotals {
         lossByReason = mergeLongMaps(map { it.lossByReason }),
         returnedToSupplierCents = sumOf { it.returnedToSupplierCents },
         afterShiftBills = sumOf { it.afterShiftBills },
+        refundCents = sumOf { it.refundCents },
+        refundCount = sumOf { it.refundCount },
+        expensesCents = sumOf { it.expensesCents },
+        expenseCount = sumOf { it.expenseCount },
+        expenseByCategory = mergeLongMaps(map { it.expenseByCategory }),
     )
 }
 
@@ -207,6 +217,9 @@ fun buildInsights(totals: ReportTotals, summaries: List<DailySummary>): List<Str
         val share = if (totals.salesCents > 0L) ", ${pct(totals.writeOffCents, totals.salesCents)}% of sales" else ""
         out.add("Stock written off cost ${formatKsh(totals.writeOffCents)}$share.")
     }
+    if (totals.refundCount > 0L) {
+        out.add("${totals.refundCount} return${if (totals.refundCount == 1L) "" else "s"} refunded ${formatKsh(totals.refundCents)}.")
+    }
     if (totals.afterShiftBills > 0L) {
         out.add("${totals.afterShiftBills} bill${if (totals.afterShiftBills == 1L) " was" else "s were"} made after the shift ended.")
     }
@@ -231,9 +244,9 @@ fun buildDailyCsv(summaries: List<DailySummary>): String {
     out.append(
         row(
             listOf(
-                "Date", "Bills", "Sales (KSh)", "Products (KSh)", "Services (KSh)",
+                "Date", "Bills", "Net sales (KSh)", "Net products (KSh)", "Net services (KSh)",
                 "Cost of stock sold (KSh)", "Gross profit (KSh)", "Margin %",
-                "Cash (KSh)", "M-Pesa (KSh)", "Card (KSh)", "Other (KSh)", "Written off (KSh)",
+                "Cash (KSh)", "M-Pesa (KSh)", "Card (KSh)", "Other (KSh)", "Written off (KSh)", "Refunds (KSh)", "Expenses (KSh)",
             ),
         ),
     )
@@ -254,6 +267,8 @@ fun buildDailyCsv(summaries: List<DailySummary>): String {
                     cents(d.payments[PaymentMethod.CARD] ?: 0L),
                     cents(d.payments[PaymentMethod.OTHER] ?: 0L),
                     cents(d.writeOffCostCents),
+                    cents(d.refundCents),
+                    cents(d.expensesCents),
                 ),
             ),
         )
@@ -300,6 +315,7 @@ fun buildBillsCsv(bills: List<DispensingRecord>): String {
             listOf(
                 "Reference", "Visit", "Date", "Time", "Shift", "Cashier", "Payment", "Medicine lines",
                 "Service lines", "Total (KSh)", "Cost (KSh)", "Gross profit (KSh)", "After shift", "Label",
+                "Status", "Returned (KSh)",
             ),
         ),
     )
@@ -322,6 +338,8 @@ fun buildBillsCsv(bills: List<DispensingRecord>): String {
                     cents(b.grossProfitCents),
                     if (b.afterShift) "Yes" else "",
                     b.label,
+                    b.status,
+                    cents(b.returnedCents),
                 ),
             ),
         )
