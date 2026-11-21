@@ -65,6 +65,7 @@ fun Route.icon(): ImageVector = when (this) {
     Route.Reports -> MoreIcons.Reports
     Route.Alerts -> SamilliIcons.Bell
     Route.Settings -> MoreIcons.Settings
+    Route.StaffAccess -> MoreIcons.Settings
 }
 
 private val LogOutIcon: ImageVector = ImageVector.Builder(
@@ -91,7 +92,7 @@ private val LogOutIcon: ImageVector = ImageVector.Builder(
 
 private val mainRoutes = listOf(Route.Home, Route.Dispense, Route.ReceiveStock, Route.Register)
 private val catalogueRoutes = listOf(Route.DrugIndex, Route.RegisteredProducts, Route.RegisteredServices)
-private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, Route.Reports, Route.Alerts)
+private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, Route.Reports, Route.Alerts, Route.StaffAccess)
 
 /** Screens only an admin or owner can open. */
 private val adminOnly = setOf(
@@ -148,17 +149,17 @@ private fun DrawerSheet(
                     .padding(top = 10.dp),
             ) {
                 DrawerLabel("MAIN")
-                mainRoutes.filter { isAdmin || it !in adminOnly }.forEach { route ->
+                mainRoutes.filter { it.allowed() }.forEach { route ->
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
                 Spacer(Modifier.height(10.dp))
                 DrawerLabel("CATALOGUE")
-                catalogueRoutes.filter { isAdmin || it !in adminOnly }.forEach { route ->
+                catalogueRoutes.filter { it.allowed() }.forEach { route ->
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
                 Spacer(Modifier.height(10.dp))
                 DrawerLabel("MANAGE")
-                manageRoutes.filter { isAdmin || it !in adminOnly }.forEach { route ->
+                manageRoutes.filter { it.allowed() }.forEach { route ->
                     DrawerItem(route.icon(), route.title, route == current) { onNavigate(route) }
                 }
                 Spacer(Modifier.height(10.dp))

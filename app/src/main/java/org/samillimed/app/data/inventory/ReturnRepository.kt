@@ -12,6 +12,8 @@ import org.samillimed.app.data.facility.FacilityScope
 import java.math.BigDecimal
 import java.math.RoundingMode
 import java.time.LocalDate
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 private val DISPENSING_RECORDS: String get() = FacilityScope.path("dispensingRecords")
 private val DISPENSING_LINES: String get() = FacilityScope.path("dispensingLines")
@@ -99,7 +101,7 @@ class ReturnRepository {
         val chosen = request.lines.filter { it.quantity > 0L }
         when {
             user.isBlank() -> return onFailure("Sign in before recording a return.")
-            !CurrentUser.isAdmin -> return onFailure("Only an administrator can record returns.")
+            !Permissions.can(Permission.RETURNS) -> return onFailure("Only an administrator can record returns.")
             request.id.isBlank() || request.billId.isBlank() -> return onFailure("The return has no ID.")
             chosen.isEmpty() -> return onFailure("Choose at least one item to return.")
             chosen.size > MAX_LINES -> return onFailure("Too many lines in one return. Split it into two.")

@@ -8,6 +8,14 @@ service cloud.firestore {
     function member(fid) { return signedIn() && me().active == true && me().facilityId == fid; }
     function isAdmin(fid) { return member(fid) && (me().role == 'admin' || me().role == 'owner'); }
 
+    // What staff may do is decided by the administrator (Staff Access screen). dflt applies until they decide.
+    function staffCan(fid, key, dflt) {
+      return isAdmin(fid) || (member(fid) && (
+        exists(/databases/$(database)/documents/facilities/$(fid)/settings/permissions)
+          ? get(/databases/$(database)/documents/facilities/$(fid)/settings/permissions).data.get('staff', {}).get(key, dflt) == true
+          : dflt));
+    }
+
     match /users/{uid} {
       allow read: if signedIn() && (request.auth.uid == uid || isOwner()
                      || (me().role == 'admin' && me().facilityId == resource.data.facilityId));
@@ -18,44 +26,53 @@ service cloud.firestore {
       allow read: if member(fid) || isOwner();
       allow write: if isOwner();
 
-      match /products/{id} { allow read: if member(fid); allow write: if isAdmin(fid); }
-      match /services/{id} { allow read: if member(fid); allow write: if isAdmin(fid); }
-      match /lists/{id}    { allow read: if member(fid); allow write: if isAdmin(fid); }
+      match /settings/{doc} { allow read: if member(fid); allow write: if isAdmin(fid); }
 
-      match /goodsReceipts/{id}     { allow read: if member(fid); allow create: if isAdmin(fid); }
-      match /goodsReceiptLines/{id} { allow read: if member(fid); allow create: if isAdmin(fid); }
+      match /products/{id} { allow read: if member(fid); allow write: if staffCan(fid, 'registerItems', false); }
+      match /services/{id} { allow read: if member(fid); allow write: if staffCan(fid, 'registerItems', false); }
+      match /lists/{id}    { allow read: if member(fid); allow write: if staffCan(fid, 'registerItems', false); }
+
+      match /goodsReceipts/{id}     { allow read: if member(fid); allow create: if staffCan(fid, 'receiveStock', false); }
+      match /goodsReceiptLines/{id} { allow read: if member(fid); allow create: if staffCan(fid, 'receiveStock', false); }
 
       match /stockBatches/{id} {
         allow read: if member(fid);
-        allow create: if isAdmin(fid);
-        allow update: if isAdmin(fid) || (member(fid)
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['remainingQuantity'])
-          && request.resource.data.remainingQuantity >= 0
-          && request.resource.data.remainingQuantity < resource.data.remainingQuantity);
+        allow create: if staffCan(fid, 'receiveStock', false);
+        allow update: if staffCan(fid, 'receiveStock', false) || staffCan(fid, 'adjustStock', false) || staffCan(fid, 'returns', false)
+          || (staffCan(fid, 'dispense', true)
+              && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['remainingQuantity'])
+              && request.resource.data.remainingQuantity >= 0
+              && request.resource.data.remainingQuantity < resource.data.remainingQuantity);
       }
       match /stockBalances/{id} {
         allow read: if member(fid);
-        allow create: if isAdmin(fid) || (member(fid) && request.resource.data.quantityOnHand == 0);
-        allow update: if isAdmin(fid) || (member(fid)
-          && request.resource.data.quantityOnHand <= resource.data.quantityOnHand);
+        allow create: if staffCan(fid, 'receiveStock', false) || staffCan(fid, 'adjustStock', false) || staffCan(fid, 'returns', false)
+          || (staffCan(fid, 'dispense', true) && request.resource.data.quantityOnHand == 0);
+        allow update: if staffCan(fid, 'receiveStock', false) || staffCan(fid, 'adjustStock', false) || staffCan(fid, 'returns', false)
+          || (staffCan(fid, 'dispense', true) && request.resource.data.quantityOnHand <= resource.data.quantityOnHand);
       }
       match /stockMovements/{id} {
         allow read: if member(fid);
-        allow create: if isAdmin(fid) || (member(fid) && request.resource.data.movementType == 'DISPENSING');
+        allow create: if (request.resource.data.movementType == 'DISPENSING' && staffCan(fid, 'dispense', true))
+          || (request.resource.data.movementType in ['RECEIPT', 'OPENING'] && staffCan(fid, 'receiveStock', false))
+          || (request.resource.data.movementType == 'ADJUSTMENT' && staffCan(fid, 'adjustStock', false))
+          || (request.resource.data.movementType == 'RETURN' && staffCan(fid, 'returns', false));
       }
       match /stockReconciliations/{id} { allow read: if member(fid); allow create: if member(fid); }
 
       match /dispensingRecords/{id} {
         allow read: if member(fid);
-        allow create: if member(fid) && request.resource.data.createdBy == request.auth.token.email;
-        allow update: if isAdmin(fid);
+        allow create: if staffCan(fid, 'dispense', true) && request.resource.data.createdBy == request.auth.token.email;
+        allow update: if staffCan(fid, 'returns', false);
       }
-      match /dispensingLines/{id}            { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
-      match /dispensingServiceLines/{id}     { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
-      match /dispensingBatchAllocations/{id} { allow read: if member(fid); allow create: if member(fid); allow update: if isAdmin(fid); }
+      match /dispensingLines/{id}            { allow read: if member(fid); allow create: if staffCan(fid, 'dispense', true); allow update: if staffCan(fid, 'returns', false); }
+      match /dispensingServiceLines/{id}     { allow read: if member(fid); allow create: if staffCan(fid, 'dispense', true); allow update: if staffCan(fid, 'returns', false); }
+      match /dispensingBatchAllocations/{id} { allow read: if member(fid); allow create: if staffCan(fid, 'dispense', true); allow update: if staffCan(fid, 'returns', false); }
 
-      // Returns and voids: only admins record them, and they are never edited afterwards.
-      match /salesReturns/{id} { allow read: if member(fid); allow create: if isAdmin(fid); }
+      match /salesReturns/{id} { allow read: if member(fid); allow create: if staffCan(fid, 'returns', false); }
+
+      match /expenses/{id} { allow read: if staffCan(fid, 'expenses', false); allow create, update: if staffCan(fid, 'expenses', false); }
+
       match /dailySummaries/{id}    { allow read, create, update: if member(fid); }
       match /productDayStats/{id}   { allow read, create, update: if member(fid); }
       match /productMonthStats/{id} { allow read, create, update: if member(fid); }

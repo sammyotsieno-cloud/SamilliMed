@@ -67,6 +67,8 @@ import org.samillimed.app.ui.icons.SamilliIcons
 import org.samillimed.app.ui.theme.SamilliTheme
 import java.math.BigDecimal
 import java.time.LocalDate
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 /**
  * The whole Inventory area: the stock list, the product page and the reorder list. One live
@@ -255,11 +257,11 @@ private fun InventoryScreen(
     Column(modifier.fillMaxSize().background(c.background)) {
         ScreenHeader(
             title = "Inventory",
-            subtitle = if (batches != null && CurrentUser.isAdmin) "Stock at cost ${formatKsh(totalValue)}" else null,
+            subtitle = if (batches != null && Permissions.can(Permission.VIEW_COSTS)) "Stock at cost ${formatKsh(totalValue)}" else null,
             onBack = onBack,
             actions = {
                 InvHeaderPill("Reorder", onClick = onReorder)
-                InvHeaderPill("Export", enabled = rows.isNotEmpty() && CurrentUser.isAdmin) {
+                InvHeaderPill("Export", enabled = rows.isNotEmpty() && Permissions.can(Permission.EXPORT_DATA)) {
                     exportLauncher.launch("samillimed-stock-$today.csv")
                 }
             },
@@ -404,7 +406,7 @@ private fun StockCard(row: StockRow, today: LocalDate, onClick: () -> Unit) {
         }
         Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
             Text(
-                text = if (CurrentUser.isAdmin) "At cost ${formatKsh(row.valueCents)}" else "",
+                text = if (Permissions.can(Permission.VIEW_COSTS)) "At cost ${formatKsh(row.valueCents)}" else "",
                 color = c.textSecondary,
                 fontSize = 12.sp,
                 modifier = Modifier.weight(1f),

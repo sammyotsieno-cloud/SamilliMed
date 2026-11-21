@@ -53,6 +53,8 @@ import org.samillimed.app.ui.inventory.fmtDayTime
 import org.samillimed.app.ui.inventory.fmtNumber
 import org.samillimed.app.ui.theme.SamilliTheme
 import java.util.UUID
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 /** The returns already recorded on a bill, and the button to start a new one (admins only). */
 @Composable
@@ -93,7 +95,7 @@ internal fun ReturnsSection(
         }
     }
     if (bill.status != BillStatus.VOIDED) {
-        if (CurrentUser.isAdmin) {
+        if (Permissions.can(Permission.RETURNS)) {
             Button(
                 onClick = onStart,
                 enabled = ready,

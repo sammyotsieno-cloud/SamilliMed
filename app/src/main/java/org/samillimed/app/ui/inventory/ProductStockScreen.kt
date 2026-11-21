@@ -66,6 +66,8 @@ import org.samillimed.app.ui.home.SamilliCard
 import org.samillimed.app.ui.theme.SamilliTheme
 import java.time.LocalDate
 import kotlin.math.abs
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 private class AdjustTarget(val batch: StockBatch, val preset: String?)
 
@@ -135,7 +137,7 @@ fun ProductStockScreen(
                             modifier = Modifier.padding(top = 4.dp),
                         )
                     }
-                    if (CurrentUser.isAdmin) Text(
+                    if (Permissions.can(Permission.VIEW_COSTS)) Text(
                         text = "Stock value at cost ${formatKsh(stockValue)}",
                         color = c.textSecondary,
                         fontSize = 12.sp,
@@ -276,18 +278,18 @@ private fun BatchCard(
         }
         Text(
             text = "Received ${fmtDay(batch.receivedAtMillis)}" +
-                if (CurrentUser.isAdmin) "  ·  cost ${formatKsh(batch.purchaseCostPerReceivingUnitCents)} per ${batch.receivingUnitName}$price" else "",
+                if (Permissions.can(Permission.VIEW_COSTS)) "  ·  cost ${formatKsh(batch.purchaseCostPerReceivingUnitCents)} per ${batch.receivingUnitName}$price" else "",
             color = c.textSecondary,
             fontSize = 12.sp,
             modifier = Modifier.padding(top = 2.dp),
         )
-        if (CurrentUser.isAdmin) Text(
+        if (Permissions.can(Permission.VIEW_COSTS)) Text(
             text = "Value at cost ${formatKsh(batchValueCents(batch))}",
             color = c.textSecondary,
             fontSize = 12.sp,
             modifier = Modifier.padding(top = 2.dp),
         )
-        if (CurrentUser.isAdmin) Row(Modifier.padding(top = 4.dp)) {
+        if (Permissions.can(Permission.ADJUST_STOCK)) Row(Modifier.padding(top = 4.dp)) {
             if (expired) {
                 TextButton(onClick = onWriteOff) {
                     Text("Write off expired stock", color = c.urgent, fontWeight = FontWeight.Bold)

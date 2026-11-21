@@ -63,6 +63,8 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 /**
  * Home screen, on live data.
@@ -262,7 +264,7 @@ fun HomeScreen(
             Spacer(Modifier.height(16.dp))
         }
 
-        HomeBottomBar(isAdmin = isAdmin, selected = 0, onSelect = onTabSelected)
+        HomeBottomBar(isAdmin = Permissions.can(Permission.RECEIVE_STOCK) && Permissions.can(Permission.REGISTER_ITEMS), selected = 0, onSelect = onTabSelected)
     }
 }
 

@@ -57,6 +57,8 @@ import org.samillimed.app.ui.reports.LegendRow
 import org.samillimed.app.ui.theme.SamilliTheme
 import java.time.LocalDate
 import java.util.UUID
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 /** Money paid out for running the business, by period, with totals by category. Admins only. */
 @Composable
@@ -259,14 +261,14 @@ private fun ExpenseDetailDialog(e: Expense, repository: ExpenseRepository, onDis
                 if (e.note.isNotBlank()) Text(e.note, color = c.textPrimary, fontSize = 13.sp)
                 if (!active) {
                     Text("Voided: ${e.voidReason}", color = c.urgent, fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                } else if (CurrentUser.isAdmin) {
+                } else if (Permissions.can(Permission.EXPENSES)) {
                     FormTextField(value = reason, onValueChange = { reason = it }, label = "Reason, to void it")
                 }
                 error?.let { Text(it, color = c.urgent, fontSize = 13.sp, fontWeight = FontWeight.Medium) }
             }
         },
         confirmButton = {
-            if (active && CurrentUser.isAdmin) {
+            if (active && Permissions.can(Permission.EXPENSES)) {
                 TextButton(
                     enabled = !saving,
                     onClick = {

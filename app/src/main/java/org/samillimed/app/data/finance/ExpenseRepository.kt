@@ -10,6 +10,8 @@ import org.samillimed.app.data.facility.CurrentUser
 import org.samillimed.app.data.facility.FacilityScope
 import org.samillimed.app.data.inventory.PaymentMethod
 import java.time.LocalDate
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 private val EXPENSES: String get() = FacilityScope.path("expenses")
 private val DAILY_SUMMARIES: String get() = FacilityScope.path("dailySummaries")
@@ -57,7 +59,7 @@ class ExpenseRepository {
         val cleanCategory = safeKey(category)
         when {
             user.isBlank() -> return onFailure("Sign in first.")
-            !CurrentUser.isAdmin -> return onFailure("Only an administrator can record expenses.")
+            !Permissions.can(Permission.EXPENSES) -> return onFailure("Only an administrator can record expenses.")
             amountCents <= 0L -> return onFailure("Enter an amount above zero.")
             cleanCategory.isBlank() -> return onFailure("Choose what the money was spent on.")
             method !in PaymentMethod.all -> return onFailure("Choose how it was paid.")
@@ -105,7 +107,7 @@ class ExpenseRepository {
         val user = FacilityScope.auth().currentUser?.email.orEmpty()
         when {
             user.isBlank() -> return onFailure("Sign in first.")
-            !CurrentUser.isAdmin -> return onFailure("Only an administrator can void expenses.")
+            !Permissions.can(Permission.EXPENSES) -> return onFailure("Only an administrator can void expenses.")
             reason.isBlank() -> return onFailure("Write the reason for voiding it.")
         }
         val now = System.currentTimeMillis()

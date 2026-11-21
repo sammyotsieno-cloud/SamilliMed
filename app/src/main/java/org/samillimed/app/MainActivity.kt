@@ -66,6 +66,10 @@ import java.time.LocalDate
 import org.samillimed.app.data.catalog.ServiceKind
 import org.samillimed.app.ui.catalog.RegisterChoiceDialog
 import org.samillimed.app.ui.finance.ExpensesScreen
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
+import org.samillimed.app.data.facility.rememberPermissionsLoaded
+import org.samillimed.app.ui.access.StaffAccessScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -164,6 +168,7 @@ class MainActivity : ComponentActivity() {
                         // Every screen below reads and writes only this facility's data.
                         FacilityScope.facilityId = profileState.profile.facilityId
                         CurrentUser.update(profileState.profile)
+                        rememberPermissionsLoaded()
 
                         // Catalog is available only while signed in.
                         val catalog = rememberCatalog()
@@ -343,9 +348,9 @@ class MainActivity : ComponentActivity() {
                                                         drawerState.open()
                                                     }
                                                 },
-                                                isAdmin = CurrentUser.isAdmin,
+                                                isAdmin = Permissions.can(Permission.VIEW_COSTS),
                                                 onTabSelected = { index ->
-                                                    val admin = CurrentUser.isAdmin
+                                                    val admin = Permissions.can(Permission.RECEIVE_STOCK) && Permissions.can(Permission.REGISTER_ITEMS)
                                                     when (index) {
                                                         1 -> nav.navigate(Route.Dispense)
                                                         2 -> nav.navigate(if (admin) Route.ReceiveStock else Route.Inventory)
@@ -367,7 +372,7 @@ class MainActivity : ComponentActivity() {
                                                     nav.navigate(Route.Sales)
                                                 },
                                                 onOpenReports = {
-                                                    if (CurrentUser.isAdmin) nav.navigate(Route.Reports)
+                                                    if (Permissions.can(Permission.VIEW_REPORTS)) nav.navigate(Route.Reports)
                                                 },
                                                 onOpenInventory = {
                                                     nav.navigate(Route.Inventory)
@@ -508,6 +513,11 @@ class MainActivity : ComponentActivity() {
                                         // EXPENSES
                                         Route.Expenses -> {
                                             ExpensesScreen(onBack = { nav.back() })
+                                        }
+
+                                        // STAFF ACCESS: the administrator decides what staff can see and do
+                                        Route.StaffAccess -> {
+                                            StaffAccessScreen(onBack = { nav.back() })
                                         }
 
                                         // NOT BUILT YET: Drug Index

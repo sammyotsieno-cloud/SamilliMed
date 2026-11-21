@@ -69,6 +69,8 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.samillimed.app.ui.receipts.BillReceiptButtons
+import org.samillimed.app.data.facility.Permission
+import org.samillimed.app.data.facility.Permissions
 
 private val timeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 private val dayFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE d MMM yyyy", Locale.getDefault())
@@ -121,7 +123,7 @@ fun BillsScreen(
             subtitle = date.format(dayFormat),
             onBack = onBack,
             actions = {
-                InvHeaderPill("Export", enabled = !bills.isNullOrEmpty() && CurrentUser.isAdmin) {
+                InvHeaderPill("Export", enabled = !bills.isNullOrEmpty() && Permissions.can(Permission.EXPORT_DATA)) {
                     exportLauncher.launch("samillimed-bills-$dateKey.csv")
                 }
             },
@@ -289,7 +291,7 @@ private fun BillDetailScreen(
                 }
             }
 
-            if (CurrentUser.isAdmin) SamilliCard(Modifier.fillMaxWidth()) {
+            if (Permissions.can(Permission.VIEW_COSTS)) SamilliCard(Modifier.fillMaxWidth()) {
                 Text("Cost and profit", color = c.textPrimary, fontSize = 14.sp, fontWeight = FontWeight.Bold)
                 DetailLine("Cost of stock sold", formatKsh(bill.totalPurchaseCostCents))
                 DetailLine("Gross profit", formatKsh(bill.grossProfitCents))
