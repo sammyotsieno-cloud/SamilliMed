@@ -91,6 +91,10 @@ import java.util.Locale
 import java.util.UUID
 import org.samillimed.app.data.catalog.ServiceKind
 import org.samillimed.app.data.catalog.rankedForSearch
+import org.samillimed.app.data.facility.FacilityScope
+import org.samillimed.app.data.receipts.ReceiptLine
+import org.samillimed.app.data.receipts.buildReceiptText
+import org.samillimed.app.ui.receipts.ShareReceiptButtons
 
 // ---- the bill being typed --------------------------------------------------------------------
 
@@ -242,6 +246,7 @@ fun DispenseScreen(
     var saving by remember { mutableStateOf(false) }
     var showDiscard by remember { mutableStateOf(false) }
     var saved by remember { mutableStateOf<DispenseResult?>(null) }
+    var savedReceipt by remember { mutableStateOf<(() -> String)?>(null) }
 
     val activeProducts = remember(catalog.products) {
         catalog.products.filter { it.active && it.units.isNotEmpty() }
@@ -434,6 +439,27 @@ fun DispenseScreen(
                 label = label.trim(),
             ),
             onSuccess = { result ->
+                val soldProducts = productLines.toList()
+                val soldServices = serviceLines.toList()
+                val paidBy = method
+                val received = receivedCents ?: totalCents
+                savedReceipt = {
+                    buildReceiptText(
+                        reference = result.reference,
+                        shortLabel = result.shortLabel,
+                        timeMillis = System.currentTimeMillis(),
+                        servedBy = FacilityScope.auth().currentUser?.email.orEmpty().substringBefore('@'),
+                        lines = soldProducts.map {
+                            ReceiptLine(it.productName, "${it.quantity} ${it.unitName} x ${formatKsh(it.priceCents)}", it.quantity * it.priceCents)
+                        } + soldServices.map {
+                            ReceiptLine(it.serviceName, "${it.quantity} x ${formatKsh(it.priceCents)}", it.quantity * it.priceCents)
+                        },
+                        totalCents = result.totalCents,
+                        paymentLabel = PaymentMethod.label(paidBy),
+                        receivedCents = received,
+                        changeCents = result.changeCents,
+                    )
+                }
                 saving = false
                 resetBill()
                 saved = result
@@ -457,6 +483,7 @@ fun DispenseScreen(
     if (done != null) {
         SavedBill(
             result = done,
+            receiptBuilder = savedReceipt,
             onNewBill = { saved = null },
             onDone = onBack,
             modifier = modifier,
@@ -945,6 +972,7 @@ private fun ServiceSearch(
 @Composable
 private fun SavedBill(
     result: DispenseResult,
+    receiptBuilder: (() -> String)?,
     onNewBill: () -> Unit,
     onDone: () -> Unit,
     modifier: Modifier = Modifier,
@@ -985,6 +1013,8 @@ private fun SavedBill(
             Text("Change ${formatKsh(result.changeCents)}", color = c.accentText, fontSize = 16.sp, fontWeight = FontWeight.Bold)
         }
         Spacer(Modifier.height(28.dp))
+        receiptBuilder?.let { ShareReceiptButtons(buildText = it) }
+        Spacer(Modifier.height(8.dp))
         PrimaryButton(text = "New bill", onClick = onNewBill)
         TextButton(onClick = onDone) { Text("Done", fontWeight = FontWeight.Bold) }
     }

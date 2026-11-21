@@ -68,6 +68,7 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import org.samillimed.app.ui.receipts.BillReceiptButtons
 
 private val timeFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 private val dayFormat: DateTimeFormatter = DateTimeFormatter.ofPattern("EEE d MMM yyyy", Locale.getDefault())
@@ -294,6 +295,7 @@ private fun BillDetailScreen(
                     DetailLine("Margin", String.format(Locale.US, "%.0f%%", bill.grossProfitCents * 100.0 / bill.totalAmountCents))
                 }
             }
+            BillReceiptButtons(bill, lines, serviceLines)
             ReturnsSection(
                 bill = bill,
                 returns = returns.orEmpty(),
