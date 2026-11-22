@@ -70,6 +70,7 @@ import org.samillimed.app.data.facility.Permission
 import org.samillimed.app.data.facility.Permissions
 import org.samillimed.app.data.facility.rememberPermissionsLoaded
 import org.samillimed.app.ui.access.StaffAccessScreen
+import org.samillimed.app.ui.till.CashCountScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -513,6 +514,11 @@ class MainActivity : ComponentActivity() {
                                         // EXPENSES
                                         Route.Expenses -> {
                                             ExpensesScreen(onBack = { nav.back() })
+                                        }
+
+                                        // CASH COUNT: check the cash in the till
+                                        Route.Till -> {
+                                            CashCountScreen(onBack = { nav.back() })
                                         }
 
                                         // STAFF ACCESS: the administrator decides what staff can see and do

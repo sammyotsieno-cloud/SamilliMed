@@ -20,6 +20,7 @@ enum class Route(val title: String) {
     Expenses("Expenses"),
     Reports("Reports"),
     Alerts("Alerts"),
+    Till("Cash Count"),
     StaffAccess("Staff Access"),
     Settings("Settings"),
 }
