@@ -71,6 +71,7 @@ import org.samillimed.app.data.facility.Permissions
 import org.samillimed.app.data.facility.rememberPermissionsLoaded
 import org.samillimed.app.ui.access.StaffAccessScreen
 import org.samillimed.app.ui.till.CashCountScreen
+import org.samillimed.app.ui.navigation.MenuPrefs
 
 class MainActivity : ComponentActivity() {
 
@@ -78,6 +79,7 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         FacilityConnection.init(applicationContext)
+        MenuPrefs.load(applicationContext)
 
         // The header and bottom bar are dark green in both themes,
         // so system icons stay light.
@@ -102,6 +104,7 @@ class MainActivity : ComponentActivity() {
 
             val drawerState = rememberDrawerState(DrawerValue.Closed)
             val scope = rememberCoroutineScope()
+            nav.onReturnToMenu = { scope.launch { drawerState.open() } }
 
             var showExit by rememberSaveable {
                 mutableStateOf(false)
@@ -189,6 +192,7 @@ class MainActivity : ComponentActivity() {
                         // The Register pop-up, and whether a new item is a service or a lab test.
                         var showRegister by rememberSaveable { mutableStateOf(false) }
                         var newKind by rememberSaveable { mutableStateOf(ServiceKind.SERVICE) }
+                        var servicesKind by rememberSaveable { mutableStateOf("ALL") }
 
                         // Service form:
                         // null = closed
@@ -202,20 +206,17 @@ class MainActivity : ComponentActivity() {
                             RegisterChoiceDialog(
                                 onProduct = {
                                     showRegister = false
-                                    serviceForm = null
-                                    productForm = "new"
+                                    nav.navigate(Route.RegisteredProducts)
                                 },
                                 onService = {
                                     showRegister = false
-                                    productForm = null
-                                    newKind = ServiceKind.SERVICE
-                                    serviceForm = "new"
+                                    servicesKind = ServiceKind.SERVICE
+                                    nav.navigate(Route.RegisteredServices)
                                 },
                                 onLabTest = {
                                     showRegister = false
-                                    productForm = null
-                                    newKind = ServiceKind.LAB
-                                    serviceForm = "new"
+                                    servicesKind = ServiceKind.LAB
+                                    nav.navigate(Route.RegisteredServices)
                                 },
                                 onDismiss = { showRegister = false },
                             )
@@ -225,6 +226,8 @@ class MainActivity : ComponentActivity() {
                             drawerState = drawerState,
                             current = nav.current,
                             onNavigate = { route ->
+                                val viaDrawer = drawerState.isOpen
+                                if (route == Route.RegisteredServices) servicesKind = "ALL"
                                 scope.launch {
                                     drawerState.close()
                                 }
@@ -235,7 +238,7 @@ class MainActivity : ComponentActivity() {
                                 if (route == Route.Register) {
                                     showRegister = true
                                 } else {
-                                    nav.navigate(route)
+                                    nav.navigate(route, fromMenu = viaDrawer)
                                 }
                                 Unit
                             },
@@ -419,6 +422,7 @@ class MainActivity : ComponentActivity() {
                                         // REGISTERED SERVICES
                                         Route.RegisteredServices -> {
                                             RegisteredServicesScreen(
+                                                initialKind = servicesKind,
                                                 onAddKind = { kind ->
                                                     productForm = null
                                                     newKind = kind

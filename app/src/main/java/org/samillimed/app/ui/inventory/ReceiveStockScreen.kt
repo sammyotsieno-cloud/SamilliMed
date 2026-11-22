@@ -454,7 +454,7 @@ fun ReceiveStockScreen(
             ScreenHeader(
                 title = "Receive Stock",
                 subtitle = if (opening) "Opening stock: stock already on hand" else "Record a supplier delivery",
-                actions = { InvHeaderPill("Register") { showRegisterChoice = true } },
+                
                 onBack = { leave() },
             )
 

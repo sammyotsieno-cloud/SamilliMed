@@ -483,7 +483,7 @@ private fun HomeBottomBar(isAdmin: Boolean, selected: Int, onSelect: (Int) -> Un
             "Home" to SamilliIcons.Home,
             "Dispense" to SamilliIcons.Pill,
             "Receive Stock" to SamilliIcons.BoxPlus,
-            "Register" to SamilliIcons.ClipboardPlus,
+            "Registers" to SamilliIcons.ClipboardPlus,
         )
     } else {
         listOf(

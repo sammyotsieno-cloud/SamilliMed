@@ -65,13 +65,13 @@ fun RegisterChoiceDialog(
     val c = SamilliTheme.colors
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Register", fontWeight = FontWeight.Bold) },
+        title = { Text("Registers", fontWeight = FontWeight.Bold) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                Text("What are you registering?", color = c.textSecondary, fontSize = 13.sp)
-                ChoiceRow(MoreIcons.ProductTag, "Product", "A medicine, or any item you buy and sell", onProduct)
-                ChoiceRow(MoreIcons.Stethoscope, "Service", "Something the clinic charges for, like a consultation", onService)
-                ChoiceRow(LabIcon, "Lab test", "A laboratory test, billed with everything else", onLabTest)
+                Text("Which register do you want to open?", color = c.textSecondary, fontSize = 13.sp)
+                ChoiceRow(MoreIcons.ProductTag, "Products", "Medicines and other items you buy and sell", onProduct)
+                ChoiceRow(MoreIcons.Stethoscope, "Services", "What the clinic charges for, like a consultation", onService)
+                ChoiceRow(LabIcon, "Lab tests", "Laboratory tests you offer", onLabTest)
             }
         },
         confirmButton = {},

@@ -60,6 +60,7 @@ fun RegisteredServicesScreen(
     onBack: () -> Unit,
     onAdd: () -> Unit,
     onAddKind: ((String) -> Unit)? = null,
+    initialKind: String = "ALL",
     onEdit: (ServiceItem) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -67,7 +68,7 @@ fun RegisteredServicesScreen(
     var query by rememberSaveable { mutableStateOf("") }
     var selectedCategory by rememberSaveable { mutableStateOf<String?>(null) }
     var showInactive by rememberSaveable { mutableStateOf(false) }
-    var kindFilter by rememberSaveable { mutableStateOf("ALL") }
+    var kindFilter by rememberSaveable { mutableStateOf(initialKind) }
 
     val inactiveCount = catalog.services.count { !it.active }
     val activeCount = catalog.services.size - inactiveCount
