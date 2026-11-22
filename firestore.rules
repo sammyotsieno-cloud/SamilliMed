@@ -71,7 +71,12 @@ service cloud.firestore {
 
       match /salesReturns/{id} { allow read: if member(fid); allow create: if staffCan(fid, 'returns', false); }
 
-      match /expenses/{id} { allow read: if staffCan(fid, 'expenses', false); allow create, update: if staffCan(fid, 'expenses', false); }
+      match /tillCounts/{id} {
+        allow read: if staffCan(fid, 'tillCount', true);
+        allow create: if staffCan(fid, 'tillCount', true) && request.resource.data.createdBy == request.auth.token.email;
+      }
+
+      match /expenses/{id} { allow read: if staffCan(fid, 'expenses', false) || staffCan(fid, 'tillCount', true); allow create, update: if staffCan(fid, 'expenses', false); }
 
       match /dailySummaries/{id}    { allow read, create, update: if member(fid); }
       match /productDayStats/{id}   { allow read, create, update: if member(fid); }

@@ -34,6 +34,7 @@ enum class Permission(
     ADJUST_STOCK("adjustStock", "Write off or adjust stock", "Expired, damaged, lost and stock-count corrections", false, true),
     RETURNS("returns", "Record returns and voids", "Refund a bill, fully or partly", false, true),
     EXPENSES("expenses", "Record and see expenses", "Rent, salaries, transport and other costs", false, true),
+    TILL_COUNT("tillCount", "Count the till", "Count the cash at the end of a shift and compare it with what the bills say", true, true),
 }
 
 /** What the signed-in person may do. Administrators and owners may do everything. */
