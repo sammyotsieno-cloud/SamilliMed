@@ -74,6 +74,7 @@ import org.samillimed.app.ui.till.CashCountScreen
 import org.samillimed.app.ui.navigation.MenuPrefs
 import org.samillimed.app.data.branding.Brand
 import org.samillimed.app.data.branding.rememberBrandLoaded
+import org.samillimed.app.ui.branding.BrandingScreen
 
 class MainActivity : ComponentActivity() {
 
@@ -527,6 +528,11 @@ class MainActivity : ComponentActivity() {
                                         // CASH COUNT: check the cash in the till
                                         Route.Till -> {
                                             CashCountScreen(onBack = { nav.back() })
+                                        }
+
+                                        // BRANDING: the facility's name, logo and colours
+                                        Route.Branding -> {
+                                            BrandingScreen(onBack = { nav.back() })
                                         }
 
                                         // STAFF ACCESS: the administrator decides what staff can see and do

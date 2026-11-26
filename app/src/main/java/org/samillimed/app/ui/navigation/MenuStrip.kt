@@ -61,7 +61,7 @@ object MenuPrefs {
 private val stripRoutes = listOf(
     Route.Home, Route.Dispense, Route.ReceiveStock, Route.Register, Route.DrugIndex,
     Route.RegisteredProducts, Route.RegisteredServices, Route.Inventory, Route.Sales,
-    Route.Expenses, Route.Reports, Route.Alerts, Route.Till, Route.StaffAccess,
+    Route.Expenses, Route.Reports, Route.Alerts, Route.Till, Route.StaffAccess, Route.Branding,
 )
 
 /** A narrow strip of icons down the left side. Its top button opens the full menu with names. */

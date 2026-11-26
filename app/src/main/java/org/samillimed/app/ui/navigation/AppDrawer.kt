@@ -72,6 +72,7 @@ fun Route.icon(): ImageVector = when (this) {
     Route.Settings -> MoreIcons.Settings
     Route.StaffAccess -> MoreIcons.Settings
     Route.Till -> SamilliIcons.Coins
+    Route.Branding -> MoreIcons.Settings
 }
 
 private val LogOutIcon: ImageVector = ImageVector.Builder(
@@ -98,7 +99,7 @@ private val LogOutIcon: ImageVector = ImageVector.Builder(
 
 private val mainRoutes = listOf(Route.Home, Route.Dispense, Route.ReceiveStock, Route.Register)
 private val catalogueRoutes = listOf(Route.DrugIndex, Route.RegisteredProducts, Route.RegisteredServices)
-private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, Route.Reports, Route.Alerts, Route.Till, Route.StaffAccess)
+private val manageRoutes = listOf(Route.Inventory, Route.Sales, Route.Expenses, Route.Reports, Route.Alerts, Route.Till, Route.StaffAccess, Route.Branding)
 
 /** Screens only an admin or owner can open. */
 private val adminOnly = setOf(
