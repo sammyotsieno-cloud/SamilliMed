@@ -66,14 +66,14 @@ jobs:
             echo "No signing key configured: this build will be signed with a temporary key."
           fi
 
-      - name: Build debug APK
-        run: bash ./gradlew --no-daemon --warning-mode=all --stacktrace assembleDebug
+      - name: Build release APK
+        run: bash ./gradlew --no-daemon --warning-mode=all --stacktrace assembleRelease
 
       - name: Verify APK and prepare single-file package
         shell: bash
         run: |
           set -euo pipefail
-          APK="app/build/outputs/apk/debug/app-debug.apk"
+          APK="app/build/outputs/apk/release/app-release.apk"
           test -s "$APK"
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs "$APK"
           BADGING="$("$ANDROID_HOME/build-tools/36.0.0/aapt" dump badging "$APK")"

@@ -18,6 +18,13 @@ android {
         }
     }
     buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            isShrinkResources = false
+            if (!System.getenv("SM_KEYSTORE_PATH").isNullOrBlank()) {
+                signingConfig = signingConfigs.getByName("fixed")
+            }
+        }
         getByName("debug") {
             if (!System.getenv("SM_KEYSTORE_PATH").isNullOrBlank()) {
                 signingConfig = signingConfigs.getByName("fixed")
@@ -29,10 +36,14 @@ android {
 
     defaultConfig {
         applicationId = "org.samillimed.app"
-        minSdk = 26
+        minSdk = 24
         targetSdk = 36
-        versionCode = 1
+        versionCode = System.getenv("GITHUB_RUN_NUMBER")?.toIntOrNull() ?: 1
         versionName = "0.1.0"
+    }
+
+    compileOptions {
+        isCoreLibraryDesugaringEnabled = true
     }
 
     buildFeatures {
@@ -43,6 +54,7 @@ android {
 dependencies {
     implementation(libs.androidx.activity.compose)
     implementation("androidx.core:core-splashscreen:1.0.1")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.compose.ui)
