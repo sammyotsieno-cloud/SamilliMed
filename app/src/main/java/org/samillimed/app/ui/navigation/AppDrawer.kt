@@ -52,6 +52,8 @@ import org.samillimed.app.ui.theme.SamilliTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
+import org.samillimed.app.data.branding.Brand
+import org.samillimed.app.ui.branding.BrandedDrawerHeader
 
 /** The icon shown for each screen, in the side menu and on "Coming soon" screens. */
 fun Route.icon(): ImageVector = when (this) {
@@ -212,6 +214,10 @@ private fun DrawerSheet(
 
 @Composable
 private fun DrawerHeader(userEmail: String?) {
+    if (Brand.isSet) {
+        BrandedDrawerHeader(userEmail)
+        return
+    }
     val c = SamilliTheme.colors
     Column(
         Modifier

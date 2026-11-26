@@ -72,6 +72,8 @@ import org.samillimed.app.data.facility.rememberPermissionsLoaded
 import org.samillimed.app.ui.access.StaffAccessScreen
 import org.samillimed.app.ui.till.CashCountScreen
 import org.samillimed.app.ui.navigation.MenuPrefs
+import org.samillimed.app.data.branding.Brand
+import org.samillimed.app.data.branding.rememberBrandLoaded
 
 class MainActivity : ComponentActivity() {
 
@@ -80,6 +82,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         FacilityConnection.init(applicationContext)
         MenuPrefs.load(applicationContext)
+        Brand.loadCached(applicationContext)
 
         // The header and bottom bar are dark green in both themes,
         // so system icons stay light.
@@ -173,6 +176,7 @@ class MainActivity : ComponentActivity() {
                         FacilityScope.facilityId = profileState.profile.facilityId
                         CurrentUser.update(profileState.profile)
                         rememberPermissionsLoaded()
+                        rememberBrandLoaded()
 
                         // Catalog is available only while signed in.
                         val catalog = rememberCatalog()

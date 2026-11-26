@@ -65,6 +65,8 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 import org.samillimed.app.data.facility.Permission
 import org.samillimed.app.data.facility.Permissions
+import org.samillimed.app.data.branding.Brand
+import org.samillimed.app.ui.branding.FacilityWordmark
 
 /**
  * Home screen, on live data.
@@ -370,6 +372,10 @@ private fun Greeting() {
 /** Logo as the first letter, "amilli" in cream, "med" in gold: same as the splash. */
 @Composable
 private fun Wordmark() {
+    if (Brand.isSet) {
+        FacilityWordmark()
+        return
+    }
     val c = SamilliTheme.colors
     Row(verticalAlignment = Alignment.CenterVertically) {
         Image(

@@ -5,6 +5,7 @@ import org.samillimed.app.data.catalog.formatKsh
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import org.samillimed.app.data.branding.Brand
 
 /** The header and footer printed on every receipt. Saved on this phone. */
 object ReceiptSettings {
@@ -67,7 +68,7 @@ fun buildReceiptText(
 ): String {
     val rule = "-".repeat(28)
     val out = ArrayList<String>()
-    out.add(ReceiptSettings.businessName.ifBlank { "SamilliMed" }.uppercase())
+    out.add(ReceiptSettings.businessName.ifBlank { Brand.name.ifBlank { "SamilliMed" } }.uppercase())
     if (ReceiptSettings.address.isNotBlank()) out.add(ReceiptSettings.address)
     if (ReceiptSettings.phone.isNotBlank()) out.add("Tel: " + ReceiptSettings.phone)
     out.add(rule)

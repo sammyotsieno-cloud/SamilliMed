@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Density
 import org.samillimed.app.R
+import org.samillimed.app.data.branding.Brand
 
 /** The three choices shown in Settings > Appearance. */
 enum class ThemeMode { System, Light, Dark }
@@ -184,7 +185,12 @@ fun SamilliMedTheme(
         ThemeMode.Light -> false
         ThemeMode.Dark -> true
     }
-    val c = if (dark) DarkSamilliColors else LightSamilliColors
+    val base = if (dark) DarkSamilliColors else LightSamilliColors
+    val brandPrimary = parseHexColor(Brand.primaryHex)
+    val brandAccent = parseHexColor(Brand.accentHex)
+    val c = remember(base, brandPrimary, brandAccent) {
+        if (brandPrimary != null && brandAccent != null) base.withBrand(brandPrimary, brandAccent) else base
+    }
     val scheme = if (dark) {
         darkColorScheme(
             primary = c.gold, onPrimary = c.onReorder,
