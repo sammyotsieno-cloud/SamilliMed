@@ -67,6 +67,7 @@ import org.samillimed.app.data.facility.Permission
 import org.samillimed.app.data.facility.Permissions
 import org.samillimed.app.data.branding.Brand
 import org.samillimed.app.ui.branding.FacilityWordmark
+import androidx.compose.foundation.border
 
 /**
  * Home screen, on live data.
@@ -504,6 +505,7 @@ private fun HomeBottomBar(isAdmin: Boolean, selected: Int, onSelect: (Int) -> Un
             .fillMaxWidth()
             .shadow(12.dp, shape, clip = false)
             .background(Brush.linearGradient(listOf(c.navStart, c.navEnd)), shape)
+            .then(if (c.isDark) Modifier.border(1.dp, c.cardBorder, shape) else Modifier)
             .windowInsetsPadding(WindowInsets.navigationBars)
             .padding(start = 10.dp, end = 10.dp, top = 10.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.SpaceAround,

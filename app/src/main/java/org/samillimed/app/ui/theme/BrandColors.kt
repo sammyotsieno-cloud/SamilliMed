@@ -28,6 +28,15 @@ fun parseHexColor(text: String): Color? {
 
 fun Color.toHex(): String = String.format("#%06X", 0xFFFFFF and toArgb())
 
+/** A dark shade of the facility's colour, for dark mode surfaces. value is how light it is (0 is black). */
+private fun tone(primary: Color, value: Float): Color {
+    val hsv = FloatArray(3)
+    android.graphics.Color.colorToHSV(primary.toArgb(), hsv)
+    hsv[1] = hsv[1].coerceAtMost(0.6f)
+    hsv[2] = value
+    return Color(android.graphics.Color.HSVToColor(hsv))
+}
+
 private fun contrast(a: Color, b: Color): Float {
     val l1 = a.luminance()
     val l2 = b.luminance()
@@ -96,14 +105,14 @@ fun SamilliColors.withBrand(primary: Color, accent: Color): SamilliColors {
             sparkDown = accent,
         )
     } else {
-        val newBackground = lerp(Color.Black, primary, 0.10f)
-        val newCard = lerp(Color.Black, primary, 0.22f)
+        val newBackground = tone(primary, 0.14f)
+        val newCard = tone(primary, 0.22f)
         val accentText = lightenUntil(accent, newBackground, 4.5f)
         SamilliColors(
             isDark = true,
             background = newBackground,
             card = newCard,
-            cardBorder = onHeader.copy(alpha = 0.07f),
+            cardBorder = onHeader.copy(alpha = 0.18f),
             textPrimary = onHeader,
             textSecondary = onHeader.copy(alpha = 0.72f),
             textMuted = lerp(onHeader, newBackground, 0.45f),
@@ -112,10 +121,10 @@ fun SamilliColors.withBrand(primary: Color, accent: Color): SamilliColors {
             iconTint = accentText,
             iconBg = accent.copy(alpha = 0.16f),
             sectionLink = accentText,
-            headerStart = deep,
-            headerEnd = deeper,
-            navStart = lerp(Color.Black, primary, 0.24f),
-            navEnd = lerp(Color.Black, primary, 0.24f),
+            headerStart = tone(primary, 0.36f),
+            headerEnd = tone(primary, 0.26f),
+            navStart = tone(primary, 0.34f),
+            navEnd = tone(primary, 0.26f),
             onHeader = onHeader,
             gold = accent,
             deltaBg = deltaBg,
