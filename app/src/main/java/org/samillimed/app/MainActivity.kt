@@ -71,7 +71,6 @@ import org.samillimed.app.data.facility.Permissions
 import org.samillimed.app.data.facility.rememberPermissionsLoaded
 import org.samillimed.app.ui.access.StaffAccessScreen
 import org.samillimed.app.ui.till.CashCountScreen
-import org.samillimed.app.ui.navigation.MenuPrefs
 import org.samillimed.app.data.branding.Brand
 import org.samillimed.app.data.branding.rememberBrandLoaded
 import org.samillimed.app.ui.branding.BrandingScreen
@@ -82,7 +81,6 @@ class MainActivity : ComponentActivity() {
         installSplashScreen()
         super.onCreate(savedInstanceState)
         FacilityConnection.init(applicationContext)
-        MenuPrefs.load(applicationContext)
         Brand.loadCached(applicationContext)
 
         // The header and bottom bar are dark green in both themes,

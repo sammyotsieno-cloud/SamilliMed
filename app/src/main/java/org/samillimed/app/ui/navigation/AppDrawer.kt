@@ -124,24 +124,11 @@ fun AppDrawer(
     isAdmin: Boolean = true,
     content: @Composable () -> Unit,
 ) {
-    val strip = MenuPrefs.strip
-    val scope = rememberCoroutineScope()
     ModalNavigationDrawer(
         drawerState = drawerState,
         gesturesEnabled = drawerState.isOpen,
         drawerContent = { DrawerSheet(current, onNavigate, userEmail, onSignOut, isAdmin) },
-        content = {
-            Row(Modifier.fillMaxSize()) {
-                if (strip) {
-                    MenuStrip(
-                        current = current,
-                        onNavigate = onNavigate,
-                        onExpand = { scope.launch { drawerState.open() } },
-                    )
-                }
-                Box(Modifier.weight(1f).fillMaxHeight()) { content() }
-            }
-        },
+        content = content,
     )
 }
 
@@ -184,8 +171,6 @@ private fun DrawerSheet(
                 }
                 Spacer(Modifier.height(10.dp))
             }
-
-            PinStripRow()
 
             // Settings and Sign out stay pinned at the bottom
             Box(Modifier.fillMaxWidth().height(1.dp).background(c.cardBorder))
