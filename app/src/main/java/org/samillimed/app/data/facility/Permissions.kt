@@ -35,6 +35,7 @@ enum class Permission(
     RETURNS("returns", "Record returns and voids", "Refund a bill, fully or partly", false, true),
     EXPENSES("expenses", "Record and see expenses", "Rent, salaries, transport and other costs", false, true),
     TILL_COUNT("tillCount", "Count the till", "Count the cash at the end of a shift and compare it with what the bills say", true, true),
+    COUNT_STOCK("countStock", "Count stock", "Count what is on the shelves for a stock check. An administrator reviews the result", true, true),
 }
 
 /** What the signed-in person may do. Administrators and owners may do everything. */

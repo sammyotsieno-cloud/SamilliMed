@@ -71,6 +71,17 @@ service cloud.firestore {
 
       match /salesReturns/{id} { allow read: if member(fid); allow create: if staffCan(fid, 'returns', false); }
 
+      match /stockChecks/{id} {
+        allow read: if staffCan(fid, 'countStock', true);
+        allow create: if staffCan(fid, 'countStock', true) && request.resource.data.createdBy == request.auth.token.email;
+        allow update: if isAdmin(fid);
+      }
+      match /stockCheckLines/{id} {
+        allow read: if isAdmin(fid);
+        allow create: if staffCan(fid, 'countStock', true);
+        allow update: if isAdmin(fid);
+      }
+
       match /tillCounts/{id} {
         allow read: if staffCan(fid, 'tillCount', true);
         allow create: if staffCan(fid, 'tillCount', true) && request.resource.data.createdBy == request.auth.token.email;
