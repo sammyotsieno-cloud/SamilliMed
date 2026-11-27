@@ -14,6 +14,7 @@ fun Route.allowed(): Boolean = when (this) {
     Route.Sales -> Permissions.can(Permission.VIEW_SALES)
     Route.Dispense -> Permissions.can(Permission.DISPENSE)
     Route.Till -> Permissions.can(Permission.TILL_COUNT)
+    Route.StockCheck -> Permissions.can(Permission.COUNT_STOCK)
     Route.StaffAccess -> CurrentUser.isAdmin
     Route.Branding -> CurrentUser.isAdmin
     else -> true

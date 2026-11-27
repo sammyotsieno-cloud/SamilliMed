@@ -74,6 +74,7 @@ import org.samillimed.app.ui.till.CashCountScreen
 import org.samillimed.app.data.branding.Brand
 import org.samillimed.app.data.branding.rememberBrandLoaded
 import org.samillimed.app.ui.branding.BrandingScreen
+import org.samillimed.app.ui.stockcheck.StockCheckHost
 
 class MainActivity : ComponentActivity() {
 
@@ -521,6 +522,11 @@ class MainActivity : ComponentActivity() {
                                         // EXPENSES
                                         Route.Expenses -> {
                                             ExpensesScreen(onBack = { nav.back() })
+                                        }
+
+                                        // STOCK CHECK: count the shelves and compare with the records
+                                        Route.StockCheck -> {
+                                            StockCheckHost(catalog = catalog, onBack = { nav.back() })
                                         }
 
                                         // CASH COUNT: check the cash in the till
